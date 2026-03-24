@@ -302,6 +302,30 @@
       "name": "Deep Agents",
       "category": "deep-agents",
       "description": "Deep agent architecture with nested agent orchestration"
+    },
+    {
+      "id": "agentic-chat-reasoning",
+      "name": "Agentic Chat (Reasoning)",
+      "category": "chat-ui",
+      "description": "Chat with visible reasoning/thinking chain display"
+    },
+    {
+      "id": "a2a-chat",
+      "name": "A2A Chat",
+      "category": "multi-agent",
+      "description": "Agent-to-Agent protocol chat with multi-tab agent communication"
+    },
+    {
+      "id": "a2ui-chat",
+      "name": "A2UI Chat",
+      "category": "a2ui",
+      "description": "Chat with rich A2UI surface rendering using A2UI message renderer"
+    },
+    {
+      "id": "vnext-chat",
+      "name": "vNext Chat",
+      "category": "platform",
+      "description": "Experimental next-generation chat using CopilotKit vNext runtime"
     }
   ]
 }
