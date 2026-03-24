@@ -161,6 +161,7 @@ function generatePackageJson(args: CLIArgs): string {
 
 function generateLayout(): string {
     return `import type { Metadata } from "next";
+import "@copilotkit/react-core/v2/styles.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -234,23 +235,21 @@ function generateDemoPage(featureId: string, feature: Feature | undefined, args:
     return `"use client";
 
 import React from "react";
-import "@copilotkit/react-core/v2/styles.css";
 import { CopilotKit } from "@copilotkit/react-core";
 import {
     CopilotChat,
     useFrontendTool,
+    useRenderTool,
     useAgentContext,
     useConfigureSuggestions,
+    useHumanInTheLoop,
+    useInterrupt,
 } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 
 export default function ${toPascalCase(featureId)}Demo() {
     return (
-        <CopilotKit
-            runtimeUrl="/api/copilotkit"
-            showDevConsole={false}
-            agent="${featureId}"
-        >
+        <CopilotKit runtimeUrl="/api/copilotkit" agent="${featureId}">
             <DemoContent />
         </CopilotKit>
     );
@@ -259,15 +258,24 @@ export default function ${toPascalCase(featureId)}Demo() {
 function DemoContent() {
     // TODO: Implement ${feature?.name || featureId} demo
     // See the LangGraph Python reference implementation for patterns
+    //
+    // Key hooks available:
+    //   useFrontendTool({ name, description, parameters: z.object({...}), handler })
+    //   useRenderTool({ name: "tool_name", render: ({ args }) => <Component /> })
+    //   useHumanInTheLoop({ name, description, parameters, handler: ({ args, respond }) => ... })
+    //   useAgentContext({ description, value })
+    //   useConfigureSuggestions({ suggestions: [{ title, message }] })
+    //   useInterrupt({ render: ({ event, resolve }) => <Component /> })
 
     useConfigureSuggestions({
-        instructions: "Suggest actions relevant to ${feature?.name || featureId}",
+        suggestions: [
+            { title: "Get started", message: "Hello! What can you do?" },
+        ],
     });
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             <CopilotChat
-                className="flex-1"
                 labels={{
                     title: "${feature?.name || featureId}",
                     placeholder: "Type a message...",
@@ -309,39 +317,52 @@ function generateRuntimeRoute(args: CLIArgs): string {
 import {
     CopilotRuntime,
     ExperimentalEmptyAdapter,
+    copilotRuntimeNextJSAppRouterEndpoint,
 } from "@copilotkit/runtime";
 
+// TODO: Import the appropriate agent adapter for ${args.name}
+// Examples:
+//   import { LangGraphAgent } from "@copilotkit/runtime/langgraph";
+//   import { MastraAgent } from "@ag-ui/mastra";
+
 export const POST = async (req: NextRequest) => {
-    const runtime = new CopilotRuntime();
+    const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+        endpoint: "/api/copilotkit",
+        serviceAdapter: new ExperimentalEmptyAdapter(),
+        runtime: new CopilotRuntime({
+            // TODO: Configure agents for ${args.name}
+            // agents: { default: new YourAgent({ ... }) },
+        }),
+    });
 
-    // TODO: Configure the agent adapter for ${args.name}
-    // See the LangGraph Python reference for patterns
-
-    const response = await runtime.process(req);
-    return response;
+    return handleRequest(req);
 };
 `;
     }
 
     return `import { NextRequest } from "next/server";
+import {
+    CopilotRuntime,
+    ExperimentalEmptyAdapter,
+    copilotRuntimeNextJSAppRouterEndpoint,
+} from "@copilotkit/runtime";
+
+// The agent backend runs as a separate process on port 8000.
+// This runtime proxies CopilotKit requests to it via AG-UI protocol.
 
 const AGENT_URL = process.env.AGENT_URL || "http://localhost:8000";
 
 export const POST = async (req: NextRequest) => {
-    const body = await req.json();
-
-    const response = await fetch(\`\${AGENT_URL}/copilotkit\`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+    const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+        endpoint: "/api/copilotkit",
+        serviceAdapter: new ExperimentalEmptyAdapter(),
+        runtime: new CopilotRuntime({
+            // TODO: Configure the agent adapter for ${args.name}
+            // The adapter should point to AGENT_URL
+        }),
     });
 
-    return new Response(response.body, {
-        status: response.status,
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+    return handleRequest(req);
 };
 `;
 }
