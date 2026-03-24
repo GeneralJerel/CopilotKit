@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "tsx ../scripts/generate-registry.ts && next build",
+    "build": "tsx ../scripts/generate-registry.ts && tsx ../scripts/bundle-demo-content.ts && next build",
     "start": "next start",
     "lint": "next lint"
   },
