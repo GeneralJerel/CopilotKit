@@ -40,6 +40,14 @@
     {
       "id": "web-frameworks",
       "name": "Web Frameworks"
+    },
+    {
+      "id": "byoc",
+      "name": "BYOC (Bring Your Own Components)"
+    },
+    {
+      "id": "deep-agents",
+      "name": "Deep Agents"
     }
   ],
   "features": [
@@ -258,6 +266,42 @@
       "name": "Web (Vue)",
       "category": "web-frameworks",
       "description": "Vue support"
+    },
+    {
+      "id": "byoc-hashbrown",
+      "name": "BYOC Hashbrown",
+      "category": "byoc",
+      "description": "Hashbrown-style generative UI"
+    },
+    {
+      "id": "byoc-a2ui",
+      "name": "BYOC A2UI v0.9",
+      "category": "byoc",
+      "description": "Hashbrown-style generative UI on top of A2UI 0.9"
+    },
+    {
+      "id": "byoc-json-render",
+      "name": "BYOC json-render",
+      "category": "byoc",
+      "description": "Hashbrown-style generative UI built on json-render"
+    },
+    {
+      "id": "byoc-opengenui",
+      "name": "BYOC OpenGenUI",
+      "category": "byoc",
+      "description": "Hashbrown-style generative UI built on Open GenUI framework"
+    },
+    {
+      "id": "byoc-tambo",
+      "name": "BYOC Tambo",
+      "category": "byoc",
+      "description": "Hashbrown-style generative UI built on Tambo"
+    },
+    {
+      "id": "deep-agents",
+      "name": "Deep Agents",
+      "category": "deep-agents",
+      "description": "Deep agent architecture with nested agent orchestration"
     }
   ]
 }
