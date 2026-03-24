@@ -13,13 +13,36 @@ console.log("[copilotkit/route] Initializing CopilotKit runtime");
 console.log(`[copilotkit/route] LANGGRAPH_URL: ${LANGGRAPH_URL}`);
 console.log(`[copilotkit/route] LANGSMITH_API_KEY: ${process.env.LANGSMITH_API_KEY ? "set" : "not set"}`);
 
-const defaultAgent = new LangGraphAgent({
-    deploymentUrl: LANGGRAPH_URL,
-    graphId: "sample_agent",
-    langsmithApiKey: process.env.LANGSMITH_API_KEY || "",
-});
+function createAgent(graphId: string = "sample_agent") {
+    return new LangGraphAgent({
+        deploymentUrl: LANGGRAPH_URL,
+        graphId,
+        langsmithApiKey: process.env.LANGSMITH_API_KEY || "",
+    });
+}
 
-console.log("[copilotkit/route] LangGraphAgent created for graph: sample_agent");
+// Register the same agent under all names used by demo pages.
+// Each demo specifies an agent ID; they all route to the same LangGraph graph.
+const agentNames = [
+    "agentic_chat",
+    "human_in_the_loop",
+    "tool-rendering",
+    "gen-ui-tool-based",
+    "gen-ui-agent",
+    "shared-state-read",
+    "shared-state-write",
+    "shared-state-streaming",
+    "subagents",
+];
+
+const agents: Record<string, LangGraphAgent> = {};
+for (const name of agentNames) {
+    agents[name] = createAgent();
+}
+// Also register a default
+agents["default"] = createAgent();
+
+console.log(`[copilotkit/route] Registered ${Object.keys(agents).length} agent names: ${Object.keys(agents).join(", ")}`);
 
 export const POST = async (req: NextRequest) => {
     const url = req.url;
@@ -31,7 +54,7 @@ export const POST = async (req: NextRequest) => {
             endpoint: "/api/copilotkit",
             serviceAdapter: new ExperimentalEmptyAdapter(),
             runtime: new CopilotRuntime({
-                agents: { default: defaultAgent },
+                agents,
             }),
         });
 
