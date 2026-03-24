@@ -2,8 +2,8 @@
 FROM node:20-slim AS frontend
 WORKDIR /app
 RUN corepack enable
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+COPY package.json ./
+RUN pnpm install --no-frozen-lockfile
 COPY . .
 RUN pnpm build
 
@@ -27,11 +27,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --from=frontend /app/.next ./.next
 COPY --from=frontend /app/node_modules ./node_modules
 COPY --from=frontend /app/package.json ./
-COPY --from=frontend /app/public ./public
+COPY --from=frontend /app/node_modules ./node_modules
 
 # Agent code
-COPY src/agent_server.py ./
-COPY src/app/demos/*/agent.py ./agents/
+COPY langgraph.json ./
+COPY src/agents/ ./src/agents/
+COPY requirements.txt ./
 
 # Entrypoint
 COPY entrypoint.sh ./
