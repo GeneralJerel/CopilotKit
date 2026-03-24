@@ -1,0 +1,95 @@
+name: "Showcase: Drift Detection"
+
+on:
+  schedule:
+    # Run nightly at 3am UTC
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  drift-detection:
+    name: E2E Drift Detection
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Add each deployed integration here as it goes live
+          - slug: langgraph-python
+            name: "LangGraph (Python)"
+            url: https://showcase-langgraph-python.onrender.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        working-directory: showcase/packages/${{ matrix.slug }}
+        run: pnpm install --ignore-scripts || true
+
+      - name: Install Playwright
+        working-directory: showcase/packages/${{ matrix.slug }}
+        run: npx playwright install chromium
+
+      - name: Check health endpoint
+        run: |
+          status=$(curl -sf "${{ matrix.url }}/api/health" | jq -r '.status' 2>/dev/null || echo "down")
+          echo "Health status: $status"
+          if [ "$status" != "ok" ]; then
+            echo "::warning::${{ matrix.name }} health check failed (status: $status)"
+          fi
+
+      - name: Run E2E tests
+        working-directory: showcase/packages/${{ matrix.slug }}
+        env:
+          BASE_URL: ${{ matrix.url }}
+          CI: true
+        run: npx playwright test --reporter=github
+
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `[Drift] ${{ matrix.name }} E2E tests failing`;
+            const body = `## Drift Detection Alert
+
+            **Integration**: ${{ matrix.name }} (\`${{ matrix.slug }}\`)
+            **URL**: ${{ matrix.url }}
+            **Run**: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+
+            E2E tests are failing against the deployed integration. This may indicate:
+            - A CopilotKit SDK update broke compatibility
+            - The agent backend is down or misconfigured
+            - A dependency update caused a regression
+
+            Please investigate and fix.
+            `;
+
+            // Check if an issue already exists
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'showcase-drift',
+              state: 'open',
+            });
+
+            const existing = issues.find(i => i.title === title);
+            if (!existing) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['showcase-drift', '${{ matrix.slug }}'],
+              });
+            }
