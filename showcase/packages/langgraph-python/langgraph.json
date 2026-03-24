@@ -1,4 +1,5 @@
 {
+  "dependencies": ["."],
   "graphs": {
     "sample_agent": "./src/agents/main.py:graph"
   }

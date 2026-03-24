@@ -27,17 +27,16 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --from=frontend /app/.next ./.next
 COPY --from=frontend /app/node_modules ./node_modules
 COPY --from=frontend /app/package.json ./
-COPY --from=frontend /app/node_modules ./node_modules
 
-# Agent code
+# Agent code + config
 COPY langgraph.json ./
 COPY src/agents/ ./src/agents/
-COPY requirements.txt ./
 
 # Entrypoint
 COPY entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
-EXPOSE 3000
+EXPOSE 10000
 ENV NODE_ENV=production
+ENV PORT=10000
 CMD ["./entrypoint.sh"]
