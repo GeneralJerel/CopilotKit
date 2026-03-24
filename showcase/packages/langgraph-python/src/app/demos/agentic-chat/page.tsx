@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     useFrontendTool,
     useRenderTool,
@@ -10,12 +10,27 @@ import {
 } from "@copilotkit/react-core/v2";
 import { CopilotKit } from "@copilotkit/react-core";
 import { z } from "zod";
+import { DemoErrorBoundary } from "../error-boundary";
 
 export default function AgenticChatDemo() {
+    useEffect(() => {
+        console.log("[agentic-chat] Demo mounted");
+        console.log("[agentic-chat] Runtime URL: /api/copilotkit");
+        console.log("[agentic-chat] Agent: agentic_chat");
+    }, []);
+
     return (
-        <CopilotKit runtimeUrl="/api/copilotkit" agent="agentic_chat">
-            <Chat />
-        </CopilotKit>
+        <DemoErrorBoundary demoName="Agentic Chat">
+            <CopilotKit
+                runtimeUrl="/api/copilotkit"
+                agent="agentic_chat"
+                onError={(error) => {
+                    console.error("[agentic-chat] CopilotKit error:", error);
+                }}
+            >
+                <Chat />
+            </CopilotKit>
+        </DemoErrorBoundary>
     );
 }
 
