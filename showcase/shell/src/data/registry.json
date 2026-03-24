@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-24T05:59:57.397Z",
+  "generated_at": "2026-03-24T18:03:56.336Z",
   "feature_registry": {
     "version": "1.0.0",
     "categories": [
@@ -274,7 +274,7 @@
       "partner_docs": "https://docs.copilotkit.ai/integrations/langgraph",
       "repo": "https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/langgraph-python",
       "copilotkit_version": "2.0.0",
-      "backend_url": "https://showcase-langgraph-python.onrender.com",
+      "backend_url": "https://langgraph-python.onrender.com",
       "features": [
         "agentic-chat",
         "hitl",
