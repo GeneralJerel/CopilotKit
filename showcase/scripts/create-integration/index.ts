@@ -139,8 +139,8 @@ function generatePackageJson(args: CLIArgs): string {
                 "test:e2e": "playwright test",
             },
             dependencies: {
-                "@copilotkit/react-core": "workspace:*",
-                "@copilotkit/runtime": "workspace:*",
+                "@copilotkit/react-core": "next",
+                "@copilotkit/runtime": "next",
                 next: "^15.0.0",
                 react: "^19.0.0",
                 "react-dom": "^19.0.0",
