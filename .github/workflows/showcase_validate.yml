@@ -34,6 +34,10 @@ jobs:
       - name: Install workspace dependencies
         run: pnpm install --ignore-scripts
 
+      - name: Run build pipeline tests
+        working-directory: showcase/scripts
+        run: npx vitest run
+
       - name: Validate manifests & generate registry
         working-directory: showcase/scripts
         run: npx tsx generate-registry.ts
