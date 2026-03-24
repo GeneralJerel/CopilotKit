@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: showcase-shell
+    runtime: node
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    plan: starter
+    region: oregon
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_BASE_URL
+        value: https://showcase.copilotkit.dev

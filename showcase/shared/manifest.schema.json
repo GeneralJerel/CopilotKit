@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Integration Package Manifest",
+  "description": "Schema for CopilotKit Showcase integration package manifests",
+  "type": "object",
+  "required": ["name", "slug", "category", "language", "description", "backend_url", "features", "demos"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name (e.g. 'LangGraph (Python)')"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "URL-safe identifier (e.g. 'langgraph-python')"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["agent-framework", "enterprise-platform", "provider-sdk", "protocol", "starter"],
+      "description": "Integration category"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["python", "typescript", "dotnet"],
+      "description": "Primary agent backend language"
+    },
+    "logo": {
+      "type": "string",
+      "description": "Path to logo SVG relative to package root"
+    },
+    "description": {
+      "type": "string",
+      "description": "One-paragraph description of the integration"
+    },
+    "partner_docs": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Link to partner's own CopilotKit documentation"
+    },
+    "repo": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to source code in the monorepo"
+    },
+    "copilotkit_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+",
+      "description": "CopilotKit SDK version this package is built against"
+    },
+    "backend_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Deployed Render service URL"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "List of supported feature IDs from the feature registry"
+    },
+    "demos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description", "tags", "route"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "References a feature ID from the registry"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for this demo"
+          },
+          "description": {
+            "type": "string",
+            "description": "One-line description of what this demo shows"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Freeform tags for search and filtering"
+          },
+          "route": {
+            "type": "string",
+            "pattern": "^/",
+            "description": "Route within the package (e.g. /demos/agentic-chat)"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Runnable demos (subset of features with working implementations)"
+    }
+  },
+  "additionalProperties": false
+}

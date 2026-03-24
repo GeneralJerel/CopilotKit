@@ -6,5 +6,8 @@ packages:
   - "examples/v2/react/*"
   - "examples/v2/angular/*"
   - "!examples/v1/_legacy"
+  - "showcase/shell"
+  - "showcase/packages/*"
+  - "showcase/scripts"
 onlyBuiltDependencies:
   - better-sqlite3
