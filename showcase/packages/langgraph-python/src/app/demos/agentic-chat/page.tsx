@@ -110,16 +110,14 @@ function Chat() {
 
     return (
         <div
-            className="flex justify-center items-center h-screen w-full"
+            className="h-screen w-full"
             data-testid="background-container"
             style={{ background }}
         >
-            <div className="h-full w-full max-w-4xl">
-                <CopilotChat
-                    agentId="agentic_chat"
-                    className="h-full rounded-2xl"
-                />
-            </div>
+            <CopilotChat
+                agentId="agentic_chat"
+                className="h-full"
+            />
         </div>
     );
 }
