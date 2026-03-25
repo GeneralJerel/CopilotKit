@@ -63,6 +63,14 @@ export default async function IntegrationProfilePage({
                 >
                     Source Code
                 </a>
+                <a
+                    href="https://github.com/CopilotKit/CopilotKit/blob/main/showcase/STYLING-GUIDE.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--text-muted)] transition-colors"
+                >
+                    Developer Guide
+                </a>
             </div>
 
             {/* Features */}
