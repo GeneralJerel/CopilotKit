@@ -88,19 +88,26 @@ function findAgentFiles(dir: string): string[] {
 }
 
 function checkAlreadyMigrated(packageDir: string): boolean {
-    const agentsDir = path.join(packageDir, "src", "agents");
-    if (!fs.existsSync(agentsDir)) return false;
-    const files = findAgentFiles(agentsDir);
-    // If there are real agent files (not just __init__.py or the stub main.py),
-    // consider it already migrated
-    return files.some(f => !f.endsWith("__init__.py") && !f.includes("TODO"));
+    // Check multiple locations where migrated files could land
+    const dirs = [
+        path.join(packageDir, "src", "agents"),
+        path.join(packageDir, "src", "mastra"),
+    ];
+    for (const dir of dirs) {
+        if (!fs.existsSync(dir)) continue;
+        const files = findAgentFiles(dir);
+        if (files.some(f => !f.endsWith("__init__.py") && !f.includes("TODO"))) return true;
+    }
+    return false;
 }
 
 function wipeAgents(packageDir: string) {
-    const agentsDir = path.join(packageDir, "src", "agents");
-    if (fs.existsSync(agentsDir)) {
-        fs.rmSync(agentsDir, { recursive: true, force: true });
-        fs.mkdirSync(agentsDir, { recursive: true });
+    for (const dir of ["src/agents", "src/mastra"]) {
+        const full = path.join(packageDir, dir);
+        if (fs.existsSync(full)) {
+            fs.rmSync(full, { recursive: true, force: true });
+            fs.mkdirSync(full, { recursive: true });
+        }
     }
 }
 
@@ -175,11 +182,17 @@ function migrateIntegration(
         return result;
     }
 
-    const targetDir = path.join(packageDir, "src", "agents");
-
     for (const file of agentFiles) {
         const sourcePath = path.join(sourceDir, file);
-        const targetPath = path.join(targetDir, file);
+
+        // Smart placement: if the file path matches the package structure,
+        // place it there directly. Otherwise, put it in src/agents/.
+        let targetPath: string;
+        if (file.startsWith("src/app/") || file.startsWith("src/lib/") || file.startsWith("src/mastra/") || file.startsWith("src/agents/")) {
+            targetPath = path.join(packageDir, file);
+        } else {
+            targetPath = path.join(packageDir, "src", "agents", file);
+        }
 
         if (opts.dryRun) {
             result.files.push(`[dry-run] ${file}`);

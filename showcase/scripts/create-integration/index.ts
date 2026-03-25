@@ -38,6 +38,7 @@ interface CLIArgs {
     category: string;
     language: string;
     features: string[];
+    extraDeps: string[];
 }
 
 function parseArgs(): CLIArgs {
@@ -56,13 +57,15 @@ function parseArgs(): CLIArgs {
     }
 
     if (!parsed.name || !parsed.slug || !parsed.category || !parsed.language || !parsed.features) {
-        console.error("Usage: create-integration --name <name> --slug <slug> --category <category> --language <language> --features <comma-separated>");
+        console.error("Usage: create-integration --name <name> --slug <slug> --category <category> --language <language> --features <comma-separated> [--deps <comma-separated>]");
         console.error("\nRequired flags:");
         console.error("  --name       Display name (e.g. 'Anthropic (Claude Agent SDK)')");
         console.error("  --slug       URL-safe ID (e.g. 'anthropic-claude-sdk')");
         console.error("  --category   One of: agent-framework, enterprise-platform, provider-sdk, protocol, starter");
         console.error("  --language   One of: python, typescript, dotnet");
         console.error("  --features   Comma-separated feature IDs (e.g. 'agentic-chat,hitl,tool-rendering')");
+        console.error("\nOptional flags:");
+        console.error("  --deps       Extra npm dependencies (e.g. '@ag-ui/mastra,@mastra/core')");
         process.exit(1);
     }
 
@@ -72,6 +75,7 @@ function parseArgs(): CLIArgs {
         category: parsed.category,
         language: parsed.language,
         features: parsed.features.split(",").map((f) => f.trim()),
+        extraDeps: parsed.deps ? parsed.deps.split(",").map((d) => d.trim()) : [],
     };
 }
 
@@ -145,6 +149,7 @@ function generatePackageJson(args: CLIArgs): string {
                 react: "^19.0.0",
                 "react-dom": "^19.0.0",
                 zod: "^3.24.0",
+                ...Object.fromEntries(args.extraDeps.map((d) => [d, "latest"])),
             },
             devDependencies: {
                 "@playwright/test": "^1.50.0",
@@ -278,18 +283,25 @@ import {
     useInterrupt,
 } from "@copilotkit/react-core/v2";
 import { z } from "zod";
+import { DemoErrorBoundary } from "../error-boundary";
 
 export default function ${toPascalCase(featureId)}Demo() {
     return (
-        <CopilotKit runtimeUrl="/api/copilotkit" agent="${featureId}">
-            <DemoContent />
-        </CopilotKit>
+        <DemoErrorBoundary demoName="${feature?.name || featureId}">
+            <CopilotKit runtimeUrl="/api/copilotkit" agent="${featureId}">
+                <DemoContent />
+            </CopilotKit>
+        </DemoErrorBoundary>
     );
 }
 
 function DemoContent() {
     // TODO: Implement ${feature?.name || featureId} demo
     // See the LangGraph Python reference implementation for patterns
+    //
+    // IMPORTANT: Use inline styles for any UI rendered inside the chat
+    // (useRenderTool, useHumanInTheLoop callbacks). Tailwind classes get
+    // purged by Tailwind v4 in this context. See STYLING-GUIDE.md.
     //
     // Key hooks available:
     //   useFrontendTool({ name, description, parameters: z.object({...}), handler })
@@ -306,13 +318,12 @@ function DemoContent() {
     });
 
     return (
-        <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-            <CopilotChat
-                labels={{
-                    title: "${feature?.name || featureId}",
-                    placeholder: "Type a message...",
-                }}
-            />
+        <div className="flex justify-center items-center h-screen w-full">
+            <div className="h-full w-full md:w-4/5 md:h-4/5 rounded-lg">
+                <CopilotChat
+                    className="h-full rounded-2xl max-w-6xl mx-auto"
+                />
+            </div>
         </div>
     );
 }
