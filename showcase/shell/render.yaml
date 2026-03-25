@@ -2,13 +2,15 @@ services:
   - type: web
     name: showcase-shell
     runtime: node
-    buildCommand: pnpm install && pnpm build
-    startCommand: pnpm start
-    plan: starter
-    region: oregon
+    buildCommand: "cd ../scripts && npm install --silent && cd ../shell && npm install --silent && node ../scripts/node_modules/tsx/dist/cli.mjs ../scripts/generate-registry.ts && node ../scripts/node_modules/tsx/dist/cli.mjs ../scripts/bundle-demo-content.ts && npx next build"
+    startCommand: npx next start
+    plan: standard
+    region: virginia
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_BASE_URL
         value: https://showcase.copilotkit.dev
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
