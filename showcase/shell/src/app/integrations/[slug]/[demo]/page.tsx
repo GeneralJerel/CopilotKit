@@ -78,18 +78,18 @@ export default function DemoViewerPage() {
                         ← {integration.name}
                     </Link>
                     <span className="text-[var(--text-muted)]">/</span>
-                    <span className="text-sm font-medium text-[var(--text-primary)]">
+                    <span className="text-sm font-medium text-[var(--text)]">
                         {demo.name}
                     </span>
                 </div>
-                <div className="flex gap-1 rounded-lg bg-[var(--bg-deep)] p-1">
+                <div className="flex gap-1 rounded-lg bg-[var(--bg)] p-1">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`rounded-md px-4 py-1.5 text-xs font-medium transition-colors ${
                                 activeTab === tab.id
-                                    ? "bg-[var(--bg-elevated)] text-[var(--text-primary)]"
+                                    ? "bg-[var(--bg-elevated)] text-[var(--text)]"
                                     : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                             }`}
                         >
@@ -124,7 +124,7 @@ export default function DemoViewerPage() {
                                     onClick={() => setActiveFile(idx)}
                                     className={`px-4 py-2 text-left text-xs font-mono transition-colors ${
                                         activeFile === idx
-                                            ? "bg-[var(--bg-elevated)] text-[var(--text-primary)]"
+                                            ? "bg-[var(--bg-elevated)] text-[var(--text)]"
                                             : "text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]/50"
                                     }`}
                                 >
@@ -136,7 +136,7 @@ export default function DemoViewerPage() {
                                     href={integration.repo}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-[10px] text-[var(--accent-blue)] hover:underline"
+                                    className="text-[10px] text-[var(--accent)] hover:underline"
                                 >
                                     View on GitHub
                                 </a>
@@ -151,7 +151,7 @@ export default function DemoViewerPage() {
                                     customStyle={{
                                         margin: 0,
                                         borderRadius: 0,
-                                        background: "var(--bg-deep)",
+                                        background: "var(--bg)",
                                         fontSize: "13px",
                                         lineHeight: "1.6",
                                     }}
@@ -177,7 +177,7 @@ export default function DemoViewerPage() {
                 {activeTab === "docs" && (
                     <div className="h-full overflow-auto p-8">
                         {demoContent?.readme ? (
-                            <div className="mx-auto max-w-3xl [&_h1]:text-2xl [&_h1]:font-light [&_h1]:text-[var(--text-primary)] [&_h1]:mb-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-[var(--text-primary)] [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[var(--text-primary)] [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:text-sm [&_p]:text-[var(--text-secondary)] [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4 [&_li]:text-sm [&_li]:text-[var(--text-secondary)] [&_li]:mb-1 [&_strong]:text-[var(--text-primary)] [&_code]:text-[var(--accent-cyan)] [&_code]:bg-[var(--bg-elevated)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono [&_pre]:bg-[var(--bg-surface)] [&_pre]:rounded-lg [&_pre]:p-4 [&_pre]:mb-4 [&_pre]:overflow-x-auto [&_hr]:border-[var(--border)] [&_hr]:my-6">
+                            <div className="mx-auto max-w-3xl [&_h1]:text-2xl [&_h1]:font-light [&_h1]:text-[var(--text)] [&_h1]:mb-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-[var(--text)] [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[var(--text)] [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:text-sm [&_p]:text-[var(--text-secondary)] [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4 [&_li]:text-sm [&_li]:text-[var(--text-secondary)] [&_li]:mb-1 [&_strong]:text-[var(--text)] [&_code]:text-[var(--accent)] [&_code]:bg-[var(--bg-elevated)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono [&_pre]:bg-[var(--bg-surface)] [&_pre]:rounded-lg [&_pre]:p-4 [&_pre]:mb-4 [&_pre]:overflow-x-auto [&_hr]:border-[var(--border)] [&_hr]:my-6">
                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                     {demoContent.readme}
                                 </ReactMarkdown>

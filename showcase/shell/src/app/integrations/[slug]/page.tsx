@@ -27,14 +27,14 @@ export default async function IntegrationProfilePage({
             <div className="flex items-start justify-between">
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-light text-[var(--text-primary)]">
+                        <h1 className="text-3xl font-light text-[var(--text)]">
                             {integration.name}
                         </h1>
                         <span className="rounded-md bg-[var(--bg-elevated)] px-2 py-0.5 text-[10px] font-mono text-[var(--text-muted)] border border-[var(--border)]">
                             {getLanguageLabel(integration.language)}
                         </span>
                     </div>
-                    <p className="mt-1 text-xs font-mono uppercase tracking-widest text-[var(--accent-cyan)]">
+                    <p className="mt-1 text-xs font-mono uppercase tracking-widest text-[var(--accent)]">
                         {getCategoryLabel(integration.category)}
                     </p>
                     <p className="mt-4 text-[var(--text-secondary)] max-w-2xl leading-relaxed">
@@ -50,7 +50,7 @@ export default async function IntegrationProfilePage({
                         href={integration.partner_docs}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)] transition-colors"
+                        className="rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--text-muted)] transition-colors"
                     >
                         Partner Docs
                     </a>
@@ -59,7 +59,7 @@ export default async function IntegrationProfilePage({
                     href={integration.repo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)] transition-colors"
+                    className="rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--text-muted)] transition-colors"
                 >
                     Source Code
                 </a>
@@ -81,7 +81,7 @@ export default async function IntegrationProfilePage({
                                 key={featureId}
                                 className={`rounded-md px-3 py-1 text-xs font-mono ${
                                     hasDemo
-                                        ? "bg-[rgba(52,211,153,0.1)] text-[var(--accent-emerald)]"
+                                        ? "bg-[rgba(52,211,153,0.1)] text-[var(--accent)]"
                                         : "bg-[var(--bg-elevated)] text-[var(--text-muted)]"
                                 }`}
                             >
@@ -103,9 +103,9 @@ export default async function IntegrationProfilePage({
                         <Link
                             key={demo.id}
                             href={`/integrations/${integration.slug}/${demo.id}`}
-                            className="group rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 hover:border-[var(--accent-blue)] hover:-translate-y-0.5 transition-all"
+                            className="group rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5 hover:border-[var(--accent)] hover:-translate-y-0.5 transition-all"
                         >
-                            <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+                            <h3 className="text-sm font-semibold text-[var(--text)]">
                                 {demo.name}
                             </h3>
                             <p className="mt-1 text-xs text-[var(--text-secondary)]">

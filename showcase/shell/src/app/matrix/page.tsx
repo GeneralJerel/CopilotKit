@@ -14,7 +14,7 @@ export default function FeatureMatrixPage() {
     if (integrations.length === 0) {
         return (
             <div className="mx-auto max-w-7xl px-6 py-12 text-center">
-                <h1 className="text-3xl font-light text-[var(--text-primary)]">
+                <h1 className="text-3xl font-light text-[var(--text)]">
                     Feature Matrix
                 </h1>
                 <p className="mt-6 text-[var(--text-muted)]">
@@ -38,7 +38,7 @@ export default function FeatureMatrixPage() {
     return (
         <div className="px-6 py-12">
             <div className="mx-auto max-w-7xl">
-                <h1 className="text-3xl font-light text-[var(--text-primary)]">
+                <h1 className="text-3xl font-light text-[var(--text)]">
                     Feature Matrix
                 </h1>
                 <p className="mt-2 text-sm text-[var(--text-secondary)]">
@@ -59,7 +59,7 @@ export default function FeatureMatrixPage() {
                                     colSpan={cat.features.length}
                                     className="border-l border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-center"
                                 >
-                                    <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--accent-cyan)]">
+                                    <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--accent)]">
                                         {cat.name}
                                     </span>
                                 </th>
@@ -94,13 +94,13 @@ export default function FeatureMatrixPage() {
                             <tr
                                 key={integration.slug}
                                 className={`border-t border-[var(--border)] hover:bg-[var(--bg-elevated)]/50 transition-colors ${
-                                    rowIdx % 2 === 1 ? "bg-[var(--bg-deep)]/30" : ""
+                                    rowIdx % 2 === 1 ? "bg-[var(--bg)]/30" : ""
                                 }`}
                             >
                                 <td className="sticky left-0 z-10 bg-[var(--bg-surface)] p-4 border-r border-[var(--border)]">
                                     <Link
                                         href={`/integrations/${integration.slug}`}
-                                        className="font-medium text-sm text-[var(--text-primary)] hover:text-[var(--accent-blue)] transition-colors"
+                                        className="font-medium text-sm text-[var(--text)] hover:text-[var(--accent)] transition-colors"
                                     >
                                         {integration.name}
                                     </Link>
@@ -122,7 +122,7 @@ export default function FeatureMatrixPage() {
                                                 {supported && hasDemo ? (
                                                     <Link
                                                         href={`/integrations/${integration.slug}/${feature.id}`}
-                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[rgba(52,211,153,0.1)] text-[var(--accent-emerald)] hover:bg-[rgba(52,211,153,0.2)] transition-colors text-sm"
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[rgba(52,211,153,0.1)] text-[var(--accent)] hover:bg-[rgba(52,211,153,0.2)] transition-colors text-sm"
                                                         title={`Try ${feature.name} demo`}
                                                     >
                                                         ✓
@@ -152,7 +152,7 @@ export default function FeatureMatrixPage() {
             {/* Legend */}
             <div className="mx-auto max-w-7xl mt-4 flex gap-6 text-xs text-[var(--text-muted)]">
                 <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-[rgba(52,211,153,0.1)] text-[var(--accent-emerald)] text-[10px]">✓</span>
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-[rgba(52,211,153,0.1)] text-[var(--accent)] text-[10px]">✓</span>
                     Supported with live demo
                 </div>
                 <div className="flex items-center gap-2">
