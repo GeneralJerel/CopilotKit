@@ -1012,8 +1012,30 @@ See the LangGraph Python reference implementation for patterns.
     }
 
     console.log(`\nPackage created at: showcase/packages/${args.slug}/`);
+
+    // Auto-migrate agent code from examples/integrations/ if available
+    console.log("\n--- Migrating agent code from examples/integrations/ ---\n");
+    try {
+        const { migrateForSlug } = await import("../migrate-integration-examples.js");
+        const migResult = migrateForSlug(args.slug);
+
+        if (migResult.errors.length > 0) {
+            console.error(`  Migration FAILED for ${args.slug}:`);
+            for (const err of migResult.errors) console.error(`    ${err}`);
+            process.exit(1);
+        } else if (migResult.files.length > 0) {
+            console.log(`  Migrated ${migResult.files.length} agent files from examples/integrations/`);
+            for (const f of migResult.files) console.log(`    ${f}`);
+        } else if (migResult.skipped.length > 0) {
+            console.log(`  No migration needed: ${migResult.skipped[0]}`);
+        }
+    } catch (e: any) {
+        console.log(`  Migration skipped: ${e.message}`);
+        console.log("  (Run migrate-integration-examples.ts manually if needed)");
+    }
+
     console.log("\nNext steps:");
-    console.log("  1. Write the agent code in each demo's agent file");
+    console.log("  1. Write/customize the agent code in src/agents/");
     console.log("  2. Customize README content with framework-specific details");
     console.log("  3. Fill in E2E test assertions");
     console.log("  4. Deploy to Render (render.yaml is ready)");

@@ -3,15 +3,13 @@
 // Copies agent code from existing examples/integrations/<name>/
 // into the corresponding showcase/packages/<slug>/src/agents/
 //
-// Usage:
-//   npx tsx showcase/scripts/migrate-integration-examples.ts [--dry-run]
+// Usage (standalone):
+//   npx tsx showcase/scripts/migrate-integration-examples.ts [--dry-run] [--redo]
 //   npx tsx showcase/scripts/migrate-integration-examples.ts --integration mastra
 //
-// This script:
-// 1. Scans examples/integrations/ for existing integration directories
-// 2. Matches them to showcase/packages/ by slug
-// 3. Copies agent code (Python/TS files) into the showcase package
-// 4. Reports what was copied and what needs manual attention
+// Usage (from create-integration):
+//   import { migrateForSlug } from "./migrate-integration-examples.ts";
+//   const result = migrateForSlug("mastra", { redo: false });
 
 import fs from "fs";
 import path from "path";
@@ -24,12 +22,6 @@ const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const EXAMPLES_DIR = path.join(REPO_ROOT, "examples", "integrations");
 const PACKAGES_DIR = path.join(__dirname, "..", "packages");
 
-const DRY_RUN = process.argv.includes("--dry-run");
-const SINGLE = process.argv.find((a) => a === "--integration");
-const SINGLE_NAME = SINGLE
-    ? process.argv[process.argv.indexOf(SINGLE) + 1]
-    : null;
-
 // Map from examples/integrations dir name → showcase package slug
 const SLUG_MAP: Record<string, string> = {
     "langgraph-python": "langgraph-python",
@@ -37,7 +29,7 @@ const SLUG_MAP: Record<string, string> = {
     "langgraph-fastapi": "langgraph-fastapi",
     mastra: "mastra",
     "crewai-crews": "crewai",
-    "crewai-flows": "crewai", // both map to same package
+    "crewai-flows": "crewai",
     "pydantic-ai": "pydanticai",
     agno: "agno",
     llamaindex: "llamaindex",
@@ -51,37 +43,34 @@ const SLUG_MAP: Record<string, string> = {
     "mcp-apps": "mcp-apps",
 };
 
-interface MigrationResult {
+// Reverse map: slug → example dir name(s)
+const REVERSE_MAP: Record<string, string[]> = {};
+for (const [example, slug] of Object.entries(SLUG_MAP)) {
+    if (!REVERSE_MAP[slug]) REVERSE_MAP[slug] = [];
+    REVERSE_MAP[slug].push(example);
+}
+
+export interface MigrationResult {
     example: string;
     slug: string;
     files: string[];
     skipped: string[];
     errors: string[];
+    alreadyMigrated: boolean;
 }
 
 function findAgentFiles(dir: string): string[] {
     const results: string[] = [];
-
     function walk(current: string, rel: string) {
         if (!fs.existsSync(current)) return;
         const entries = fs.readdirSync(current, { withFileTypes: true });
-
         for (const entry of entries) {
             const fullPath = path.join(current, entry.name);
             const relPath = path.join(rel, entry.name);
-
             if (entry.isDirectory()) {
-                // Skip node_modules, .next, __pycache__, .venv
-                if (
-                    ["node_modules", ".next", "__pycache__", ".venv", ".git", "dist"].includes(
-                        entry.name
-                    )
-                ) {
-                    continue;
-                }
+                if (["node_modules", ".next", "__pycache__", ".venv", ".git", "dist"].includes(entry.name)) continue;
                 walk(fullPath, relPath);
             } else if (entry.isFile()) {
-                // Collect Python and TypeScript agent files
                 if (
                     entry.name.endsWith(".py") ||
                     (entry.name.endsWith(".ts") &&
@@ -94,12 +83,31 @@ function findAgentFiles(dir: string): string[] {
             }
         }
     }
-
     walk(dir, "");
     return results;
 }
 
-function migrateIntegration(exampleName: string): MigrationResult {
+function checkAlreadyMigrated(packageDir: string): boolean {
+    const agentsDir = path.join(packageDir, "src", "agents");
+    if (!fs.existsSync(agentsDir)) return false;
+    const files = findAgentFiles(agentsDir);
+    // If there are real agent files (not just __init__.py or the stub main.py),
+    // consider it already migrated
+    return files.some(f => !f.endsWith("__init__.py") && !f.includes("TODO"));
+}
+
+function wipeAgents(packageDir: string) {
+    const agentsDir = path.join(packageDir, "src", "agents");
+    if (fs.existsSync(agentsDir)) {
+        fs.rmSync(agentsDir, { recursive: true, force: true });
+        fs.mkdirSync(agentsDir, { recursive: true });
+    }
+}
+
+function migrateIntegration(
+    exampleName: string,
+    opts: { dryRun?: boolean; redo?: boolean } = {}
+): MigrationResult {
     const slug = SLUG_MAP[exampleName];
     const result: MigrationResult = {
         example: exampleName,
@@ -107,6 +115,7 @@ function migrateIntegration(exampleName: string): MigrationResult {
         files: [],
         skipped: [],
         errors: [],
+        alreadyMigrated: false,
     };
 
     if (!slug) {
@@ -118,12 +127,30 @@ function migrateIntegration(exampleName: string): MigrationResult {
     const packageDir = path.join(PACKAGES_DIR, slug);
 
     if (!fs.existsSync(exampleDir)) {
-        result.errors.push(`Example dir not found: ${exampleDir}`);
+        result.skipped.push(`Example dir not found: ${exampleDir}`);
         return result;
     }
 
-    // Find agent files in the example
-    // Look in apps/agent/ first (langgraph-python structure), then root
+    if (!fs.existsSync(packageDir)) {
+        result.skipped.push(`Package dir doesn't exist: showcase/packages/${slug}/`);
+        return result;
+    }
+
+    // Check if already migrated
+    if (checkAlreadyMigrated(packageDir)) {
+        result.alreadyMigrated = true;
+        if (!opts.redo) {
+            result.skipped.push("Already migrated (use --redo to re-import)");
+            return result;
+        }
+        // Redo: wipe and re-import
+        if (!opts.dryRun) {
+            wipeAgents(packageDir);
+            console.log(`    Wiped existing agents for redo`);
+        }
+    }
+
+    // Find agent files
     const agentDirs = [
         path.join(exampleDir, "apps", "agent"),
         path.join(exampleDir, "agent"),
@@ -131,41 +158,30 @@ function migrateIntegration(exampleName: string): MigrationResult {
     ];
 
     const agentFiles: string[] = [];
+    let sourceDir = exampleDir;
     for (const dir of agentDirs) {
         if (fs.existsSync(dir)) {
-            agentFiles.push(...findAgentFiles(dir));
-            if (agentFiles.length > 0) break; // Use the first dir that has files
+            const found = findAgentFiles(dir);
+            if (found.length > 0) {
+                agentFiles.push(...found);
+                sourceDir = dir;
+                break;
+            }
         }
     }
 
     if (agentFiles.length === 0) {
-        result.skipped.push("No agent files found");
+        result.skipped.push("No agent files found in example");
         return result;
     }
 
-    // Target directory in the showcase package
     const targetDir = path.join(packageDir, "src", "agents");
 
-    if (!fs.existsSync(packageDir)) {
-        result.skipped.push(
-            `Package dir doesn't exist yet: showcase/packages/${slug}/ (run create-integration first)`
-        );
-        // Still list what would be copied
-        for (const file of agentFiles) {
-            result.skipped.push(`  would copy: ${file}`);
-        }
-        return result;
-    }
-
-    // Copy files
     for (const file of agentFiles) {
-        const sourcePath = path.join(
-            agentDirs.find((d) => fs.existsSync(d)) || exampleDir,
-            file
-        );
+        const sourcePath = path.join(sourceDir, file);
         const targetPath = path.join(targetDir, file);
 
-        if (DRY_RUN) {
+        if (opts.dryRun) {
             result.files.push(`[dry-run] ${file}`);
             continue;
         }
@@ -182,62 +198,83 @@ function migrateIntegration(exampleName: string): MigrationResult {
     return result;
 }
 
+// Public API for use from create-integration
+export function migrateForSlug(
+    slug: string,
+    opts: { dryRun?: boolean; redo?: boolean } = {}
+): MigrationResult {
+    const exampleNames = REVERSE_MAP[slug];
+    if (!exampleNames || exampleNames.length === 0) {
+        return {
+            example: "none",
+            slug,
+            files: [],
+            skipped: [`No example mapping for slug "${slug}" — nothing to migrate`],
+            errors: [],
+            alreadyMigrated: false,
+        };
+    }
+
+    // Migrate the first matching example (most have only one)
+    return migrateIntegration(exampleNames[0], opts);
+}
+
+// CLI entrypoint
 function main() {
+    const args = process.argv.slice(2);
+    const DRY_RUN = args.includes("--dry-run");
+    const REDO = args.includes("--redo");
+    const singleIdx = args.indexOf("--integration");
+    const singleName = singleIdx >= 0 ? args[singleIdx + 1] : null;
+
     console.log("Migration: examples/integrations → showcase/packages\n");
     if (DRY_RUN) console.log("DRY RUN — no files will be copied\n");
+    if (REDO) console.log("REDO MODE — will wipe and re-import\n");
 
     if (!fs.existsSync(EXAMPLES_DIR)) {
         console.error(`Examples directory not found: ${EXAMPLES_DIR}`);
         process.exit(1);
     }
 
-    const examples = SINGLE_NAME
-        ? [SINGLE_NAME]
-        : fs
-              .readdirSync(EXAMPLES_DIR, { withFileTypes: true })
+    const examples = singleName
+        ? [singleName]
+        : fs.readdirSync(EXAMPLES_DIR, { withFileTypes: true })
               .filter((d) => d.isDirectory())
               .map((d) => d.name);
 
     const results: MigrationResult[] = [];
+    let hasErrors = false;
 
     for (const example of examples) {
-        const result = migrateIntegration(example);
+        const result = migrateIntegration(example, { dryRun: DRY_RUN, redo: REDO });
         results.push(result);
 
         const status =
             result.errors.length > 0
                 ? "ERROR"
-                : result.skipped.length > 0
-                  ? "SKIP"
-                  : "OK";
+                : result.alreadyMigrated && !REDO
+                  ? "ALREADY"
+                  : result.skipped.length > 0
+                    ? "SKIP"
+                    : "OK";
 
-        console.log(
-            `  [${status}] ${example} → ${result.slug} (${result.files.length} files)`
-        );
+        if (result.errors.length > 0) hasErrors = true;
+
+        console.log(`  [${status}] ${example} → ${result.slug} (${result.files.length} files)`);
         for (const err of result.errors) console.log(`         ERROR: ${err}`);
-        for (const skip of result.skipped)
-            console.log(`         SKIP: ${skip}`);
+        for (const skip of result.skipped) console.log(`         SKIP: ${skip}`);
     }
 
     console.log("\n--- Summary ---");
-    console.log(`Total examples: ${results.length}`);
-    console.log(
-        `Migrated: ${results.filter((r) => r.files.length > 0).length}`
-    );
-    console.log(
-        `Skipped: ${results.filter((r) => r.skipped.length > 0).length}`
-    );
-    console.log(
-        `Errors: ${results.filter((r) => r.errors.length > 0).length}`
-    );
+    console.log(`Total: ${results.length}`);
+    console.log(`Migrated: ${results.filter((r) => r.files.length > 0).length}`);
+    console.log(`Already done: ${results.filter((r) => r.alreadyMigrated && r.skipped.length > 0).length}`);
+    console.log(`Skipped: ${results.filter((r) => !r.alreadyMigrated && r.skipped.length > 0).length}`);
+    console.log(`Errors: ${results.filter((r) => r.errors.length > 0).length}`);
 
-    // List unmapped examples
-    const unmapped = results.filter((r) => r.slug === "UNMAPPED");
-    if (unmapped.length > 0) {
-        console.log(
-            `\nUnmapped examples (add to SLUG_MAP): ${unmapped.map((r) => r.example).join(", ")}`
-        );
-    }
+    process.exit(hasErrors ? 1 : 0);
 }
 
-main();
+// Only run main if this is the entry point (not imported)
+const isMain = process.argv[1]?.includes("migrate-integration-examples");
+if (isMain) main();
