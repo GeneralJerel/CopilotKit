@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-24T18:03:56.336Z",
+  "generated_at": "2026-03-25T22:59:55.454Z",
   "feature_registry": {
     "version": "1.0.0",
     "categories": [
@@ -42,6 +42,14 @@
       {
         "id": "web-frameworks",
         "name": "Web Frameworks"
+      },
+      {
+        "id": "byoc",
+        "name": "BYOC (Bring Your Own Components)"
+      },
+      {
+        "id": "deep-agents",
+        "name": "Deep Agents"
       }
     ],
     "features": [
@@ -260,6 +268,72 @@
         "name": "Web (Vue)",
         "category": "web-frameworks",
         "description": "Vue support"
+      },
+      {
+        "id": "web-tanstack",
+        "name": "Web (TanStack)",
+        "category": "web-frameworks",
+        "description": "TanStack Start support"
+      },
+      {
+        "id": "byoc-hashbrown",
+        "name": "BYOC Hashbrown",
+        "category": "byoc",
+        "description": "Hashbrown-style generative UI"
+      },
+      {
+        "id": "byoc-a2ui",
+        "name": "BYOC A2UI v0.9",
+        "category": "byoc",
+        "description": "Hashbrown-style generative UI on top of A2UI 0.9"
+      },
+      {
+        "id": "byoc-json-render",
+        "name": "BYOC json-render",
+        "category": "byoc",
+        "description": "Hashbrown-style generative UI built on json-render"
+      },
+      {
+        "id": "byoc-opengenui",
+        "name": "BYOC OpenGenUI",
+        "category": "byoc",
+        "description": "Hashbrown-style generative UI built on Open GenUI framework"
+      },
+      {
+        "id": "byoc-tambo",
+        "name": "BYOC Tambo",
+        "category": "byoc",
+        "description": "Hashbrown-style generative UI built on Tambo"
+      },
+      {
+        "id": "deep-agents",
+        "name": "Deep Agents",
+        "category": "deep-agents",
+        "description": "Deep agent architecture with nested agent orchestration"
+      },
+      {
+        "id": "agentic-chat-reasoning",
+        "name": "Agentic Chat (Reasoning)",
+        "category": "chat-ui",
+        "description": "Chat with visible reasoning/thinking chain display"
+      },
+      {
+        "id": "a2a-chat",
+        "name": "A2A Chat",
+        "category": "multi-agent",
+        "description": "Agent-to-Agent protocol chat with multi-tab agent communication"
+      },
+      {
+        "id": "a2ui-chat",
+        "name": "A2UI Chat",
+        "category": "a2ui",
+        "description": "Chat with rich A2UI surface rendering using A2UI message renderer"
+      },
+      {
+        "id": "vnext-chat",
+        "name": "vNext Chat",
+        "category": "platform",
+        "description": "Experimental next-generation chat using CopilotKit vNext runtime"
       }
     ]
   },
@@ -367,6 +441,62 @@
             "multi-agent"
           ],
           "route": "/demos/subagents"
+        }
+      ]
+    },
+    {
+      "name": "Mastra",
+      "slug": "mastra",
+      "category": "agent-framework",
+      "language": "typescript",
+      "logo": "/logos/mastra.svg",
+      "description": "TypeScript-native agent framework with built-in tool management, agent memory, and workflow orchestration. Integrates with CopilotKit via the AG-UI protocol adapter.",
+      "partner_docs": "https://docs.copilotkit.ai/integrations/mastra",
+      "repo": "https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/mastra",
+      "copilotkit_version": "2.0.0",
+      "backend_url": "https://showcase-mastra.onrender.com",
+      "features": [
+        "agentic-chat",
+        "hitl",
+        "tool-rendering",
+        "gen-ui-tool-based"
+      ],
+      "demos": [
+        {
+          "id": "agentic-chat",
+          "name": "Agentic Chat",
+          "description": "Natural conversation with frontend tool execution",
+          "tags": [
+            "chat-ui"
+          ],
+          "route": "/demos/agentic-chat"
+        },
+        {
+          "id": "hitl",
+          "name": "Human in the Loop",
+          "description": "User approves agent actions before execution",
+          "tags": [
+            "interactivity"
+          ],
+          "route": "/demos/hitl"
+        },
+        {
+          "id": "tool-rendering",
+          "name": "Tool Rendering",
+          "description": "Backend agent tools rendered as UI components",
+          "tags": [
+            "agent-capabilities"
+          ],
+          "route": "/demos/tool-rendering"
+        },
+        {
+          "id": "gen-ui-tool-based",
+          "name": "Tool-Based Generative UI",
+          "description": "Agent uses tools to trigger UI generation",
+          "tags": [
+            "generative-ui"
+          ],
+          "route": "/demos/gen-ui-tool-based"
         }
       ]
     }

@@ -969,7 +969,7 @@ function toPascalCase(str: string): string {
         .join("");
 }
 
-function main() {
+async function main() {
     const args = parseArgs();
     const features = loadFeatureRegistry();
     const packageDir = path.join(PACKAGES_DIR, args.slug);
