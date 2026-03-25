@@ -388,12 +388,73 @@ function generateHealthRoute(args: CLIArgs): string {
         ? "N/A (in-process)"
         : "http://localhost:8123";
 
-    return `import { NextResponse } from "next/server";
+    return `import { NextRequest, NextResponse } from "next/server";
 
 const AGENT_URL = process.env.AGENT_URL || process.env.LANGGRAPH_DEPLOYMENT_URL || "${agentUrl}";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     // Check agent backend reachability
+    let agentStatus = "unknown";
+    try {
+        const res = await fetch(\`\${AGENT_URL}/ok\`, { signal: AbortSignal.timeout(3000) });
+        agentStatus = res.ok ? "ok" : "error";
+    } catch {
+        agentStatus = "down";
+    }
+
+    // Public response: safe to expose
+    const publicResponse: Record<string, any> = {
+        status: "ok",
+        integration: "${args.slug}",
+        agent: agentStatus,
+        timestamp: new Date().toISOString(),
+    };
+
+    // Extended diagnostics: only with debug token
+    const token = req.headers.get("x-debug-token") || req.nextUrl.searchParams.get("debug");
+    const expectedToken = process.env.SHOWCASE_DEBUG_TOKEN;
+
+    if (token && expectedToken && token === expectedToken) {
+        publicResponse.diagnostics = {
+            agent_url: AGENT_URL,
+            env: {
+                OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "set" : "NOT SET",
+                ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "set" : "NOT SET",
+                NODE_ENV: process.env.NODE_ENV,
+                PORT: process.env.PORT,
+            },
+        };
+    }
+
+    return NextResponse.json(publicResponse);
+}
+`;
+}
+
+function generateDebugRoute(args: CLIArgs): string {
+    return `import { NextRequest, NextResponse } from "next/server";
+
+// Request log (in-memory ring buffer, last 50 requests)
+const requestLog: Array<{ time: string; method: string; path: string; status: number; durationMs: number }> = [];
+const MAX_LOG_SIZE = 50;
+
+export function logRequest(method: string, path: string, status: number, durationMs: number) {
+    requestLog.push({ time: new Date().toISOString(), method, path, status, durationMs });
+    if (requestLog.length > MAX_LOG_SIZE) requestLog.shift();
+}
+
+export async function GET(req: NextRequest) {
+    // Token-gated: SHOWCASE_DEBUG_TOKEN must be set in env and matched
+    const token = req.headers.get("x-debug-token") || req.nextUrl.searchParams.get("token");
+    const expectedToken = process.env.SHOWCASE_DEBUG_TOKEN;
+
+    if (!expectedToken || !token || token !== expectedToken) {
+        return NextResponse.json({ error: "unauthorized" }, { status: 403 });
+    }
+
+    const AGENT_URL = process.env.AGENT_URL || process.env.LANGGRAPH_DEPLOYMENT_URL || "unknown";
+
+    // Agent connectivity
     let agentStatus = "unknown";
     let agentDetail = "";
     try {
@@ -405,62 +466,25 @@ export async function GET() {
         agentDetail = e.message;
     }
 
-    return NextResponse.json({
-        status: "ok",
-        integration: "${args.slug}",
-        version: "2.0.0",
-        timestamp: new Date().toISOString(),
-        agent: {
-            url: AGENT_URL,
-            status: agentStatus,
-            detail: agentDetail,
-        },
-        env: {
-            OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "set" : "NOT SET",
-            ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "set" : "NOT SET",
-            NODE_ENV: process.env.NODE_ENV,
-            PORT: process.env.PORT,
-        },
-    });
-}
-`;
-}
-
-function generateDebugRoute(args: CLIArgs): string {
-    return `import { NextResponse } from "next/server";
-
-// Request log (in-memory ring buffer, last 50 requests)
-const requestLog: Array<{ time: string; method: string; path: string; status: number; durationMs: number }> = [];
-const MAX_LOG_SIZE = 50;
-
-export function logRequest(method: string, path: string, status: number, durationMs: number) {
-    requestLog.push({ time: new Date().toISOString(), method, path, status, durationMs });
-    if (requestLog.length > MAX_LOG_SIZE) requestLog.shift();
-}
-
-export async function GET() {
     const uptime = process.uptime();
     const mem = process.memoryUsage();
 
     return NextResponse.json({
         integration: "${args.slug}",
         uptime: \`\${Math.floor(uptime / 60)}m \${Math.floor(uptime % 60)}s\`,
+        agent: { url: AGENT_URL, status: agentStatus, detail: agentDetail },
         memory: {
             rss: \`\${Math.round(mem.rss / 1024 / 1024)}MB\`,
             heapUsed: \`\${Math.round(mem.heapUsed / 1024 / 1024)}MB\`,
-            heapTotal: \`\${Math.round(mem.heapTotal / 1024 / 1024)}MB\`,
         },
         env: {
             NODE_ENV: process.env.NODE_ENV,
-            PORT: process.env.PORT,
             OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "set" : "NOT SET",
             ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "set" : "NOT SET",
             LANGSMITH_API_KEY: process.env.LANGSMITH_API_KEY ? "set" : "NOT SET",
-            AGENT_URL: process.env.AGENT_URL || process.env.LANGGRAPH_DEPLOYMENT_URL || "default",
         },
         recentRequests: requestLog.slice(-20),
         nodeVersion: process.version,
-        platform: process.platform,
     });
 }
 `;
