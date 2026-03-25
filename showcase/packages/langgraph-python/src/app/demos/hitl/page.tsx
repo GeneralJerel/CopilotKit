@@ -64,10 +64,10 @@ function DemoContent() {
 
     return (
         <div className="flex justify-center items-center h-screen w-full">
-            <div className="h-full w-full max-w-4xl">
+            <div className="h-full w-full md:w-4/5 md:h-4/5 rounded-lg">
                 <CopilotChat
                     agentId="human_in_the_loop"
-                    className="h-full rounded-2xl"
+                    className="h-full rounded-2xl max-w-6xl mx-auto"
                 />
             </div>
         </div>

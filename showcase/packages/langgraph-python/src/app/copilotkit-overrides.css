@@ -1,17 +1,13 @@
-/* CopilotKit component overrides — separate file to avoid Tailwind purging */
-
-.copilotKitChat {
-    max-width: 760px !important;
-    margin: 0 auto !important;
-    padding: 0 32px !important;
-}
+/* CopilotKit overrides — matches Dojo styling */
 
 .copilotKitInput {
-    margin: 0 24px 8px !important;
-    border-radius: 28px;
-    border: 1px solid #e5e5e0 !important;
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    border: 1px solid var(--copilot-kit-separator-color) !important;
 }
 
-.copilotKitMessages {
-    padding: 16px 16px !important;
+.copilotKitChat {
+    background-color: #fff !important;
 }
