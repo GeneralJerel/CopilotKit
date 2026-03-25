@@ -1,0 +1,17 @@
+/* CopilotKit component overrides — separate file to avoid Tailwind purging */
+
+.copilotKitChat {
+    max-width: 760px !important;
+    margin: 0 auto !important;
+    padding: 0 32px !important;
+}
+
+.copilotKitInput {
+    margin: 0 24px 8px !important;
+    border-radius: 28px;
+    border: 1px solid #e5e5e0 !important;
+}
+
+.copilotKitMessages {
+    padding: 16px 16px !important;
+}

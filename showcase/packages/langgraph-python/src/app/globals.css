@@ -22,32 +22,3 @@ html, body {
     background: #fafaf9;
     color: #1a1a18;
 }
-
-/* ===== CopilotKit Chat Overrides ===== */
-
-/* Main chat container — constrain and center with side padding */
-.copilotKitChat {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 32px !important;
-}
-
-/* Input bar — needs breathing room from container edges */
-.copilotKitInput {
-    margin: 0 24px 8px !important;
-}
-
-/* Messages scroll area */
-.copilotKitMessages {
-    padding: 16px 16px !important;
-}
-
-/* Disclaimer / footer text */
-.copilotKitChat [class*="text-center"][class*="text-xs"] {
-    padding: 4px 24px 12px !important;
-}
-
-/* Suggestion buttons — give them margin from left edge */
-.copilotKitChat [class*="mb-6"] {
-    padding: 0 24px;
-}
