@@ -119,9 +119,10 @@ function WeatherCard({
         <div
             data-testid="weather-card"
             style={{ backgroundColor: themeColor }}
-            className="rounded-xl mt-6 mb-4 max-w-md w-full"
+            className="rounded-xl mt-6 mb-4 w-full overflow-hidden"
+            style={{ maxWidth: "380px" }}
         >
-            <div className="bg-white/20 p-4 w-full">
+            <div className="p-5" style={{ background: "rgba(255,255,255,0.15)" }}>
                 <div className="flex items-center justify-between">
                     <div>
                         <h3
@@ -177,80 +178,15 @@ function WeatherCard({
 
 function WeatherIcon({ conditions }: { conditions: string }) {
     if (!conditions) return null;
+    const c = conditions.toLowerCase();
 
-    if (
-        conditions.toLowerCase().includes("clear") ||
-        conditions.toLowerCase().includes("sunny")
-    ) {
-        return <SunIcon />;
-    }
+    let emoji = "☁️";
+    if (c.includes("clear") || c.includes("sunny")) emoji = "☀️";
+    else if (c.includes("rain") || c.includes("drizzle")) emoji = "🌧️";
+    else if (c.includes("snow")) emoji = "❄️";
+    else if (c.includes("thunderstorm")) emoji = "⛈️";
+    else if (c.includes("cloud") || c.includes("overcast")) emoji = "☁️";
+    else if (c.includes("fog")) emoji = "🌫️";
 
-    if (
-        conditions.toLowerCase().includes("rain") ||
-        conditions.toLowerCase().includes("drizzle") ||
-        conditions.toLowerCase().includes("snow") ||
-        conditions.toLowerCase().includes("thunderstorm")
-    ) {
-        return <RainIcon />;
-    }
-
-    return <CloudIcon />;
-}
-
-function SunIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-14 h-14 text-yellow-200"
-        >
-            <circle cx="12" cy="12" r="5" />
-            <path
-                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
-                strokeWidth="2"
-                stroke="currentColor"
-            />
-        </svg>
-    );
-}
-
-function RainIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-14 h-14 text-blue-200"
-        >
-            <path
-                d="M7 15a4 4 0 0 1 0-8 5 5 0 0 1 10 0 4 4 0 0 1 0 8H7z"
-                fill="currentColor"
-                opacity="0.8"
-            />
-            <path
-                d="M8 18l2 4M12 18l2 4M16 18l2 4"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                fill="none"
-            />
-        </svg>
-    );
-}
-
-function CloudIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-14 h-14 text-gray-200"
-        >
-            <path
-                d="M7 15a4 4 0 0 1 0-8 5 5 0 0 1 10 0 4 4 0 0 1 0 8H7z"
-                fill="currentColor"
-            />
-        </svg>
-    );
+    return <span style={{ fontSize: "48px", lineHeight: 1 }}>{emoji}</span>;
 }
