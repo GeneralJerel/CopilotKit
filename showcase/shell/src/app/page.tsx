@@ -118,9 +118,14 @@ export default function HomePage() {
                 <StackConnector />
 
                 <StackLayer label="Interaction">
-                    <StackChip href="/integrations/langgraph-python/hitl">HITL</StackChip>
-                    <StackChip>Tools</StackChip>
+                    <StackChip href="/integrations/langgraph-python/hitl">Human in the Loop</StackChip>
+                    <StackChip>Frontend Tools</StackChip>
+                    <StackChip>Tool Rendering</StackChip>
+                    <StackChip>Readables</StackChip>
+                    <StackChip>Agent Context</StackChip>
+                    <StackChip>Suggestions</StackChip>
                     <StackChip>Voice</StackChip>
+                    <StackChip>Multi-modal</StackChip>
                 </StackLayer>
 
                 <StackConnector />
@@ -143,16 +148,18 @@ export default function HomePage() {
                             {fw}
                         </StackChip>
                     ))}
-                    <StackChip href="/integrations">+{integrations.length > 11 ? integrations.length - 11 : ""}</StackChip>
                 </StackLayer>
 
                 <StackConnector />
 
                 <StackLayer label="Platforms">
+                    <StackChip>LangSmith</StackChip>
                     <StackChip>Google ADK</StackChip>
-                    <StackChip>AWS</StackChip>
-                    <StackChip>Azure</StackChip>
+                    <StackChip>AWS Agent Core</StackChip>
+                    <StackChip>Azure AI Foundry</StackChip>
+                    <StackChip>Cloudflare Workers</StackChip>
                     <StackChip>Vercel</StackChip>
+                    <StackChip>Render</StackChip>
                 </StackLayer>
 
                 <StackConnector />
@@ -161,7 +168,11 @@ export default function HomePage() {
                     <StackChip>OpenAI</StackChip>
                     <StackChip>Anthropic</StackChip>
                     <StackChip>Google</StackChip>
-                    <StackChip>+5</StackChip>
+                    <StackChip>AWS Bedrock</StackChip>
+                    <StackChip>Azure OpenAI</StackChip>
+                    <StackChip>Groq</StackChip>
+                    <StackChip>Ollama</StackChip>
+                    <StackChip>Any OpenAI-compatible</StackChip>
                 </StackLayer>
 
                 <div className="mt-6 pt-4 border-t border-[var(--border)] text-center">
@@ -188,11 +199,18 @@ function StackLayer({ label, children }: { label: string; children: React.ReactN
 }
 
 function StackChip({ children, href }: { children: React.ReactNode; href?: string }) {
-    const cls = "px-2.5 py-1 rounded text-[10px] font-medium bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all cursor-pointer";
     if (href) {
-        return <Link href={href} className={cls}>{children}</Link>;
+        return (
+            <Link href={href} className="px-2.5 py-1 rounded text-[10px] font-medium bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all cursor-pointer">
+                {children}
+            </Link>
+        );
     }
-    return <span className={cls}>{children}</span>;
+    return (
+        <span className="px-2.5 py-1 rounded text-[10px] font-medium bg-[var(--bg-elevated)] border border-[var(--border-dim)] text-[var(--text-faint)] cursor-default">
+            {children}
+        </span>
+    );
 }
 
 function StackConnector() {

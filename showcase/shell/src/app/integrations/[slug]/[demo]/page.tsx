@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Tab = "preview" | "code" | "docs";
 
@@ -147,7 +147,7 @@ export default function DemoViewerPage() {
                             {demoContent?.files[activeFile] ? (
                                 <SyntaxHighlighter
                                     language={demoContent.files[activeFile].language}
-                                    style={oneDark}
+                                    style={oneLight}
                                     customStyle={{
                                         margin: 0,
                                         borderRadius: 0,

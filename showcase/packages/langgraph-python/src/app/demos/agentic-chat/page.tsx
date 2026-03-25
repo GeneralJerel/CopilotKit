@@ -33,7 +33,7 @@ export default function AgenticChatDemo() {
 }
 
 function Chat() {
-    const [background, setBackground] = useState<string>("#0f0f1a");
+    const [background, setBackground] = useState<string>("#fafaf9");
 
     useAgentContext({
         description: "Name of the user",
