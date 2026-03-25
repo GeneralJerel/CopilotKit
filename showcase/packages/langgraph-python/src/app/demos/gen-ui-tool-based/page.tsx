@@ -139,6 +139,8 @@ function HaikuDisplay() {
 }
 
 function HaikuCard({ haiku }: { haiku: Partial<Haiku> }) {
+    const [imageError, setImageError] = useState(false);
+
     return (
         <div
             data-testid="haiku-card"
@@ -171,7 +173,7 @@ function HaikuCard({ haiku }: { haiku: Partial<Haiku> }) {
                 ))}
             </div>
 
-            {haiku.image_name && (
+            {haiku.image_name && !imageError && (
                 <div className="relative z-10 mt-8 pt-8 border-t border-slate-200">
                     <div className="relative group overflow-hidden rounded-2xl shadow-xl">
                         <img
@@ -179,6 +181,7 @@ function HaikuCard({ haiku }: { haiku: Partial<Haiku> }) {
                             src={`/images/${haiku.image_name}`}
                             alt={haiku.image_name}
                             className="object-cover w-full h-64 md:h-80 transform transition-transform duration-500 group-hover:scale-105"
+                            onError={() => setImageError(true)}
                         />
                     </div>
                 </div>
