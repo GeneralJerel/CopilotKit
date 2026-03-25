@@ -25,55 +25,29 @@ html, body {
 
 /* ===== CopilotKit Chat Overrides ===== */
 
-/* Main chat container */
+/* Main chat container — constrain and center with side padding */
 .copilotKitChat {
-    max-width: 800px;
+    max-width: 760px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 32px !important;
 }
 
-/* Messages area */
+/* Input bar — needs breathing room from container edges */
+.copilotKitInput {
+    margin: 0 24px 8px !important;
+}
+
+/* Messages scroll area */
 .copilotKitMessages {
-    padding: 16px 24px !important;
+    padding: 16px 16px !important;
 }
 
-/* User messages */
-.copilotKitMessages [data-role="user"] {
-    margin-left: auto;
-    max-width: 80%;
+/* Disclaimer / footer text */
+.copilotKitChat [class*="text-center"][class*="text-xs"] {
+    padding: 4px 24px 12px !important;
 }
 
-/* Assistant messages */
-.copilotKitMessages [data-role="assistant"] {
-    max-width: 90%;
-    padding-left: 8px;
-}
-
-/* Rendered tool content (cards, step lists, etc) */
-.copilotKitMessages > div {
-    padding: 0 8px;
-}
-
-/* Suggestion buttons row */
-.copilotKitMessages button {
-    margin-left: 8px;
-}
-
-/* Input area — padding from edges and bottom */
-.copilotKitChat form,
-.copilotKitChat [class*="input"],
-.copilotKitChat [class*="Input"] {
-    margin: 0 16px 16px !important;
-}
-
-.copilotKitChat input[type="text"],
-.copilotKitChat textarea {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-}
-
-/* Disclaimer text */
-.copilotKitChat [class*="disclaimer"],
-.copilotKitChat p:last-child {
-    padding: 0 16px 8px;
+/* Suggestion buttons — give them margin from left edge */
+.copilotKitChat [class*="mb-6"] {
+    padding: 0 24px;
 }
