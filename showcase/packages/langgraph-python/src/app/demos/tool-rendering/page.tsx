@@ -118,9 +118,8 @@ function WeatherCard({
     return (
         <div
             data-testid="weather-card"
-            style={{ backgroundColor: themeColor }}
+            style={{ backgroundColor: themeColor, maxWidth: "380px" }}
             className="rounded-xl mt-6 mb-4 w-full overflow-hidden"
-            style={{ maxWidth: "380px" }}
         >
             <div className="p-5" style={{ background: "rgba(255,255,255,0.15)" }}>
                 <div className="flex items-center justify-between">
