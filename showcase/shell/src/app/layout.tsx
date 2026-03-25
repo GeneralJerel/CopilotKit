@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SearchTrigger } from "@/components/search-trigger";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -51,11 +52,7 @@ export default function RootLayout({
                                 Reference
                             </a>
                         </div>
-                        <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1.5 text-xs text-[var(--text-muted)] cursor-pointer hover:border-[var(--text-faint)] transition-colors min-w-[200px]">
-                            <span>⌕</span>
-                            <span>Search docs, demos...</span>
-                            <span className="ml-auto font-mono text-[10px] border border-[var(--border)] px-1 py-0.5 rounded bg-[var(--bg-surface)]">⌘K</span>
-                        </div>
+                        <SearchTrigger />
                     </div>
                 </nav>
                 <main>{children}</main>

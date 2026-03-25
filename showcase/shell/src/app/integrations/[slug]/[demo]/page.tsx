@@ -67,9 +67,9 @@ export default function DemoViewerPage() {
     ];
 
     return (
-        <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+        <div className="flex h-[calc(100vh-52px)] flex-col p-4 gap-3">
             {/* Header bar */}
-            <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--bg-surface)] px-6 py-3">
+            <div className="flex items-center justify-between border border-[var(--border)] bg-[var(--bg-surface)] px-6 py-3 rounded-xl">
                 <div className="flex items-center gap-3">
                     <Link
                         href={`/integrations/${integration.slug}`}
@@ -100,11 +100,11 @@ export default function DemoViewerPage() {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden rounded-xl border border-[var(--border)]">
                 {activeTab === "preview" && (
                     <iframe
                         src={iframeSrc}
-                        className="h-full w-full border-0"
+                        className="h-full w-full border-0 rounded-xl"
                         title={`${demo.name} demo`}
                         allow="clipboard-read; clipboard-write"
                         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
