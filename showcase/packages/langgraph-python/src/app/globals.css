@@ -22,3 +22,40 @@ html, body {
     background: #0a0a0f;
     color: #e8e8f0;
 }
+
+/* ===== CopilotKit Chat Overrides ===== */
+
+/* Add consistent padding to the chat message area */
+.copilotKitChat {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Messages container — add horizontal padding */
+.copilotKitMessages {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+/* User messages — right-aligned with accent background */
+.copilotKitMessages [data-role="user"] {
+    margin-left: auto;
+    max-width: 85%;
+}
+
+/* Assistant messages — constrained width */
+.copilotKitMessages [data-role="assistant"] {
+    max-width: 90%;
+}
+
+/* Suggestion buttons */
+.copilotKitMessages button {
+    margin-left: 24px;
+}
+
+/* Input area */
+.copilotKitChat input[type="text"],
+.copilotKitChat textarea {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
