@@ -195,22 +195,32 @@ body {
       <div class="line" style="background:rgba(77,124,255,0.15)"></div>
       <span class="desc">Where your UI runs</span>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 0 24px;">
-      <div style="display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;">
-        <div class="chip chip-frontend"><span class="icon">⚛️</span> React</div>
-        <div class="chip chip-frontend"><span class="icon">🅰️</span> Angular</div>
-        <div class="chip chip-frontend"><span class="icon">🟠</span> Svelte</div>
-        <div class="chip chip-frontend"><span class="icon">💚</span> Vue</div>
-        <div class="chip chip-frontend"><span class="icon">🔷</span> TanStack</div>
-        <div class="chip chip-frontend"><span class="icon">📱</span> React Native</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:0 0 24px;">
+      <div class="subgroup" style="border-color:rgba(77,124,255,0.15);">
+        <div class="subgroup-label">Web</div>
+        <div class="chips">
+          <div class="chip chip-frontend sm">React</div>
+          <div class="chip chip-frontend sm">Angular</div>
+          <div class="chip chip-frontend sm">Svelte</div>
+          <div class="chip chip-frontend sm">Vue</div>
+          <div class="chip chip-frontend sm">TanStack</div>
+        </div>
       </div>
-      <div style="display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;">
-        <div class="chip chip-frontend"><span class="icon">🍎</span> SwiftUI</div>
-        <div class="chip chip-frontend"><span class="icon">🤖</span> Android</div>
-        <div style="width:1px;height:24px;background:var(--border);margin:0 4px;"></div>
-        <div class="chip chip-frontend"><span class="icon">💬</span> Slack</div>
-        <div class="chip chip-frontend"><span class="icon">🟣</span> Teams</div>
-        <div class="chip chip-frontend"><span class="icon">🟢</span> WhatsApp</div>
+      <div class="subgroup" style="border-color:rgba(77,124,255,0.15);">
+        <div class="subgroup-label">Native</div>
+        <div class="chips">
+          <div class="chip chip-frontend sm">React Native</div>
+          <div class="chip chip-frontend sm">SwiftUI</div>
+          <div class="chip chip-frontend sm">Android</div>
+        </div>
+      </div>
+      <div class="subgroup" style="border-color:rgba(77,124,255,0.15);">
+        <div class="subgroup-label">Messaging</div>
+        <div class="chips">
+          <div class="chip chip-frontend sm">Slack</div>
+          <div class="chip chip-frontend sm">Teams</div>
+          <div class="chip chip-frontend sm">WhatsApp</div>
+        </div>
       </div>
     </div>
   </div>
