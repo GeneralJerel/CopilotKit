@@ -91,16 +91,16 @@ function StepSelector({
     const enabledCount = localSteps.filter((s) => s.status === "enabled").length;
 
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg w-[500px]" data-testid="select-steps">
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg w-[500px]" data-testid="select-steps">
             <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-bold text-gray-800">Select Steps</h3>
                 <span className="text-sm text-gray-500">
                     {enabledCount}/{localSteps.length} selected
                 </span>
             </div>
-            <div className="space-y-2 mb-4">
+            <div className="space-y-1 mb-6">
                 {localSteps.map((step, i) => (
-                    <label key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer" data-testid="step-item">
+                    <label key={i} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 cursor-pointer" data-testid="step-item">
                         <input
                             type="checkbox"
                             checked={step.status === "enabled"}
@@ -147,16 +147,16 @@ function StepsFeedback({ args, respond, status }: { args: any; respond: any; sta
     const enabledCount = steps.filter((s: any) => s.status === "enabled").length;
 
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg w-[500px]" data-testid="select-steps">
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg w-[500px]" data-testid="select-steps">
             <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-bold text-gray-800">Review Steps</h3>
                 <span className="text-sm text-gray-500">
                     {enabledCount}/{steps.length} selected
                 </span>
             </div>
-            <div className="space-y-2 mb-4">
+            <div className="space-y-1 mb-6">
                 {steps.map((step: any, i: number) => (
-                    <label key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer" data-testid="step-item">
+                    <label key={i} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 cursor-pointer" data-testid="step-item">
                         <input
                             type="checkbox"
                             checked={step.status === "enabled"}

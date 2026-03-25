@@ -25,32 +25,55 @@ html, body {
 
 /* ===== CopilotKit Chat Overrides ===== */
 
+/* Main chat container */
 .copilotKitChat {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 16px;
+    padding: 0 24px;
 }
 
+/* Messages area */
 .copilotKitMessages {
-    padding-left: 24px !important;
-    padding-right: 24px !important;
+    padding: 16px 24px !important;
 }
 
+/* User messages */
 .copilotKitMessages [data-role="user"] {
     margin-left: auto;
-    max-width: 85%;
+    max-width: 80%;
 }
 
+/* Assistant messages */
 .copilotKitMessages [data-role="assistant"] {
     max-width: 90%;
+    padding-left: 8px;
 }
 
+/* Rendered tool content (cards, step lists, etc) */
+.copilotKitMessages > div {
+    padding: 0 8px;
+}
+
+/* Suggestion buttons row */
 .copilotKitMessages button {
-    margin-left: 24px;
+    margin-left: 8px;
+}
+
+/* Input area — padding from edges and bottom */
+.copilotKitChat form,
+.copilotKitChat [class*="input"],
+.copilotKitChat [class*="Input"] {
+    margin: 0 16px 16px !important;
 }
 
 .copilotKitChat input[type="text"],
 .copilotKitChat textarea {
-    padding-left: 24px !important;
-    padding-right: 24px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+}
+
+/* Disclaimer text */
+.copilotKitChat [class*="disclaimer"],
+.copilotKitChat p:last-child {
+    padding: 0 16px 8px;
 }
