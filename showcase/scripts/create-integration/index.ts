@@ -175,7 +175,23 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>{children}</body>
+            <body>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: \\\`
+                            console.log('[showcase] Demo loaded:', window.location.href);
+                            console.log('[showcase] In iframe:', window.self !== window.top);
+                            window.addEventListener('error', function(e) {
+                                console.error('[showcase] Uncaught error:', e.message, e.filename, e.lineno);
+                            });
+                            window.addEventListener('unhandledrejection', function(e) {
+                                console.error('[showcase] Unhandled rejection:', e.reason);
+                            });
+                        \\\`,
+                    }}
+                />
+                {children}
+            </body>
         </html>
     );
 }
@@ -368,15 +384,150 @@ export const POST = async (req: NextRequest) => {
 }
 
 function generateHealthRoute(args: CLIArgs): string {
+    const agentUrl = args.language === "typescript"
+        ? "N/A (in-process)"
+        : "http://localhost:8123";
+
     return `import { NextResponse } from "next/server";
 
+const AGENT_URL = process.env.AGENT_URL || process.env.LANGGRAPH_DEPLOYMENT_URL || "${agentUrl}";
+
 export async function GET() {
+    // Check agent backend reachability
+    let agentStatus = "unknown";
+    let agentDetail = "";
+    try {
+        const res = await fetch(\`\${AGENT_URL}/ok\`, { signal: AbortSignal.timeout(3000) });
+        agentStatus = res.ok ? "ok" : "error";
+        agentDetail = \`HTTP \${res.status}\`;
+    } catch (e: any) {
+        agentStatus = "down";
+        agentDetail = e.message;
+    }
+
     return NextResponse.json({
         status: "ok",
         integration: "${args.slug}",
         version: "2.0.0",
         timestamp: new Date().toISOString(),
+        agent: {
+            url: AGENT_URL,
+            status: agentStatus,
+            detail: agentDetail,
+        },
+        env: {
+            OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "set" : "NOT SET",
+            ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "set" : "NOT SET",
+            NODE_ENV: process.env.NODE_ENV,
+            PORT: process.env.PORT,
+        },
     });
+}
+`;
+}
+
+function generateDebugRoute(args: CLIArgs): string {
+    return `import { NextResponse } from "next/server";
+
+// Request log (in-memory ring buffer, last 50 requests)
+const requestLog: Array<{ time: string; method: string; path: string; status: number; durationMs: number }> = [];
+const MAX_LOG_SIZE = 50;
+
+export function logRequest(method: string, path: string, status: number, durationMs: number) {
+    requestLog.push({ time: new Date().toISOString(), method, path, status, durationMs });
+    if (requestLog.length > MAX_LOG_SIZE) requestLog.shift();
+}
+
+export async function GET() {
+    const uptime = process.uptime();
+    const mem = process.memoryUsage();
+
+    return NextResponse.json({
+        integration: "${args.slug}",
+        uptime: \`\${Math.floor(uptime / 60)}m \${Math.floor(uptime % 60)}s\`,
+        memory: {
+            rss: \`\${Math.round(mem.rss / 1024 / 1024)}MB\`,
+            heapUsed: \`\${Math.round(mem.heapUsed / 1024 / 1024)}MB\`,
+            heapTotal: \`\${Math.round(mem.heapTotal / 1024 / 1024)}MB\`,
+        },
+        env: {
+            NODE_ENV: process.env.NODE_ENV,
+            PORT: process.env.PORT,
+            OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "set" : "NOT SET",
+            ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY ? "set" : "NOT SET",
+            LANGSMITH_API_KEY: process.env.LANGSMITH_API_KEY ? "set" : "NOT SET",
+            AGENT_URL: process.env.AGENT_URL || process.env.LANGGRAPH_DEPLOYMENT_URL || "default",
+        },
+        recentRequests: requestLog.slice(-20),
+        nodeVersion: process.version,
+        platform: process.platform,
+    });
+}
+`;
+}
+
+function generateErrorBoundary(): string {
+    return `"use client";
+
+import React from "react";
+
+interface ErrorBoundaryState { hasError: boolean; error: Error | null; }
+
+export class DemoErrorBoundary extends React.Component<
+    { children: React.ReactNode; demoName: string },
+    ErrorBoundaryState
+> {
+    constructor(props: { children: React.ReactNode; demoName: string }) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        console.error(\`[DemoErrorBoundary] \${this.props.demoName} crashed:\`, error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{
+                    display: "flex", flexDirection: "column", alignItems: "center",
+                    justifyContent: "center", height: "100vh", padding: "2rem",
+                    fontFamily: "system-ui, sans-serif", color: "#888", textAlign: "center",
+                }}>
+                    <div style={{ fontSize: "48px", marginBottom: "16px" }}>Warning</div>
+                    <h2 style={{ fontSize: "18px", fontWeight: 600, color: "#ccc", marginBottom: "8px" }}>
+                        {this.props.demoName} — Demo Error
+                    </h2>
+                    <p style={{ fontSize: "14px", maxWidth: "400px", lineHeight: 1.5 }}>
+                        The demo encountered an error. This usually means the agent backend is not responding.
+                        Check the server logs and /api/health endpoint.
+                    </p>
+                    <pre style={{
+                        marginTop: "16px", padding: "12px 16px", background: "#1a1a2e",
+                        borderRadius: "8px", fontSize: "12px", color: "#f87171",
+                        maxWidth: "500px", overflow: "auto", textAlign: "left",
+                    }}>
+                        {this.state.error?.message}
+                    </pre>
+                    <button
+                        onClick={() => this.setState({ hasError: false, error: null })}
+                        style={{
+                            marginTop: "16px", padding: "8px 20px", background: "#333",
+                            border: "1px solid #555", borderRadius: "8px", color: "#ccc",
+                            cursor: "pointer", fontSize: "13px",
+                        }}
+                    >
+                        Try Again
+                    </button>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
 }
 `;
 }
@@ -767,6 +918,8 @@ function main() {
     writeFile(path.join(packageDir, "src", "app", "page.tsx"), generateIndexPage(args, features));
     writeFile(path.join(packageDir, "src", "app", "api", "copilotkit", "route.ts"), generateRuntimeRoute(args));
     writeFile(path.join(packageDir, "src", "app", "api", "health", "route.ts"), generateHealthRoute(args));
+    writeFile(path.join(packageDir, "src", "app", "api", "debug", "route.ts"), generateDebugRoute(args));
+    writeFile(path.join(packageDir, "src", "app", "demos", "error-boundary.tsx"), generateErrorBoundary());
 
     // Demo stubs
     for (const featureId of args.features) {
