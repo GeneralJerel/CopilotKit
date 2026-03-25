@@ -151,6 +151,9 @@ function generatePackageJson(args: CLIArgs): string {
                 "@types/node": "^22.0.0",
                 "@types/react": "^19.0.0",
                 typescript: "^5.7.0",
+                tailwindcss: "^4.0.0",
+                "@tailwindcss/postcss": "^4.0.0",
+                postcss: "^8.5.0",
                 ...(args.language !== "typescript" ? { concurrently: "^9.1.0" } : {}),
             },
         },
@@ -198,8 +201,21 @@ export default function RootLayout({
 `;
 }
 
+function generatePostcssConfig(): string {
+    return `/** @type {import('postcss-load-config').Config} */
+const config = {
+    plugins: {
+        "@tailwindcss/postcss": {},
+    },
+};
+
+export default config;
+`;
+}
+
 function generateGlobalsCss(): string {
-    return `@import "@copilotkit/react-core/v2/styles.css";
+    return `@import "tailwindcss";
+@import "@copilotkit/react-core/v2/styles.css";
 
 :root {
     --copilot-kit-background-color: #f8f9fa;
@@ -929,6 +945,7 @@ function main() {
     writeFile(path.join(packageDir, ".gitignore"), generateGitignore());
     writeFile(path.join(packageDir, "next.config.ts"), generateNextConfig());
     writeFile(path.join(packageDir, "tsconfig.json"), generateTsConfig());
+    writeFile(path.join(packageDir, "postcss.config.mjs"), generatePostcssConfig());
     writeFile(path.join(packageDir, "playwright.config.ts"), generatePlaywrightConfig());
 
     if (args.language !== "typescript") {
