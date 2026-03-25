@@ -52,6 +52,11 @@
       "format": "uri",
       "description": "Deployed Render service URL"
     },
+    "animated_preview_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to an animated preview (gif/video) shown on the landing page when no live mini-demo is available"
+    },
     "features": {
       "type": "array",
       "items": {
@@ -89,6 +94,10 @@
             "type": "string",
             "pattern": "^/",
             "description": "Route within the package (e.g. /demos/agentic-chat)"
+          },
+          "animated_preview_url": {
+            "type": ["string", "null"],
+            "description": "URL to animated preview for this specific demo"
           }
         },
         "additionalProperties": false
