@@ -143,11 +143,14 @@ export default function HomePage() {
                 <StackConnector />
 
                 <StackLayer label="Agent Frameworks">
-                    {frameworks.map((fw) => (
-                        <StackChip key={fw} href={fw === "LangGraph" ? "/integrations/langgraph-python" : undefined}>
-                            {fw}
-                        </StackChip>
-                    ))}
+                    {frameworks.map((fw) => {
+                        const match = integrations.find((i) => i.name === fw || i.name.startsWith(fw));
+                        return (
+                            <StackChip key={fw} href={match ? `/integrations/${match.slug}` : undefined}>
+                                {fw}
+                            </StackChip>
+                        );
+                    })}
                 </StackLayer>
 
                 <StackConnector />
