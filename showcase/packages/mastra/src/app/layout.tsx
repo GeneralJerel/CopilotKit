@@ -4,7 +4,7 @@ import "./globals.css";
 import "./copilotkit-overrides.css";
 
 export const metadata: Metadata = {
-    title: "CopilotKit Showcase",
+    title: "CopilotKit Showcase — Mastra",
 };
 
 export default function RootLayout({
@@ -14,23 +14,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body>
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: \`
-                            console.log('[showcase] Demo loaded:', window.location.href);
-                            console.log('[showcase] In iframe:', window.self !== window.top);
-                            window.addEventListener('error', function(e) {
-                                console.error('[showcase] Uncaught error:', e.message, e.filename, e.lineno);
-                            });
-                            window.addEventListener('unhandledrejection', function(e) {
-                                console.error('[showcase] Unhandled rejection:', e.reason);
-                            });
-                        \`,
-                    }}
-                />
-                {children}
-            </body>
+            <body>{children}</body>
         </html>
     );
 }

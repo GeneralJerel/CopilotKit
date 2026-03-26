@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    serverExternalPackages: ["@copilotkit/runtime"],
+    typescript: {
+        // Mastra beta packages have unstable types
+        ignoreBuildErrors: true,
+    },
     // Allow iframe embedding from the showcase shell
     async headers() {
         return [

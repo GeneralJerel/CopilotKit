@@ -10,14 +10,22 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@ag-ui/client": "0.0.42",
+    "@ag-ui/mastra": "beta",
+    "@ai-sdk/openai": "^2.0.42",
     "@copilotkit/react-core": "next",
     "@copilotkit/runtime": "next",
+    "@libsql/client": "^0.15.15",
+    "@mastra/client-js": "beta",
+    "@mastra/core": "beta",
+    "@mastra/libsql": "beta",
+    "@mastra/memory": "beta",
+    "libsql": "^0.5.22",
+    "mastra": "beta",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zod": "^3.24.0",
-    "@ag-ui/mastra": "latest",
-    "@mastra/core": "latest"
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
