@@ -152,7 +152,7 @@ function Chat() {
             data-testid="background-container"
             style={{ background }}
         >
-            <div className="h-full w-full md:w-4/5 md:h-4/5 rounded-lg">
+            <div className="h-full w-full md:w-4/5 md:h-4/5 rounded-lg px-6">
                 <CopilotChat
                     agentId="agentic_chat"
                     className="h-full rounded-2xl max-w-6xl mx-auto"
