@@ -1095,12 +1095,117 @@ See the LangGraph Python reference implementation for patterns.
         console.log("  (Run migrate-integration-examples.ts manually if needed)");
     }
 
+    // Auto-update CI workflows to include this integration
+    console.log("\n--- Updating CI workflows ---\n");
+    updateWorkflows(args);
+
     console.log("\nNext steps:");
     console.log("  1. Write/customize the agent code in src/agents/");
-    console.log("  2. Customize README content with framework-specific details");
+    console.log("  2. Pin framework deps to exact versions from the Dojo example");
     console.log("  3. Fill in E2E test assertions");
-    console.log("  4. Deploy to Render (render.yaml is ready)");
-    console.log("  5. Open a PR to the monorepo\n");
+    console.log(`  4. Deploy to Render: npx tsx showcase/scripts/deploy-to-render.ts ${args.slug}`);
+    console.log(`  5. Go live: npx tsx showcase/scripts/deploy-to-render.ts --go-live ${args.slug}`);
+    console.log("  6. Open a PR to the monorepo\n");
+}
+
+function updateWorkflows(args: CLIArgs) {
+    const workflowsDir = path.resolve(ROOT, "..", ".github", "workflows");
+
+    // 1. Update showcase_deploy.yml — add change detection + build job
+    const deployPath = path.join(workflowsDir, "showcase_deploy.yml");
+    if (fs.existsSync(deployPath)) {
+        let deploy = fs.readFileSync(deployPath, "utf-8");
+        const slug = args.slug;
+        const slugVar = slug.replace(/-/g, "_");
+
+        // Add to workflow_dispatch options if not present
+        if (!deploy.includes(`- ${slug}`)) {
+            deploy = deploy.replace(
+                /(\s+options:\n(?:\s+- .+\n)+)/,
+                `$1          - ${slug}\n`
+            );
+        }
+
+        // Add change detection filter if not present
+        if (!deploy.includes(`${slug}:`)) {
+            // Add output
+            deploy = deploy.replace(
+                /(outputs:\n(?:\s+\w+:.*\n)+)/,
+                `$1      ${slugVar}: \${{ steps.changes.outputs.${slugVar} }}\n`
+            );
+            // Add filter
+            deploy = deploy.replace(
+                /(filters: \|\n(?:\s+\w+:\n(?:\s+- .+\n)+)+)/,
+                `$1            ${slugVar}:\n              - 'showcase/packages/${slug}/**'\n`
+            );
+        }
+
+        // Add build job if not present
+        if (!deploy.includes(`build-${slugVar}`)) {
+            const buildJob = `
+  build-${slugVar}:
+    name: Build & Push ${args.name}
+    needs: [detect-changes, check-lockfile]
+    if: |
+      needs.detect-changes.outputs.${slugVar} == 'true' ||
+      github.event.inputs.service == '${slug}' ||
+      github.event.inputs.service == 'all'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: \${{ github.actor }}
+          password: \${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: showcase/packages/${slug}
+          push: true
+          tags: |
+            ghcr.io/copilotkit/showcase-${slug}:latest
+            ghcr.io/copilotkit/showcase-${slug}:\${{ github.sha }}
+          cache-from: type=gha,scope=${slugVar}
+          cache-to: type=gha,scope=${slugVar},mode=max
+
+      - name: Trigger Render deploy
+        run: |
+          curl -sf "\${{ secrets.RENDER_DEPLOY_HOOK_${slugVar.toUpperCase()} }}" || echo "Deploy hook not configured"
+`;
+            deploy += buildJob;
+        }
+
+        fs.writeFileSync(deployPath, deploy);
+        console.log("  Updated showcase_deploy.yml");
+    }
+
+    // 2. Update showcase_drift-detection.yml — add to E2E matrix
+    const driftPath = path.join(workflowsDir, "showcase_drift-detection.yml");
+    if (fs.existsSync(driftPath)) {
+        let drift = fs.readFileSync(driftPath, "utf-8");
+        const slug = args.slug;
+
+        if (!drift.includes(`slug: ${slug}`)) {
+            // Add to matrix includes
+            const entry = `          - slug: ${slug}\n            name: "${args.name}"\n            url: https://showcase-${slug}.onrender.com`;
+            drift = drift.replace(
+                /(matrix:\n\s+include:\n(?:\s+- slug:.*\n\s+name:.*\n\s+url:.*\n)+)/,
+                `$1${entry}\n`
+            );
+            fs.writeFileSync(driftPath, drift);
+            console.log("  Updated showcase_drift-detection.yml");
+        }
+    }
 }
 
 main();
