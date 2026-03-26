@@ -16,7 +16,7 @@ interface Step {
 
 export default function HitlDemo() {
     return (
-        <CopilotKit runtimeUrl="/api/copilotkit" agent="weather-agent">
+        <CopilotKit runtimeUrl="/api/copilotkit" agent="weatherAgent">
             <DemoContent />
         </CopilotKit>
     );

@@ -19,7 +19,7 @@ interface Haiku {
 export default function GenUiToolBasedDemo() {
     return (
         <div style={{ width: "100%", height: "100%", overflow: "hidden", position: "relative" }}>
-            <CopilotKit runtimeUrl="/api/copilotkit" agent="weather-agent">
+            <CopilotKit runtimeUrl="/api/copilotkit" agent="weatherAgent">
                 <SidebarWithSuggestions />
                 <HaikuDisplay />
             </CopilotKit>

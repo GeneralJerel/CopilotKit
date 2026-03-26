@@ -12,7 +12,7 @@ import { z } from "zod";
 
 export default function AgenticChatDemo() {
     return (
-        <CopilotKit runtimeUrl="/api/copilotkit" agent="weather-agent">
+        <CopilotKit runtimeUrl="/api/copilotkit" agent="weatherAgent">
             <Chat />
         </CopilotKit>
     );
