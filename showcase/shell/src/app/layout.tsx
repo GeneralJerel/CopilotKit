@@ -56,6 +56,22 @@ export default function RootLayout({
                     </div>
                 </nav>
                 <main>{children}</main>
+                <div
+                    style={{
+                        position: "fixed",
+                        bottom: "8px",
+                        right: "12px",
+                        fontSize: "10px",
+                        fontFamily: "monospace",
+                        color: "rgba(0,0,0,0.15)",
+                        pointerEvents: "none",
+                        zIndex: 9999,
+                        userSelect: "none",
+                    }}
+                >
+                    {process.env.NEXT_PUBLIC_BRANCH || "local"}{" "}
+                    {(process.env.NEXT_PUBLIC_COMMIT_SHA || "dev").slice(0, 9)}
+                </div>
             </body>
         </html>
     );

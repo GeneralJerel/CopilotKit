@@ -85,6 +85,9 @@ jobs:
           context: .
           file: showcase/shell/Dockerfile
           push: true
+          build-args: |
+            COMMIT_SHA=${{ github.sha }}
+            BRANCH=${{ github.ref_name }}
           tags: |
             ghcr.io/copilotkit/showcase-shell:latest
             ghcr.io/copilotkit/showcase-shell:${{ github.sha }}
