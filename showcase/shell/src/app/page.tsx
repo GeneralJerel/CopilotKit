@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getIntegrations, getFeatures } from "@/lib/registry";
+import { HomeChat } from "@/components/home-chat";
 
 export default function HomePage() {
     const integrations = getIntegrations();
@@ -12,76 +13,8 @@ export default function HomePage() {
 
     return (
         <div className="flex" style={{ height: "calc(100vh - 52px)" }}>
-            {/* Left: Conversational */}
-            <div className="flex-1 flex flex-col border-r border-[var(--border)]">
-                <div className="px-8 pt-6 pb-4 border-b border-[var(--border)]">
-                    <h1 className="text-xl font-semibold tracking-tight text-[var(--text)]">
-                        CopilotKit Docs
-                    </h1>
-                    <p className="text-[13px] text-[var(--text-secondary)] mt-1">
-                        Ask anything, explore the stack, or jump to what you need.
-                    </p>
-                </div>
-                <div className="flex-1 flex flex-col px-8 py-5 overflow-y-auto">
-                    <div className="flex-1">
-                        {/* Bot message */}
-                        <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-[var(--bg-elevated)] px-4 py-3 mb-3">
-                            <div className="text-[10px] font-semibold text-[var(--text-muted)] mb-1">
-                                CopilotKit
-                            </div>
-                            <p className="text-[14px] text-[var(--text)] leading-relaxed">
-                                Welcome! I can help you find the right integration,
-                                explore features, or get started with a quickstart guide.
-                                What are you working on?
-                            </p>
-                        </div>
-
-                        {/* Quick replies */}
-                        <div className="flex flex-wrap gap-2 mt-3 mb-6">
-                            <Link
-                                href="/integrations"
-                                className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[12px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-all"
-                            >
-                                🚀 Get started with a framework
-                            </Link>
-                            <Link
-                                href="/integrations/langgraph-python/gen-ui-tool-based"
-                                className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[12px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-all"
-                            >
-                                🎨 Explore Generative UI
-                            </Link>
-                            <Link
-                                href="/integrations/langgraph-python/agentic-chat"
-                                className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[12px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-all"
-                            >
-                                💬 Try a live demo
-                            </Link>
-                            <Link
-                                href="/matrix"
-                                className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[12px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-all"
-                            >
-                                📊 Feature comparison
-                            </Link>
-                            <span className="px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[12px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-all cursor-pointer">
-                                🤔 Help me choose a stack
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Input */}
-                    <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface)] px-4 py-2.5 shadow-sm">
-                        <input
-                            type="text"
-                            placeholder="Ask anything about CopilotKit..."
-                            className="flex-1 bg-transparent text-[14px] text-[var(--text)] outline-none placeholder:text-[var(--text-faint)]"
-                            readOnly
-                        />
-                        <button className="w-7 h-7 rounded-full bg-[var(--accent)] text-white flex items-center justify-center text-xs">
-                            ↑
-                        </button>
-                    </div>
-                </div>
-            </div>
+            {/* Left: CopilotChat */}
+            <HomeChat />
 
             {/* Right: Stack Nav */}
             <div className="w-[340px] overflow-y-auto px-5 py-5 bg-[var(--bg-elevated)]">

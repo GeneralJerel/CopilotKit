@@ -3126,9 +3126,21 @@ importers:
 
   showcase/shell:
     dependencies:
+      '@copilotkit/react-core':
+        specifier: next
+        version: 1.54.1-next.6(@ag-ui/core@0.0.48)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(encoding@0.1.13)(graphql@16.12.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(signal-polyfill@0.2.2)(zod@3.25.76)
+      '@copilotkitnext/agent':
+        specifier: next
+        version: 1.54.1-next.6(@cfworker/json-schema@4.1.1)
+      '@copilotkitnext/runtime':
+        specifier: next
+        version: 1.54.1-next.6(@ag-ui/client@0.0.48)(@ag-ui/core@0.0.48)(@ag-ui/encoder@0.0.48)(@cfworker/json-schema@4.1.1)(@copilotkitnext/shared@1.54.1-next.6)(zod@3.25.76)
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
+      hono:
+        specifier: ^4.0.0
+        version: 4.12.9
       next:
         specifier: 15.4.10
         version: 15.4.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.97.2)
@@ -28920,9 +28932,9 @@ snapshots:
     dependencies:
       hono: 4.12.9
 
-  '@hono/zod-validator@0.7.6(hono@4.11.4)(zod@3.25.76)':
+  '@hono/zod-validator@0.7.6(hono@4.12.9)(zod@3.25.76)':
     dependencies:
-      hono: 4.11.4
+      hono: 4.12.9
       zod: 3.25.76
 
   '@hookform/resolvers@4.1.3(react-hook-form@7.71.1(react@19.1.0))':
@@ -30407,8 +30419,8 @@ snapshots:
   '@langchain/langgraph-api@1.1.13(@langchain/core@1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76)))(@langchain/langgraph-checkpoint@1.0.0(@langchain/core@1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76))))(@langchain/langgraph-sdk@1.4.5(@langchain/core@1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@langchain/langgraph@1.1.5(@langchain/core@1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(zod-to-json-schema@3.25.1(zod@3.25.76))(zod@3.25.76))(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76))(typescript@5.9.3)':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@hono/node-server': 1.19.7(hono@4.11.4)
-      '@hono/zod-validator': 0.7.6(hono@4.11.4)(zod@3.25.76)
+      '@hono/node-server': 1.19.7(hono@4.12.9)
+      '@hono/zod-validator': 0.7.6(hono@4.12.9)(zod@3.25.76)
       '@langchain/core': 1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76))
       '@langchain/langgraph': 1.1.5(@langchain/core@1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(zod-to-json-schema@3.25.1(zod@3.25.76))(zod@3.25.76)
       '@langchain/langgraph-checkpoint': 1.0.0(@langchain/core@1.1.27(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76)))
@@ -30418,7 +30430,7 @@ snapshots:
       dedent: 1.7.1(babel-plugin-macros@3.1.0)
       dotenv: 16.6.1
       exit-hook: 4.0.0
-      hono: 4.11.4
+      hono: 4.12.9
       langsmith: 0.4.12(@opentelemetry/api@1.9.0)(openai@6.24.0(ws@8.19.0)(zod@3.25.76))
       open: 10.2.0
       semver: 7.7.3
