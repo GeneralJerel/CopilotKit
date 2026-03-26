@@ -15,6 +15,7 @@ interface DemoDrawerProps {
     demoName: string;
     backendUrl: string;
     demoRoute: string;
+    wide?: boolean; // true for sidebar-type demos that need more space
 }
 
 export function DemoDrawer({
@@ -26,6 +27,7 @@ export function DemoDrawer({
     demoName,
     backendUrl,
     demoRoute,
+    wide = false,
 }: DemoDrawerProps) {
     const [activeTab, setActiveTab] = useState<"preview" | "code" | "docs">("preview");
     const [demoContent, setDemoContent] = useState<any>(null);
@@ -75,7 +77,7 @@ export function DemoDrawer({
             <div
                 className="fixed top-[52px] right-0 bottom-0 z-[70] flex flex-col bg-[var(--bg-surface)] border-l border-[var(--border)]"
                 style={{
-                    width: "55%",
+                    width: wide ? "80%" : "55%",
                     boxShadow: "-8px 0 30px rgba(0,0,0,0.06)",
                     animation: "slideIn 0.25s ease",
                 }}

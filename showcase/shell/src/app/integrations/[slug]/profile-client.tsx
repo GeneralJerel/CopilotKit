@@ -186,6 +186,7 @@ export function ProfileClient({
                     demoName={activeDemo.name}
                     backendUrl={integration.backend_url}
                     demoRoute={activeDemo.route}
+                    wide={activeDemo.id.includes("gen-ui") || activeDemo.id.includes("shared-state") || activeDemo.id.includes("subagent")}
                 />
             )}
         </>
