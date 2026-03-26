@@ -24,6 +24,7 @@ const PACKAGES_DIR = path.join(ROOT, "packages");
 // Reference service config (langgraph-python) — used as template
 const REFERENCE = {
     ownerId: "tea-cs79biogph6c73fgnbeg",
+    environmentId: "evm-d7129oggjchc7396sha0", // "showcase" project
     registryCredentialId: "rgc-d71koqp5pdvs7380o5p0", // GHCR credential
     region: "oregon",
     plan: "starter",
@@ -155,11 +156,12 @@ async function createService(slug: string): Promise<void> {
         }
     }
 
-    // Create the service
+    // Create the service inside the "showcase" project
     const createBody = {
         type: "web_service",
         name: serviceName,
         ownerId: REFERENCE.ownerId,
+        environmentId: REFERENCE.environmentId,
         image: {
             ownerId: REFERENCE.ownerId,
             imagePath,
