@@ -42,7 +42,7 @@ function Chat() {
     });
 
     useRenderTool({
-        name: "get_weather",
+        name: "get-weather",
         parameters: z.object({
             location: z.string(),
         }),
