@@ -63,14 +63,13 @@ export default function HomePage() {
 
                 <StackConnector />
 
-                <div className="text-center py-2 px-4 border-2 border-[var(--accent)] rounded-xl bg-[var(--accent-light)] text-xs font-semibold text-[var(--accent)]">
-                    CopilotKit
-                </div>
-
-                <StackConnector />
-
-                <div className="text-center py-2 px-4 border-2 border-[var(--violet)] rounded-xl bg-[var(--violet-light)] text-xs font-semibold text-[var(--violet)]">
-                    AG-UI Protocol
+                <div className="flex gap-2 justify-center">
+                    <div className="flex-1 text-center py-1.5 px-3 border-2 border-[var(--accent)] rounded-lg bg-[var(--accent-light)] text-[10px] font-semibold text-[var(--accent)]">
+                        CopilotKit
+                    </div>
+                    <div className="flex-1 text-center py-1.5 px-3 border-2 border-[var(--violet)] rounded-lg bg-[var(--violet-light)] text-[10px] font-semibold text-[var(--violet)]">
+                        AG-UI Protocol
+                    </div>
                 </div>
 
                 <StackConnector />
