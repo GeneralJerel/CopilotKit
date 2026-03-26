@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@copilotkit/react-core": "next",
+    "@copilotkitnext/react": "next",
     "@copilotkitnext/runtime": "next",
     "@copilotkitnext/agent": "next",
     "hono": "^4.0.0",

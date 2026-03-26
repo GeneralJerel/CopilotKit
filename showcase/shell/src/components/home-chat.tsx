@@ -1,16 +1,16 @@
 "use client";
 
-import { CopilotKit } from "@copilotkit/react-core";
 import {
+    CopilotKitProvider,
     CopilotChat,
     useConfigureSuggestions,
-} from "@copilotkit/react-core/v2";
+} from "@copilotkitnext/react";
 
 export function HomeChat() {
     return (
-        <CopilotKit runtimeUrl="/api/copilotkit" showDevConsole={false}>
+        <CopilotKitProvider runtimeUrl="/api/copilotkit">
             <HomeChatInner />
-        </CopilotKit>
+        </CopilotKitProvider>
     );
 }
 
