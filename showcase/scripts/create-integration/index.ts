@@ -1180,7 +1180,11 @@ function updateWorkflows(args: CLIArgs) {
 
       - name: Trigger Render deploy
         run: |
-          curl -sf "\${{ secrets.RENDER_DEPLOY_HOOK_${slugVar.toUpperCase()} }}" || echo "Deploy hook not configured"
+          # TODO: Replace RENDER_SERVICE_ID after running deploy-to-render.ts
+          curl -sf -X POST -H "Authorization: Bearer \${{ secrets.RENDER_API_KEY }}" \\
+            -H "Content-Type: application/json" \\
+            "https://api.render.com/v1/services/RENDER_SERVICE_ID/deploys" \\
+            -d '{"clearCache":"do_not_clear"}' && echo "${slug} deploy triggered"
 `;
             deploy += buildJob;
         }

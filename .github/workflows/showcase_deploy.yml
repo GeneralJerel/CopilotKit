@@ -100,7 +100,10 @@ jobs:
 
       - name: Trigger Render deploy
         run: |
-          curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_SHELL }}" || echo "Deploy hook not configured"
+          curl -sf -X POST -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/srv-d71kuc0gjchc739k9cvg/deploys" \
+            -d '{"clearCache":"do_not_clear"}' && echo "Shell deploy triggered"
 
   build-langgraph:
     name: Build & Push LangGraph Python
@@ -139,7 +142,10 @@ jobs:
 
       - name: Trigger Render deploy
         run: |
-          curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_LANGGRAPH }}" || echo "Deploy hook not configured"
+          curl -sf -X POST -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/srv-d71kv85m5p6s739s27ig/deploys" \
+            -d '{"clearCache":"do_not_clear"}' && echo "LangGraph deploy triggered"
 
   build-mastra:
     name: Build & Push Mastra
@@ -178,4 +184,9 @@ jobs:
 
       - name: Trigger Render deploy
         run: |
-          curl -sf "${{ secrets.RENDER_DEPLOY_HOOK_MASTRA }}" || echo "Deploy hook not configured"
+          curl -sf -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/srv-d72b1nbuibrs73b8ovrg/deploys" \
+            -d '{"clearCache":"do_not_clear"}' \
+            && echo "Deploy triggered" || echo "Deploy trigger failed"

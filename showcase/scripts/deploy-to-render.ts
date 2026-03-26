@@ -219,36 +219,30 @@ async function createService(slug: string): Promise<void> {
         }
     }
 
-    // Get the deploy hook
-    console.log(`\n  Fetching deploy hook...`);
-    try {
-        const hooks = (await renderApi(
-            "GET",
-            `/services/${svcId}/deploy-hooks`
-        )) as Array<{ id: string; url: string }>;
-        if (hooks.length > 0) {
-            console.log(`  Deploy hook: ${hooks[0].url}`);
-        } else {
-            // Create a deploy hook
-            const hook = (await renderApi(
-                "POST",
-                `/services/${svcId}/deploy-hooks`,
-                { name: "github-actions" }
-            )) as { id: string; url: string };
-            console.log(`  Deploy hook: ${hook.url}`);
-        }
-    } catch {
-        console.log(
-            `  Deploy hook: create manually in Render dashboard → Settings → Deploy Hook`
+    // Update deploy workflow with the service ID
+    const workflowPath = path.resolve(
+        ROOT, "..", ".github", "workflows", "showcase_deploy.yml"
+    );
+    if (fs.existsSync(workflowPath)) {
+        let workflow = fs.readFileSync(workflowPath, "utf-8");
+        // Replace the placeholder RENDER_SERVICE_ID in the slug's deploy step
+        const placeholder = new RegExp(
+            `(showcase-${slug}.*?services/)RENDER_SERVICE_ID(/deploys)`,
+            "s"
         );
+        if (workflow.match(placeholder)) {
+            workflow = workflow.replace(placeholder, `$1${svcId}$2`);
+            fs.writeFileSync(workflowPath, workflow);
+            console.log(`\n  Updated showcase_deploy.yml with service ID ${svcId}`);
+        }
     }
 
     console.log(`
-Next steps:
-  1. Add the deploy hook URL as RENDER_DEPLOY_HOOK_${slug.toUpperCase().replace(/-/g, "_")} in GitHub repo secrets
-  2. Add ${slug} to .github/workflows/showcase_deploy.yml (change detection + build job)
-  3. Push an image: docker build & push to ghcr.io/copilotkit/showcase-${slug}:latest
-  4. Once healthy, set deployed: true in manifest.yaml and regenerate registry
+Done! Next steps:
+  1. Push an image: docker build & push to ghcr.io/copilotkit/showcase-${slug}:latest
+     (or push code and let CI build it)
+  2. Once healthy: npx tsx showcase/scripts/deploy-to-render.ts --go-live ${slug}
+  3. Commit the workflow changes and push
 `);
 }
 
