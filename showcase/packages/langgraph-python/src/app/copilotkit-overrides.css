@@ -1,13 +1,37 @@
 /* CopilotKit overrides — matches Dojo styling */
+/* Separate file to survive Tailwind v4 purging */
 
+/* Input bar — rounded border, consistent across all layouts */
 .copilotKitInput {
-    border-bottom-left-radius: 0.75rem;
-    border-bottom-right-radius: 0.75rem;
-    border-top-left-radius: 0.75rem;
-    border-top-right-radius: 0.75rem;
+    border-radius: 0.75rem;
     border: 1px solid var(--copilot-kit-separator-color) !important;
+    margin: 0 24px 12px !important;
 }
 
+/* Chat layout — constrain width, white background */
 .copilotKitChat {
     background-color: #fff !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
+}
+
+/* Sidebar layout — same constraints */
+.copilotKitSidebar {
+    background-color: #fff !important;
+}
+
+/* Messages — padding for breathing room */
+.copilotKitMessages {
+    padding: 16px 24px !important;
+}
+
+/* All rendered content inside messages — constrain width */
+.copilotKitMessages > div {
+    max-width: 100% !important;
+    overflow: hidden !important;
+}
+
+/* Suggestion buttons */
+.copilotKitMessages button {
+    margin: 0 8px;
 }
