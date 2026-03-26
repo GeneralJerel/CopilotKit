@@ -63,7 +63,7 @@ function DemoContent() {
     });
 
     return (
-        <div className="flex justify-center items-center h-screen w-full">
+        <div className="flex justify-center items-center h-full w-full">
             <div className="h-full w-full md:w-4/5 md:h-4/5 rounded-lg">
                 <CopilotChat
                     agentId="human_in_the_loop"

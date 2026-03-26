@@ -148,7 +148,7 @@ function Chat() {
 
     return (
         <div
-            className="flex justify-center items-center h-screen w-full transition-all duration-700"
+            className="flex justify-center items-center h-full w-full transition-all duration-700"
             data-testid="background-container"
             style={{ background }}
         >
