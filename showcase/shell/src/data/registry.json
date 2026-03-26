@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-25T22:59:55.454Z",
+  "generated_at": "2026-03-26T03:27:11.057Z",
   "feature_registry": {
     "version": "1.0.0",
     "categories": [
@@ -349,6 +349,7 @@
       "repo": "https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/langgraph-python",
       "copilotkit_version": "2.0.0",
       "backend_url": "https://langgraph-python.onrender.com",
+      "deployed": true,
       "features": [
         "agentic-chat",
         "hitl",
@@ -442,8 +443,7 @@
           ],
           "route": "/demos/subagents"
         }
-      ],
-      "deployed": true
+      ]
     },
     {
       "name": "Mastra",
@@ -456,6 +456,7 @@
       "repo": "https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/mastra",
       "copilotkit_version": "2.0.0",
       "backend_url": "https://showcase-mastra.onrender.com",
+      "deployed": false,
       "features": [
         "agentic-chat",
         "hitl",
@@ -499,8 +500,7 @@
           ],
           "route": "/demos/gen-ui-tool-based"
         }
-      ],
-      "deployed": false
+      ]
     }
   ]
 }

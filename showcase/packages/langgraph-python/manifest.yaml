@@ -12,6 +12,7 @@ partner_docs: https://docs.copilotkit.ai/integrations/langgraph
 repo: https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/langgraph-python
 copilotkit_version: 2.0.0
 backend_url: https://langgraph-python.onrender.com
+deployed: true
 features:
   - agentic-chat
   - hitl

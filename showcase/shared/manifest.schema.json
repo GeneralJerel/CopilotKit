@@ -52,6 +52,11 @@
       "format": "uri",
       "description": "Deployed Render service URL"
     },
+    "deployed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the backend is deployed and live. Stack nav and demo links only activate when true."
+    },
     "animated_preview_url": {
       "type": ["string", "null"],
       "format": "uri",
