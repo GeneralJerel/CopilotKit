@@ -73,6 +73,12 @@ export async function handleIntelligenceRun({
       threadId: input.threadId,
       runId: input.runId,
       userId,
+      ...(runtime.lockKeyPrefix !== undefined
+        ? { lockKeyPrefix: runtime.lockKeyPrefix }
+        : {}),
+      ...(runtime.lockTtlSeconds !== undefined
+        ? { ttlSeconds: runtime.lockTtlSeconds }
+        : {}),
     });
     joinToken = lockResult.joinToken;
     joinCode = lockResult.joinCode;
@@ -121,6 +127,32 @@ export async function handleIntelligenceRun({
 
   telemetry.capture("oss.runtime.agent_execution_stream_started", {});
 
+  // Start heartbeat timer to renew the thread lock if configured.
+  let heartbeatTimer: ReturnType<typeof setInterval> | undefined;
+  if (runtime.lockHeartbeatIntervalSeconds && runtime.lockTtlSeconds) {
+    heartbeatTimer = setInterval(() => {
+      runtime.intelligence
+        .ɵrenewThreadLock({
+          threadId: input.threadId,
+          runId: input.runId,
+          ttlSeconds: runtime.lockTtlSeconds!,
+          ...(runtime.lockKeyPrefix !== undefined
+            ? { lockKeyPrefix: runtime.lockKeyPrefix }
+            : {}),
+        })
+        .catch((err) => {
+          logger.error("Failed to renew thread lock:", err);
+        });
+    }, runtime.lockHeartbeatIntervalSeconds * 1_000);
+  }
+
+  const clearHeartbeat = () => {
+    if (heartbeatTimer !== undefined) {
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = undefined;
+    }
+  };
+
   runtime.runner
     .run({
       threadId: input.threadId,
@@ -133,12 +165,14 @@ export async function handleIntelligenceRun({
     })
     .subscribe({
       error: (error) => {
+        clearHeartbeat();
         telemetry.capture("oss.runtime.agent_execution_stream_errored", {
           error: error instanceof Error ? error.message : String(error),
         });
         logger.error("Error running agent:", error);
       },
       complete: () => {
+        clearHeartbeat();
         telemetry.capture("oss.runtime.agent_execution_stream_ended", {});
       },
     });

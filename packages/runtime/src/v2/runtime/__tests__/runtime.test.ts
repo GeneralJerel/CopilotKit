@@ -120,4 +120,76 @@ describe("runtime construction", () => {
         .identifyUser,
     ).toBeUndefined();
   });
+
+  it("throws when lockTtlSeconds is set without lockHeartbeatIntervalSeconds", () => {
+    const sdk = createMockIntelligence();
+
+    expect(
+      () =>
+        new CopilotIntelligenceRuntime({
+          agents,
+          intelligence: sdk,
+          identifyUser,
+          lockTtlSeconds: 30,
+        }),
+    ).toThrow(
+      "lockHeartbeatIntervalSeconds is required when lockTtlSeconds is set",
+    );
+  });
+
+  it("stores lock config on CopilotIntelligenceRuntime", () => {
+    const sdk = createMockIntelligence();
+
+    const runtime = new CopilotIntelligenceRuntime({
+      agents,
+      intelligence: sdk,
+      identifyUser,
+      lockTtlSeconds: 30,
+      lockKeyPrefix: "custom",
+      lockHeartbeatIntervalSeconds: 10,
+    });
+
+    expect(runtime.lockTtlSeconds).toBe(30);
+    expect(runtime.lockKeyPrefix).toBe("custom");
+    expect(runtime.lockHeartbeatIntervalSeconds).toBe(10);
+  });
+
+  it("forwards lock config through the CopilotRuntime intelligence shim", () => {
+    const sdk = createMockIntelligence();
+
+    const runtime = new CopilotRuntime({
+      agents,
+      intelligence: sdk,
+      identifyUser,
+      lockTtlSeconds: 60,
+      lockKeyPrefix: "agent",
+      lockHeartbeatIntervalSeconds: 20,
+    });
+
+    expect(
+      (runtime as CopilotRuntime & { lockTtlSeconds?: number }).lockTtlSeconds,
+    ).toBe(60);
+    expect(
+      (runtime as CopilotRuntime & { lockKeyPrefix?: string }).lockKeyPrefix,
+    ).toBe("agent");
+    expect(
+      (runtime as CopilotRuntime & { lockHeartbeatIntervalSeconds?: number })
+        .lockHeartbeatIntervalSeconds,
+    ).toBe(20);
+  });
+
+  it("exposes lock config as undefined for SSE runtimes", () => {
+    const runtime = new CopilotRuntime({ agents });
+
+    expect(
+      (runtime as CopilotRuntime & { lockTtlSeconds?: number }).lockTtlSeconds,
+    ).toBeUndefined();
+    expect(
+      (runtime as CopilotRuntime & { lockKeyPrefix?: string }).lockKeyPrefix,
+    ).toBeUndefined();
+    expect(
+      (runtime as CopilotRuntime & { lockHeartbeatIntervalSeconds?: number })
+        .lockHeartbeatIntervalSeconds,
+    ).toBeUndefined();
+  });
 });
