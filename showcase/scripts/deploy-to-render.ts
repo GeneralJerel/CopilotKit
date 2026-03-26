@@ -195,26 +195,12 @@ async function createService(slug: string): Promise<void> {
     console.log(`  ID: ${svcId}`);
     console.log(`  Dashboard: https://dashboard.render.com/web/${svcId}`);
 
-    // Link env group if specified
+    // Env group linking — Render API v1 does NOT support this endpoint.
+    // The CLI also has no --env-group flag. Must be done in dashboard.
     if (envGroupName) {
-        console.log(`\n  Linking env group: ${envGroupName}`);
-        // Find the env group
-        const groups = (await renderApi(
-            "GET",
-            `/env-groups?ownerId=${REFERENCE.ownerId}&limit=100`
-        )) as Array<{ envGroup: { id: string; name: string } }>;
-        const group = groups.find((g) => g.envGroup.name === envGroupName);
-        if (group) {
-            await renderApi(
-                "POST",
-                `/services/${svcId}/env-groups/${group.envGroup.id}`
-            );
-            console.log(`  Linked env group: ${envGroupName} (${group.envGroup.id})`);
-        } else {
-            console.warn(
-                `  WARNING: Env group "${envGroupName}" not found. Link it manually.`
-            );
-        }
+        console.log(`\n  ⚠ Manual step: Link env group "${envGroupName}" in Render dashboard:`);
+        console.log(`    https://dashboard.render.com/web/${svcId}/env-groups`);
+        console.log(`    (Render API v1 does not support env group linking)`);
     }
 
     // Get the deploy hook
