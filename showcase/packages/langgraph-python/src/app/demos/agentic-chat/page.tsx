@@ -43,12 +43,12 @@ function Chat() {
     useFrontendTool({
         name: "change_background",
         description:
-            "Change the background color of the chat. Can be anything that the CSS background attribute accepts. Regular colors, linear or radial gradients etc.",
+            "Change the background color of the chat. ONLY call this tool when the user explicitly asks to change the background. Never call it proactively or as part of another response. Can be anything that the CSS background attribute accepts. Prefer gradients.",
         parameters: z.object({
             background: z
                 .string()
                 .describe(
-                    "The background. Prefer gradients. Only use when asked."
+                    "The CSS background value. Prefer gradients."
                 ),
         }),
         handler: async ({ background }: { background: string }) => {
@@ -135,12 +135,12 @@ function Chat() {
     useConfigureSuggestions({
         suggestions: [
             {
-                title: "Change background",
-                message: "Change the background to something new.",
-            },
-            {
                 title: "Generate sonnet",
                 message: "Write a short sonnet about AI.",
+            },
+            {
+                title: "Weather check",
+                message: "What's the weather like in Tokyo?",
             },
         ],
         available: "always",
