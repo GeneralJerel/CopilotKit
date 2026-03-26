@@ -1,6 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface DemoDrawerProps {
     isOpen: boolean;
@@ -127,12 +131,27 @@ export function DemoDrawer({
                     {activeTab === "code" && (
                         <div className="h-full overflow-auto">
                             {demoContent?.files?.length > 0 ? (
-                                <pre
-                                    className="p-5 text-[13px] leading-relaxed font-mono text-[var(--text-secondary)]"
-                                    style={{ background: "var(--bg-elevated)" }}
+                                <SyntaxHighlighter
+                                    language={demoContent.files[0].language}
+                                    style={oneLight}
+                                    customStyle={{
+                                        margin: 0,
+                                        borderRadius: 0,
+                                        background: "var(--bg-elevated)",
+                                        fontSize: "13px",
+                                        lineHeight: "1.6",
+                                        padding: "20px",
+                                    }}
+                                    showLineNumbers
+                                    lineNumberStyle={{
+                                        color: "var(--text-faint)",
+                                        fontSize: "11px",
+                                        paddingRight: "1em",
+                                        minWidth: "3em",
+                                    }}
                                 >
                                     {demoContent.files[0].content}
-                                </pre>
+                                </SyntaxHighlighter>
                             ) : (
                                 <div className="flex h-full items-center justify-center text-[var(--text-muted)] text-sm">
                                     No source files available.
@@ -144,9 +163,11 @@ export function DemoDrawer({
                     {activeTab === "docs" && (
                         <div className="h-full overflow-auto p-6">
                             {demoContent?.readme ? (
-                                <pre className="whitespace-pre-wrap text-[13px] leading-relaxed text-[var(--text-secondary)]" style={{ fontFamily: "inherit" }}>
-                                    {demoContent.readme}
-                                </pre>
+                                <div className="max-w-2xl mx-auto [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-[var(--text)] [&_h1]:mb-3 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-[var(--text)] [&_h2]:mt-6 [&_h2]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:text-[var(--text)] [&_h3]:mt-4 [&_h3]:mb-1 [&_p]:text-sm [&_p]:text-[var(--text-secondary)] [&_p]:leading-relaxed [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 [&_li]:text-sm [&_li]:text-[var(--text-secondary)] [&_li]:mb-1 [&_strong]:text-[var(--text)] [&_code]:text-[var(--accent)] [&_code]:bg-[var(--bg-elevated)] [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-xs [&_code]:font-mono [&_pre]:bg-[var(--bg-elevated)] [&_pre]:rounded-lg [&_pre]:p-3 [&_pre]:mb-3 [&_pre]:overflow-x-auto [&_pre]:text-xs">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                        {demoContent.readme}
+                                    </ReactMarkdown>
+                                </div>
                             ) : (
                                 <div className="flex h-full items-center justify-center text-[var(--text-muted)] text-sm">
                                     No documentation available.

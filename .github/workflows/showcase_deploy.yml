@@ -42,9 +42,22 @@ jobs:
             langgraph:
               - 'showcase/packages/langgraph-python/**'
 
+  check-lockfile:
+    name: Verify Lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify lockfile is up to date
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
   build-shell:
     name: Build & Push Shell
-    needs: detect-changes
+    needs: [detect-changes, check-lockfile]
     if: |
       needs.detect-changes.outputs.shell == 'true' ||
       github.event.inputs.service == 'shell' ||
@@ -84,7 +97,7 @@ jobs:
 
   build-langgraph:
     name: Build & Push LangGraph Python
-    needs: detect-changes
+    needs: [detect-changes, check-lockfile]
     if: |
       needs.detect-changes.outputs.langgraph == 'true' ||
       github.event.inputs.service == 'langgraph-python' ||

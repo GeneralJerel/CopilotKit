@@ -31,8 +31,8 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Install workspace dependencies
-        run: pnpm install --ignore-scripts
+      - name: Verify lockfile is up to date
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run build pipeline tests
         working-directory: showcase/scripts
