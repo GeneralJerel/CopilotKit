@@ -37,6 +37,7 @@ One per declared feature. Each demo must:
 - [ ] Agent code in `src/agents/` (Python) or `src/lib/` (TypeScript)
 - [ ] One agent per feature (names must match the `agent` prop in demo pages)
 - [ ] `langgraph.json` (Python) or equivalent config
+- [ ] **Pin framework versions** — see "Dependency Pinning" below
 
 ### Infrastructure
 - [ ] `Dockerfile` — multi-stage, starts both agent backend and Next.js frontend
@@ -92,6 +93,28 @@ One per declared feature. Each demo must:
 
 ---
 
+## Dependency Pinning
+
+**Always pin agent framework and SDK versions to exact versions from the working Dojo example.** Do not use floating ranges like `>=0.3.0` — they resolve to different versions over time and silently break APIs.
+
+**Why this matters:** `langchain>=0.3.0` resolved to 0.3.x which lacked `create_agent`. The Dojo uses `langchain==1.2.0` where it exists. A floating range that worked at scaffold time broke on the next Docker build when a different version was pulled.
+
+**What to pin:**
+- Agent framework packages (langchain, langgraph, @mastra/core, etc.)
+- CopilotKit SDK packages (copilotkit, @copilotkit/runtime, etc.)
+- LLM provider SDKs (langchain-openai, @ai-sdk/openai, etc.)
+
+**What can float:**
+- Standard utilities (zod, react, next) — these have stable APIs
+- Dev dependencies (playwright, typescript, tailwind)
+
+**Where to find correct versions:**
+- Check the corresponding Dojo example at `examples/integrations/<slug>/`
+- Use exact versions from its `requirements.txt` / `pyproject.toml` / `package.json`
+- The weekly drift detection workflow will flag when pinned versions fall behind
+
+---
+
 ## Quick Reference: Common Gotchas
 
 | Gotcha | Fix |
@@ -103,3 +126,4 @@ One per declared feature. Each demo must:
 | Dynamic content unstyled | Use inline `style={}` not Tailwind classes for agent-generated content |
 | Stale lockfile | Run `pnpm install` after changing `package.json`, commit the lockfile |
 | Stack chip not lighting up | Check `deployed: true` in manifest and registry name matching |
+| Agent import errors in Docker | Pin framework deps to exact Dojo versions — floating ranges resolve differently over time |
