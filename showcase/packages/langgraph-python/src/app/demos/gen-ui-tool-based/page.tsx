@@ -18,10 +18,12 @@ interface Haiku {
 
 export default function GenUiToolBasedDemo() {
     return (
-        <CopilotKit runtimeUrl="/api/copilotkit" agent="gen-ui-tool-based">
-            <SidebarWithSuggestions />
-            <HaikuDisplay />
-        </CopilotKit>
+        <div style={{ width: "100%", height: "100vh", overflow: "hidden", position: "relative" }}>
+            <CopilotKit runtimeUrl="/api/copilotkit" agent="gen-ui-tool-based">
+                <SidebarWithSuggestions />
+                <HaikuDisplay />
+            </CopilotKit>
+        </div>
     );
 }
 
@@ -127,7 +129,7 @@ function HaikuDisplay() {
 
     return (
         <div className="relative flex items-center justify-center h-full w-full">
-            <div className="px-20 py-12 w-full max-w-4xl">
+            <div style={{ padding: "48px 80px", width: "100%", maxWidth: "56rem" }}>
                 <div className="space-y-6">
                     {haikus.map((haiku, index) => (
                         <HaikuCard key={index} haiku={haiku} />
@@ -144,8 +146,7 @@ function HaikuCard({ haiku }: { haiku: Partial<Haiku> }) {
     return (
         <div
             data-testid="haiku-card"
-            style={{ background: haiku.gradient }}
-            className="relative bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl my-6 p-8 max-w-2xl border border-slate-200 overflow-hidden"
+            style={{ position: "relative", borderRadius: "16px", margin: "24px 0", padding: "32px", maxWidth: "42rem", border: "1px solid #e2e8f0", overflow: "hidden", background: haiku.gradient || "linear-gradient(to bottom right, #f8fafc, #eff6ff)" }}
         >
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl -z-0" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-400/10 to-pink-400/10 rounded-full blur-3xl -z-0" />
