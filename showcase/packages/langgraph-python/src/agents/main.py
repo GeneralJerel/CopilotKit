@@ -6,8 +6,7 @@ It defines the workflow graph with tools for each demo feature.
 """
 
 from copilotkit import CopilotKitMiddleware
-from langchain.agents import create_agent
-from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_agent
 
 from src.agents.tools import query_data, get_weather
 
