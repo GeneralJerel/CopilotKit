@@ -144,7 +144,7 @@ export default function HomePage() {
 
                 <StackLayer label="Agent Frameworks">
                     {frameworks.map((fw) => {
-                        const match = integrations.find((i) => i.name === fw || i.name.startsWith(fw));
+                        const match = integrations.find((i) => i.deployed && (i.name === fw || i.name.startsWith(fw)));
                         return (
                             <StackChip key={fw} href={match ? `/integrations/${match.slug}` : undefined}>
                                 {fw}

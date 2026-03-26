@@ -116,6 +116,7 @@ function generateManifest(args: CLIArgs, features: Feature[]): string {
         repo: `https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/${args.slug}`,
         copilotkit_version: "2.0.0",
         backend_url: `https://showcase-${args.slug}.onrender.com`,
+        deployed: false,
         features: args.features,
         demos,
     };

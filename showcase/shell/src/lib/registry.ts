@@ -31,6 +31,7 @@ export interface Integration {
     repo: string;
     copilotkit_version: string;
     backend_url: string;
+    deployed: boolean;
     features: string[];
     demos: Demo[];
 }

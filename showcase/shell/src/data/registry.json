@@ -442,7 +442,8 @@
           ],
           "route": "/demos/subagents"
         }
-      ]
+      ],
+      "deployed": true
     },
     {
       "name": "Mastra",
@@ -498,7 +499,8 @@
           ],
           "route": "/demos/gen-ui-tool-based"
         }
-      ]
+      ],
+      "deployed": false
     }
   ]
 }
