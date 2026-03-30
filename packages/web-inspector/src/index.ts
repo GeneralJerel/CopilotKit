@@ -194,6 +194,9 @@ export class WebInspectorElement extends LitElement {
   private dockMode: DockMode = "floating";
   private previousBodyMargins: { left: string; bottom: string } | null = null;
   private transitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private dockTransitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private undockTransitionTimeoutId: ReturnType<typeof setTimeout> | null =
+    null;
   private pendingSelectedContext: string | null = null;
   private autoAttachCore = true;
   private attemptedAutoAttach = false;
@@ -1195,6 +1198,15 @@ ${argsString}</pre
         this.handleGlobalPointerDown as EventListener,
       );
     }
+    // Cancel any pending transition timeouts before tearing down the DOM.
+    if (this.dockTransitionTimeoutId !== null) {
+      clearTimeout(this.dockTransitionTimeoutId);
+      this.dockTransitionTimeoutId = null;
+    }
+    if (this.undockTransitionTimeoutId !== null) {
+      clearTimeout(this.undockTransitionTimeoutId);
+      this.undockTransitionTimeoutId = null;
+    }
     this.removeDockStyles(); // Clean up any docking styles
     this.detachFromCore();
   }
@@ -2032,10 +2044,11 @@ ${argsString}</pre
 
     // Remove transition after animation completes
     if (!this.isResizing && !skipTransition) {
-      setTimeout(() => {
-        if (document.body) {
+      this.dockTransitionTimeoutId = setTimeout(() => {
+        if (typeof document !== "undefined" && document.body) {
           document.body.style.transition = "";
         }
+        this.dockTransitionTimeoutId = null;
       }, 300);
     }
   }
@@ -2062,10 +2075,11 @@ ${argsString}</pre
     }
 
     // Clean up transition after animation completes
-    setTimeout(() => {
-      if (document.body) {
+    this.undockTransitionTimeoutId = setTimeout(() => {
+      if (typeof document !== "undefined" && document.body) {
         document.body.style.transition = "";
       }
+      this.undockTransitionTimeoutId = null;
     }, 300);
   }
 
