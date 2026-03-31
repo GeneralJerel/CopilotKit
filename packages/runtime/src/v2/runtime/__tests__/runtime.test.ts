@@ -121,20 +121,57 @@ describe("runtime construction", () => {
     ).toBeUndefined();
   });
 
-  it("throws when lockTtlSeconds is set without lockHeartbeatIntervalSeconds", () => {
+  it("defaults lockTtlSeconds to 20 and lockHeartbeatIntervalSeconds to 15", () => {
     const sdk = createMockIntelligence();
 
-    expect(
-      () =>
-        new CopilotIntelligenceRuntime({
-          agents,
-          intelligence: sdk,
-          identifyUser,
-          lockTtlSeconds: 30,
-        }),
-    ).toThrow(
-      "lockHeartbeatIntervalSeconds is required when lockTtlSeconds is set",
-    );
+    const runtime = new CopilotIntelligenceRuntime({
+      agents,
+      intelligence: sdk,
+      identifyUser,
+    });
+
+    expect(runtime.lockTtlSeconds).toBe(20);
+    expect(runtime.lockHeartbeatIntervalSeconds).toBe(15);
+  });
+
+  it("clamps lockTtlSeconds to a maximum of 3600 (1 hour)", () => {
+    const sdk = createMockIntelligence();
+
+    const runtime = new CopilotIntelligenceRuntime({
+      agents,
+      intelligence: sdk,
+      identifyUser,
+      lockTtlSeconds: 7200,
+    });
+
+    expect(runtime.lockTtlSeconds).toBe(3600);
+  });
+
+  it("clamps lockHeartbeatIntervalSeconds to a maximum of 3000 (50 minutes)", () => {
+    const sdk = createMockIntelligence();
+
+    const runtime = new CopilotIntelligenceRuntime({
+      agents,
+      intelligence: sdk,
+      identifyUser,
+      lockHeartbeatIntervalSeconds: 5000,
+    });
+
+    expect(runtime.lockHeartbeatIntervalSeconds).toBe(3000);
+  });
+
+  it("uses provided values when they are within allowed range", () => {
+    const sdk = createMockIntelligence();
+
+    const runtime = new CopilotIntelligenceRuntime({
+      agents,
+      intelligence: sdk,
+      identifyUser,
+      lockTtlSeconds: 30,
+    });
+
+    expect(runtime.lockTtlSeconds).toBe(30);
+    expect(runtime.lockHeartbeatIntervalSeconds).toBe(15);
   });
 
   it("stores lock config on CopilotIntelligenceRuntime", () => {

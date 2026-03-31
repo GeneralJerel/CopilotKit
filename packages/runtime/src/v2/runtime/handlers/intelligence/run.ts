@@ -76,9 +76,7 @@ export async function handleIntelligenceRun({
       ...(runtime.lockKeyPrefix !== undefined
         ? { lockKeyPrefix: runtime.lockKeyPrefix }
         : {}),
-      ...(runtime.lockTtlSeconds !== undefined
-        ? { ttlSeconds: runtime.lockTtlSeconds }
-        : {}),
+      ttlSeconds: runtime.lockTtlSeconds,
     });
     joinToken = lockResult.joinToken;
     joinCode = lockResult.joinCode;
@@ -127,24 +125,22 @@ export async function handleIntelligenceRun({
 
   telemetry.capture("oss.runtime.agent_execution_stream_started", {});
 
-  // Start heartbeat timer to renew the thread lock if configured.
+  // Start heartbeat timer to renew the thread lock.
   let heartbeatTimer: ReturnType<typeof setInterval> | undefined;
-  if (runtime.lockHeartbeatIntervalSeconds && runtime.lockTtlSeconds) {
-    heartbeatTimer = setInterval(() => {
-      runtime.intelligence
-        .ɵrenewThreadLock({
-          threadId: input.threadId,
-          runId: input.runId,
-          ttlSeconds: runtime.lockTtlSeconds!,
-          ...(runtime.lockKeyPrefix !== undefined
-            ? { lockKeyPrefix: runtime.lockKeyPrefix }
-            : {}),
-        })
-        .catch((err) => {
-          logger.error("Failed to renew thread lock:", err);
-        });
-    }, runtime.lockHeartbeatIntervalSeconds * 1_000);
-  }
+  heartbeatTimer = setInterval(() => {
+    runtime.intelligence
+      .ɵrenewThreadLock({
+        threadId: input.threadId,
+        runId: input.runId,
+        ttlSeconds: runtime.lockTtlSeconds,
+        ...(runtime.lockKeyPrefix !== undefined
+          ? { lockKeyPrefix: runtime.lockKeyPrefix }
+          : {}),
+      })
+      .catch((err) => {
+        logger.error("Failed to renew thread lock:", err);
+      });
+  }, runtime.lockHeartbeatIntervalSeconds * 1_000);
 
   const clearHeartbeat = () => {
     if (heartbeatTimer !== undefined) {

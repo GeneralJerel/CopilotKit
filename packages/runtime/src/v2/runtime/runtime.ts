@@ -84,11 +84,11 @@ export interface CopilotIntelligenceRuntimeOptions extends BaseCopilotRuntimeOpt
   maxReconnectMs?: number;
   /** Max delay (ms) for channel rejoin backoff. @default 30_000 */
   maxRejoinMs?: number;
-  /** Lock TTL in seconds. When set, `lockHeartbeatIntervalSeconds` must also be configured. */
+  /** Lock TTL in seconds. Clamped to a maximum of 3600 (1 hour). @default 20 */
   lockTtlSeconds?: number;
   /** Custom Redis key prefix for the thread lock. */
   lockKeyPrefix?: string;
-  /** Interval in seconds at which the runtime renews the thread lock. Required when `lockTtlSeconds` is set. */
+  /** Interval in seconds at which the runtime renews the thread lock. Clamped to a maximum of 3000 (50 minutes). @default 15 */
   lockHeartbeatIntervalSeconds?: number;
 }
 
@@ -119,9 +119,9 @@ export interface CopilotIntelligenceRuntimeLike extends CopilotRuntimeLike {
   intelligence: CopilotKitIntelligence;
   identifyUser: IdentifyUserCallback;
   generateThreadNames: boolean;
-  lockTtlSeconds?: number;
+  lockTtlSeconds: number;
   lockKeyPrefix?: string;
-  lockHeartbeatIntervalSeconds?: number;
+  lockHeartbeatIntervalSeconds: number;
   mode: RUNTIME_MODE_INTELLIGENCE;
 }
 
@@ -178,22 +178,17 @@ export class CopilotIntelligenceRuntime
   readonly intelligence: CopilotKitIntelligence;
   readonly identifyUser: IdentifyUserCallback;
   readonly generateThreadNames: boolean;
-  readonly lockTtlSeconds?: number;
+  readonly lockTtlSeconds: number;
   readonly lockKeyPrefix?: string;
-  readonly lockHeartbeatIntervalSeconds?: number;
+  readonly lockHeartbeatIntervalSeconds: number;
   readonly mode = RUNTIME_MODE_INTELLIGENCE;
 
-  constructor(options: CopilotIntelligenceRuntimeOptions) {
-    if (
-      options.lockTtlSeconds !== undefined &&
-      options.lockHeartbeatIntervalSeconds === undefined
-    ) {
-      throw new Error(
-        "lockHeartbeatIntervalSeconds is required when lockTtlSeconds is set. " +
-          "Without a heartbeat the lock will expire while the run is still active.",
-      );
-    }
+  /** Maximum allowed lock TTL in seconds (1 hour). */
+  static readonly MAX_LOCK_TTL_SECONDS = 3_600;
+  /** Maximum allowed heartbeat interval in seconds (50 minutes). */
+  static readonly MAX_HEARTBEAT_INTERVAL_SECONDS = 3_000;
 
+  constructor(options: CopilotIntelligenceRuntimeOptions) {
     super(
       options,
       new IntelligenceAgentRunner({
@@ -206,9 +201,15 @@ export class CopilotIntelligenceRuntime
     this.intelligence = options.intelligence;
     this.identifyUser = options.identifyUser;
     this.generateThreadNames = options.generateThreadNames ?? true;
-    this.lockTtlSeconds = options.lockTtlSeconds;
+    this.lockTtlSeconds = Math.min(
+      options.lockTtlSeconds ?? 20,
+      CopilotIntelligenceRuntime.MAX_LOCK_TTL_SECONDS,
+    );
     this.lockKeyPrefix = options.lockKeyPrefix;
-    this.lockHeartbeatIntervalSeconds = options.lockHeartbeatIntervalSeconds;
+    this.lockHeartbeatIntervalSeconds = Math.min(
+      options.lockHeartbeatIntervalSeconds ?? 15,
+      CopilotIntelligenceRuntime.MAX_HEARTBEAT_INTERVAL_SECONDS,
+    );
   }
 }
 
