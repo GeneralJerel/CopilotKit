@@ -32,6 +32,12 @@ jobs:
           - slug: crewai-crews
             name: "CrewAI (Crews)"
             url: https://showcase-crewai-crews-production.up.railway.app
+          - slug: pydantic-ai
+            name: "PydanticAI"
+            url: https://showcase-pydantic-ai-production.up.railway.app
+          - slug: google-adk
+            name: "Google ADK"
+            url: https://showcase-google-adk-production.up.railway.app
 
     steps:
       - name: Checkout
