@@ -1,0 +1,26 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - LANGGRAPH_DEPLOYMENT_URL=http://agent:8123
+      - DATABASE_URL=file:./prisma/dev.db
+    depends_on:
+      - agent
+
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    ports:
+      - "8123:8123"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+      - LANGSMITH_TRACING=true
+      - LANGSMITH_PROJECT=finsight-demo
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8123

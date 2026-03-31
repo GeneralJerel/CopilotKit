@@ -1,0 +1,82 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Portfolio {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  holdings    Holding[]
+  analyses    AnalysisRun[]
+}
+
+model Holding {
+  id          String    @id @default(cuid())
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  ticker      String
+  name        String?
+  sector      String
+  weight      Float
+  shares      Float
+  costBasis   Float?
+  createdAt   DateTime  @default(now())
+}
+
+model AnalysisRun {
+  id          String              @id @default(cuid())
+  portfolioId String
+  portfolio   Portfolio           @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  status      String              @default("running")
+  riskScore   Float?
+  beta        Float?
+  sharpe      Float?
+  varDaily    Float?
+  startedAt   DateTime            @default(now())
+  completedAt DateTime?
+  scenarios   ScenarioResult[]
+  memo        Memo?
+  correlation CorrelationSnapshot?
+}
+
+model ScenarioResult {
+  id              String      @id @default(cuid())
+  analysisRunId   String
+  analysisRun     AnalysisRun @relation(fields: [analysisRunId], references: [id], onDelete: Cascade)
+  scenarioName    String
+  description     String?
+  projectedReturn Float
+  varDelta        Float
+  sharpeDelta     Float
+  impactedTickers String?
+  createdAt       DateTime    @default(now())
+}
+
+model Memo {
+  id            String      @id @default(cuid())
+  analysisRunId String      @unique
+  analysisRun   AnalysisRun @relation(fields: [analysisRunId], references: [id], onDelete: Cascade)
+  title         String
+  content       String
+  status        String      @default("draft")
+  revisionCount Int         @default(0)
+  feedback      String?
+  approvedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model CorrelationSnapshot {
+  id            String      @id @default(cuid())
+  analysisRunId String      @unique
+  analysisRun   AnalysisRun @relation(fields: [analysisRunId], references: [id], onDelete: Cascade)
+  matrixData    String
+  computedAt    DateTime    @default(now())
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "name": "Tech-Heavy Growth",
+    "holdings": [
+      {"ticker": "AAPL", "weight": 0.12, "sector": "Technology", "beta": 1.25, "annualizedVolatility": 0.30},
+      {"ticker": "MSFT", "weight": 0.11, "sector": "Technology", "beta": 1.20, "annualizedVolatility": 0.28},
+      {"ticker": "NVDA", "weight": 0.10, "sector": "Technology", "beta": 1.45, "annualizedVolatility": 0.50},
+      {"ticker": "GOOGL", "weight": 0.08, "sector": "Technology", "beta": 1.30, "annualizedVolatility": 0.32},
+      {"ticker": "JPM", "weight": 0.06, "sector": "Financials", "beta": 1.15, "annualizedVolatility": 0.25},
+      {"ticker": "UNH", "weight": 0.05, "sector": "Healthcare", "beta": 0.85, "annualizedVolatility": 0.22},
+      {"ticker": "BND", "weight": 0.02, "sector": "Fixed Income", "beta": 0.20, "annualizedVolatility": 0.05}
+    ],
+    "expected_risk_range": [70, 85]
+  },
+  {
+    "name": "Balanced Moderate",
+    "holdings": [
+      {"ticker": "VTI", "weight": 0.20, "sector": "Broad Market", "beta": 1.00, "annualizedVolatility": 0.20},
+      {"ticker": "VXUS", "weight": 0.15, "sector": "International", "beta": 1.05, "annualizedVolatility": 0.22},
+      {"ticker": "BND", "weight": 0.15, "sector": "Fixed Income", "beta": 0.20, "annualizedVolatility": 0.05},
+      {"ticker": "AAPL", "weight": 0.08, "sector": "Technology", "beta": 1.25, "annualizedVolatility": 0.30},
+      {"ticker": "JPM", "weight": 0.07, "sector": "Financials", "beta": 1.15, "annualizedVolatility": 0.25},
+      {"ticker": "GLD", "weight": 0.06, "sector": "Commodities", "beta": 0.75, "annualizedVolatility": 0.18}
+    ],
+    "expected_risk_range": [40, 55]
+  },
+  {
+    "name": "Defensive Income",
+    "holdings": [
+      {"ticker": "JNJ", "weight": 0.15, "sector": "Healthcare", "beta": 0.75, "annualizedVolatility": 0.18},
+      {"ticker": "KO", "weight": 0.15, "sector": "Consumer Staples", "beta": 0.60, "annualizedVolatility": 0.15},
+      {"ticker": "NEE", "weight": 0.15, "sector": "Utilities", "beta": 0.50, "annualizedVolatility": 0.20},
+      {"ticker": "BND", "weight": 0.20, "sector": "Fixed Income", "beta": 0.20, "annualizedVolatility": 0.05},
+      {"ticker": "TLT", "weight": 0.15, "sector": "Fixed Income", "beta": 0.25, "annualizedVolatility": 0.12},
+      {"ticker": "VNQ", "weight": 0.20, "sector": "Real Estate", "beta": 0.90, "annualizedVolatility": 0.22}
+    ],
+    "expected_risk_range": [25, 45]
+  },
+  {
+    "name": "Small-Cap Growth",
+    "holdings": [
+      {"ticker": "NVDA", "weight": 0.20, "sector": "Technology", "beta": 1.45, "annualizedVolatility": 0.50},
+      {"ticker": "AMZN", "weight": 0.15, "sector": "Consumer Discretionary", "beta": 1.30, "annualizedVolatility": 0.35},
+      {"ticker": "GOOGL", "weight": 0.15, "sector": "Technology", "beta": 1.30, "annualizedVolatility": 0.32},
+      {"ticker": "XOM", "weight": 0.10, "sector": "Energy", "beta": 1.10, "annualizedVolatility": 0.30},
+      {"ticker": "CVX", "weight": 0.10, "sector": "Energy", "beta": 1.05, "annualizedVolatility": 0.28}
+    ],
+    "expected_risk_range": [75, 90]
+  },
+  {
+    "name": "Income REIT",
+    "holdings": [
+      {"ticker": "AMT", "weight": 0.20, "sector": "Real Estate", "beta": 0.90, "annualizedVolatility": 0.22},
+      {"ticker": "PLD", "weight": 0.20, "sector": "Real Estate", "beta": 0.85, "annualizedVolatility": 0.20},
+      {"ticker": "VNQ", "weight": 0.20, "sector": "Real Estate", "beta": 0.90, "annualizedVolatility": 0.22},
+      {"ticker": "BND", "weight": 0.20, "sector": "Fixed Income", "beta": 0.20, "annualizedVolatility": 0.05},
+      {"ticker": "TLT", "weight": 0.20, "sector": "Fixed Income", "beta": 0.25, "annualizedVolatility": 0.12}
+    ],
+    "expected_risk_range": [35, 55]
+  }
+]

@@ -1,0 +1,26 @@
+ticker,name,shares,sector,cost_basis
+AAPL,Apple Inc.,150,Technology,142.50
+MSFT,Microsoft Corporation,120,Technology,378.20
+NVDA,NVIDIA Corporation,80,Technology,485.60
+GOOGL,Alphabet Inc.,45,Technology,141.80
+AMZN,Amazon.com Inc.,60,Consumer Discretionary,178.90
+JPM,JPMorgan Chase & Co.,100,Financials,195.40
+V,Visa Inc.,70,Financials,275.30
+UNH,UnitedHealth Group,35,Healthcare,520.15
+JNJ,Johnson & Johnson,90,Healthcare,156.80
+PFE,Pfizer Inc.,200,Healthcare,28.45
+XOM,Exxon Mobil Corporation,110,Energy,104.20
+CVX,Chevron Corporation,65,Energy,155.70
+PG,Procter & Gamble Co.,80,Consumer Staples,162.30
+KO,The Coca-Cola Company,150,Consumer Staples,59.80
+PEP,PepsiCo Inc.,60,Consumer Staples,172.40
+NEE,NextEra Energy Inc.,95,Utilities,72.50
+DUK,Duke Energy Corporation,75,Utilities,98.60
+AMT,American Tower Corporation,40,Real Estate,198.70
+PLD,Prologis Inc.,55,Real Estate,124.50
+BND,Vanguard Total Bond ETF,200,Fixed Income,72.80
+TLT,iShares 20+ Year Treasury,100,Fixed Income,92.40
+GLD,SPDR Gold Shares,50,Commodities,185.60
+VWO,Vanguard FTSE Emerging Markets,120,International,42.30
+IEFA,iShares Core MSCI EAFE,100,International,72.90
+VNQ,Vanguard Real Estate ETF,80,Real Estate,84.20
