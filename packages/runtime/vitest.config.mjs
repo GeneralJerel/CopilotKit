@@ -8,7 +8,7 @@ export default defineConfig({
       "src/**/*.{test,spec}.ts",
       "tests/**/*.{test,spec}.ts",
     ],
-    exclude: ["**/dist/**", "**/integration/**"],
+    exclude: ["**/dist/**", "**/integration/bun/**"],
     setupFiles: ["./tests/setup.vitest.ts"],
     reporters: [["default", { summary: false }]],
     silent: true,
