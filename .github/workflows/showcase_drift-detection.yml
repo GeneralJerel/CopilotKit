@@ -26,6 +26,12 @@ jobs:
           - slug: mastra
             name: "Mastra"
             url: https://showcase-mastra-production.up.railway.app
+          - slug: test-integration-tmp
+            name: "Test Integration"
+            url: https://showcase-test-integration-tmp-production.up.railway.app
+          - slug: crewai-crews
+            name: "CrewAI (Crews)"
+            url: https://showcase-crewai-crews-production.up.railway.app
 
     steps:
       - name: Checkout
