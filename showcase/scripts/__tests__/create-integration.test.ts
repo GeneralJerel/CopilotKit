@@ -39,7 +39,6 @@ describe("Template Generator", () => {
             "manifest.yaml",
             "package.json",
             "Dockerfile",
-            "railway.toml",
             "entrypoint.sh",
             ".env.example",
             ".gitignore",
