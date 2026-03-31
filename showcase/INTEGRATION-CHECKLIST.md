@@ -9,7 +9,7 @@ Two checklists: what makes a **complete package**, and what **external setup** i
 Everything below should exist in `showcase/packages/<slug>/`:
 
 ### Source Files
-- [ ] `manifest.yaml` — name, slug, category, language, features, demos, `deployed: false`
+- [ ] `manifest.yaml` — name, slug, category, language, features, demos, `deployed: false`, `generative_ui`, `interaction_modalities`, and optionally `managed_platform`
 - [ ] `package.json` — dependencies including `@copilotkit/react-core`, `zod`, `tailwindcss`
 - [ ] `tsconfig.json`
 - [ ] `next.config.ts`
@@ -84,6 +84,7 @@ One per declared feature. Each demo must:
 - [ ] Verify Render service is healthy: `curl https://showcase-<slug>.onrender.com/api/health`
 - [ ] Verify all demos respond: visit each `/demos/<id>` route
 - [ ] Set `deployed: true` in `manifest.yaml`
+- [ ] Verify constraint validation passes: `npx tsx showcase/scripts/validate-constraints.ts <slug>`
 - [ ] Regenerate registry: `npx tsx showcase/scripts/generate-registry.ts`
 - [ ] Commit and push — stack nav chip will light up automatically
 
