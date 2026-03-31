@@ -4,14 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "packages/v2/runtime/**"
-      - "examples/v2/runtime/**"
+      - "packages/runtime/**"
       - ".github/workflows/test_runtime-servers.yml"
   pull_request:
     branches: [main]
     paths:
-      - "packages/v2/runtime/**"
-      - "examples/v2/runtime/**"
+      - "packages/runtime/**"
       - ".github/workflows/test_runtime-servers.yml"
   workflow_dispatch:
     inputs:
@@ -56,8 +54,8 @@ jobs:
         run: pnpm nx run @copilotkit/runtime:build
 
       - name: Run Node.js server integration tests
-        working-directory: packages/v2/runtime
-        run: npx vitest run src/__tests__/integration/node-servers.integration.test.ts
+        working-directory: packages/runtime
+        run: npx vitest run src/v2/runtime/__tests__/integration/node-servers.integration.test.ts
 
   bun:
     name: "runtime / bun"
@@ -98,5 +96,5 @@ jobs:
         run: pnpm nx run @copilotkit/runtime:build
 
       - name: Run Bun server integration tests
-        working-directory: packages/v2/runtime
-        run: bun test src/__tests__/integration/bun/bun-servers.integration.test.ts
+        working-directory: packages/runtime
+        run: bun test src/v2/runtime/__tests__/integration/bun/bun-servers.integration.test.ts

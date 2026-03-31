@@ -1,7 +1,7 @@
 /**
  * Integration tests for Bun-based server runtimes.
  *
- * Run with: bun test packages/v2/runtime/src/__tests__/integration/bun/
+ * Run with: bun test packages/runtime/src/v2/runtime/__tests__/integration/bun/
  *
  * Tests:
  *   - Elysia (multi + single)
