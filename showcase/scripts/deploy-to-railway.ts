@@ -19,7 +19,8 @@ import path from "path";
 import yaml from "yaml";
 import { fileURLToPath } from "url";
 
-const ROOT = path.resolve(import.meta.dirname, "..");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, "..");
 const PACKAGES_DIR = path.join(ROOT, "packages");
 
 const RAILWAY_API = "https://backboard.railway.com/graphql/v2";
