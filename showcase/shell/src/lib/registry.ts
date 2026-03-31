@@ -32,6 +32,9 @@ export interface Integration {
     copilotkit_version: string;
     backend_url: string;
     deployed: boolean;
+    generative_ui?: string[];
+    interaction_modalities?: string[];
+    managed_platform?: { name: string; url: string };
     features: string[];
     demos: Demo[];
 }
