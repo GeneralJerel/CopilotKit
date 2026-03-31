@@ -31,8 +31,8 @@ jobs:
       shell: ${{ steps.changes.outputs.shell }}
       langgraph: ${{ steps.changes.outputs.langgraph }}
       mastra: ${{ steps.changes.outputs.mastra }}
-    steps:
       crewai_crews: ${{ steps.changes.outputs.crewai_crews }}
+    steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
         id: changes

@@ -1128,9 +1128,9 @@ function updateWorkflows(args: CLIArgs) {
 
         // Add change detection filter if not present
         if (!deploy.includes(`${slug}:`)) {
-            // Add output
+            // Add output (match only lines containing ${{ to avoid matching `steps:`)
             deploy = deploy.replace(
-                /(outputs:\n(?:\s+\w+:.*\n)+)/,
+                /(outputs:\n(?:\s+\w+:.*\$\{\{.*\n)+)/,
                 `$1      ${slugVar}: \${{ steps.changes.outputs.${slugVar} }}\n`
             );
             // Add filter
