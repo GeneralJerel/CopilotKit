@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import yaml from "yaml";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import { validateManifestConstraints } from "./validate-constraints.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,8 @@ const SCHEMA_PATH = path.join(ROOT, "shared", "manifest.schema.json");
 const FEATURE_REGISTRY_PATH = path.join(ROOT, "shared", "feature-registry.json");
 const OUTPUT_DIR = path.join(ROOT, "shell", "src", "data");
 const OUTPUT_PATH = path.join(OUTPUT_DIR, "registry.json");
+const CONSTRAINTS_PATH = path.join(ROOT, "shared", "constraints.yaml");
+const CONSTRAINTS_OUTPUT_PATH = path.join(OUTPUT_DIR, "constraints.json");
 
 function loadSchema() {
     const raw = fs.readFileSync(SCHEMA_PATH, "utf-8");
@@ -128,6 +131,20 @@ function main() {
         console.log(`  OK: ${manifest.name} (${manifest.slug})`);
     }
 
+    // Constraint validation
+    const constraintsRaw = fs.readFileSync(CONSTRAINTS_PATH, "utf-8");
+    const constraints = yaml.parse(constraintsRaw);
+
+    for (const manifest of integrations) {
+        const constraintErrors = validateManifestConstraints(
+            manifest as { slug: string; generative_ui?: string[]; interaction_modalities?: string[]; demos: Array<{ id: string; name: string }> },
+            constraints
+        );
+        if (constraintErrors.length > 0) {
+            allErrors.push(...constraintErrors);
+        }
+    }
+
     if (allErrors.length > 0) {
         console.error("\nValidation errors:");
         for (const err of allErrors) {
@@ -155,6 +172,10 @@ function main() {
     console.log(
         `\nRegistry generated: ${OUTPUT_PATH} (${integrations.length} integrations)\n`
     );
+
+    // Write constraints.json for the shell's client-side filtering
+    fs.writeFileSync(CONSTRAINTS_OUTPUT_PATH, JSON.stringify(constraints, null, 2) + "\n");
+    console.log(`Constraints written: ${CONSTRAINTS_OUTPUT_PATH}`);
 }
 
 main();
