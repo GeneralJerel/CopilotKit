@@ -22,10 +22,10 @@ jobs:
         include:
           - slug: langgraph-python
             name: "LangGraph (Python)"
-            url: https://langgraph-python.onrender.com
+            url: https://showcase-langgraph-python-production.up.railway.app
           - slug: mastra
             name: "Mastra"
-            url: https://showcase-mastra.onrender.com
+            url: https://showcase-mastra-production.up.railway.app
 
     steps:
       - name: Checkout

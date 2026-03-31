@@ -42,7 +42,6 @@ One per declared feature. Each demo must:
 ### Infrastructure
 - [ ] `Dockerfile` — multi-stage, starts both agent backend and Next.js frontend
 - [ ] `entrypoint.sh` — starts agent server and Next.js, waits for both
-- [ ] `render.yaml` — service definition with `region: oregon`, `healthCheckPath: /api/health`, `fromGroup: showcase-shared-secrets`
 
 ### Testing & QA
 - [ ] `playwright.config.ts`
@@ -56,24 +55,22 @@ One per declared feature. Each demo must:
 
 ## B. External Setup (after the package is ready)
 
-### 1. Render Service
-- [ ] Create Web Service on Render in the **CopilotKit** project, **Oregon** region
+### 1. Railway Service
+- [ ] Create service in the **CopilotKit Showcase** Railway project, **US-West** region
 - [ ] Type: **Docker** (image from GHCR, not source build)
 - [ ] Image URL: `ghcr.io/copilotkit/showcase-<slug>:latest`
-- [ ] Plan: Starter
 - [ ] Health check path: `/api/health`
-- [ ] Link env group: `showcase-shared-secrets` (contains API keys)
+- [ ] Link shared variables group (contains API keys)
 - [ ] Set `NODE_ENV=production`, `NEXT_PUBLIC_BASE_URL=https://showcase.copilotkit.dev`
-- [ ] Note the deploy hook URL for the CI workflow
 
 ### 2. GitHub Secrets
-- [ ] Add `RENDER_DEPLOY_HOOK_<SLUG>` secret to the repo (the Render deploy hook URL)
+- [ ] Ensure `RAILWAY_TOKEN` secret exists in the repo
 
 ### 3. CI/CD Workflow (`.github/workflows/showcase_deploy.yml`)
 - [ ] Add slug to `workflow_dispatch.inputs.service.options`
 - [ ] Add change detection filter for `showcase/packages/<slug>/**`
-- [ ] Add build job: build Docker image → push to GHCR → trigger Render deploy hook
-- [ ] Wire up the correct `RENDER_DEPLOY_HOOK_<SLUG>` secret
+- [ ] Add build job: build Docker image → push to GHCR → trigger Railway deploy
+- [ ] Wire up the `RAILWAY_TOKEN` secret
 
 ### 4. Registry
 - [ ] Run `npx tsx showcase/scripts/generate-registry.ts` to regenerate `registry.json`
@@ -81,7 +78,7 @@ One per declared feature. Each demo must:
 - [ ] Verify demos load in the drawer (Preview tab)
 
 ### 5. Go Live
-- [ ] Verify Render service is healthy: `curl https://showcase-<slug>.onrender.com/api/health`
+- [ ] Verify Railway service is healthy: `curl https://showcase-<slug>-production.up.railway.app/api/health`
 - [ ] Verify all demos respond: visit each `/demos/<id>` route
 - [ ] Set `deployed: true` in `manifest.yaml`
 - [ ] Verify constraint validation passes: `npx tsx showcase/scripts/validate-constraints.ts <slug>`

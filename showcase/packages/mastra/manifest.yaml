@@ -10,7 +10,7 @@ description: >-
 partner_docs: https://docs.copilotkit.ai/integrations/mastra
 repo: https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/mastra
 copilotkit_version: 2.0.0
-backend_url: https://showcase-mastra.onrender.com
+backend_url: https://showcase-mastra-production.up.railway.app
 deployed: true
 generative_ui:
   - constrained-explicit

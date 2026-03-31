@@ -1103,8 +1103,8 @@ See the LangGraph Python reference implementation for patterns.
     console.log("  1. Write/customize the agent code in src/agents/");
     console.log("  2. Pin framework deps to exact versions from the Dojo example");
     console.log("  3. Fill in E2E test assertions");
-    console.log(`  4. Deploy to Render: npx tsx showcase/scripts/deploy-to-render.ts ${args.slug}`);
-    console.log(`  5. Go live: npx tsx showcase/scripts/deploy-to-render.ts --go-live ${args.slug}`);
+    console.log(`  4. Deploy to Railway: npx tsx showcase/scripts/deploy-to-railway.ts ${args.slug}`);
+    console.log(`  5. Go live: npx tsx showcase/scripts/deploy-to-railway.ts --go-live ${args.slug}`);
     console.log("  6. Open a PR to the monorepo\n");
 }
 

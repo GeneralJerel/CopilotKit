@@ -231,10 +231,11 @@ jobs:
           cache-from: type=gha,scope=test_integration_tmp
           cache-to: type=gha,scope=test_integration_tmp,mode=max
 
-      - name: Trigger Render deploy
+      - name: Trigger Railway deploy
         run: |
-          # TODO: Replace RENDER_SERVICE_ID after running deploy-to-render.ts
-          curl -sf -X POST -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          # TODO: Replace service/environment IDs after running deploy-to-railway.ts
+          curl -sf -X POST https://backboard.railway.com/graphql/v2 \
+            -H "Authorization: Bearer ${{ secrets.RAILWAY_TOKEN }}" \
             -H "Content-Type: application/json" \
-            "https://api.render.com/v1/services/RENDER_SERVICE_ID/deploys" \
-            -d '{"clearCache":"do_not_clear"}' && echo "test-integration-tmp deploy triggered"
+            -d '{"query":"mutation { serviceInstanceRedeploy(serviceId: \"RAILWAY_SERVICE_ID\", environmentId: \"RAILWAY_ENVIRONMENT_ID\") }"}' \
+            && echo "test-integration-tmp deploy triggered"
