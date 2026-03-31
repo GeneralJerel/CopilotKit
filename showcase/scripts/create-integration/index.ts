@@ -115,7 +115,7 @@ function generateManifest(args: CLIArgs, features: Feature[]): string {
         partner_docs: null,
         repo: `https://github.com/CopilotKit/CopilotKit/tree/main/showcase/packages/${args.slug}`,
         copilotkit_version: "2.0.0",
-        backend_url: `https://showcase-${args.slug}.onrender.com`,
+        backend_url: `https://showcase-${args.slug}-production.up.railway.app`,
         deployed: false,
         generative_ui: ["constrained-explicit"],
         interaction_modalities: ["chat"],
@@ -743,24 +743,6 @@ exit $?
 `;
 }
 
-function generateRenderYaml(args: CLIArgs): string {
-    return `services:
-  - type: web
-    name: showcase-${args.slug}
-    runtime: docker
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    plan: starter
-    region: oregon
-    healthCheckPath: /api/health
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: NEXT_PUBLIC_BASE_URL
-        value: https://showcase.copilotkit.dev
-      - fromGroup: showcase-shared-secrets
-`;
-}
 
 function generateEnvExample(args: CLIArgs): string {
     const lines = [
@@ -1019,7 +1001,6 @@ async function main() {
     writeFile(path.join(packageDir, "manifest.yaml"), generateManifest(args, features));
     writeFile(path.join(packageDir, "package.json"), generatePackageJson(args));
     writeFile(path.join(packageDir, "Dockerfile"), generateDockerfile(args));
-    writeFile(path.join(packageDir, "render.yaml"), generateRenderYaml(args));
     writeFile(path.join(packageDir, "entrypoint.sh"), generateEntrypoint(args));
     writeFile(path.join(packageDir, ".env.example"), generateEnvExample(args));
     writeFile(path.join(packageDir, ".gitignore"), generateGitignore());
@@ -1197,13 +1178,13 @@ function updateWorkflows(args: CLIArgs) {
           cache-from: type=gha,scope=${slugVar}
           cache-to: type=gha,scope=${slugVar},mode=max
 
-      - name: Trigger Render deploy
+      - name: Trigger Railway deploy
         run: |
-          # TODO: Replace RENDER_SERVICE_ID after running deploy-to-render.ts
-          curl -sf -X POST -H "Authorization: Bearer \${{ secrets.RENDER_API_KEY }}" \\
+          curl -sf -X POST https://backboard.railway.com/graphql/v2 \\
+            -H "Authorization: Bearer \${{ secrets.RAILWAY_TOKEN }}" \\
             -H "Content-Type: application/json" \\
-            "https://api.render.com/v1/services/RENDER_SERVICE_ID/deploys" \\
-            -d '{"clearCache":"do_not_clear"}' && echo "${slug} deploy triggered"
+            -d '{"query":"mutation { serviceInstanceRedeploy(serviceId: \\\\"RAILWAY_SERVICE_ID\\\\", environmentId: \\\\"b14919f4-6417-429f-848d-c6ae2201e04f\\\\") }"}' \\
+            && echo "${slug} deploy triggered"
 `;
             deploy += buildJob;
         }
@@ -1220,7 +1201,7 @@ function updateWorkflows(args: CLIArgs) {
 
         if (!drift.includes(`slug: ${slug}`)) {
             // Add to matrix includes
-            const entry = `          - slug: ${slug}\n            name: "${args.name}"\n            url: https://showcase-${slug}.onrender.com`;
+            const entry = `          - slug: ${slug}\n            name: "${args.name}"\n            url: https://showcase-${slug}-production.up.railway.app`;
             drift = drift.replace(
                 /(matrix:\n\s+include:\n(?:\s+- slug:.*\n\s+name:.*\n\s+url:.*\n)+)/,
                 `$1${entry}\n`
