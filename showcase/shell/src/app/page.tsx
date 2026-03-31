@@ -1,155 +1,209 @@
 import Link from "next/link";
-import { getIntegrations, getFeatures } from "@/lib/registry";
-import { HomeChat } from "@/components/home-chat";
+import { getIntegrations, getFeatures, getFeatureCategories } from "@/lib/registry";
+
+const ALL_FRAMEWORKS = [
+    "LangGraph", "Mastra", "CrewAI", "PydanticAI", "Agno", "AG2",
+    "LlamaIndex", "Langroid", "Strands", "Spring AI", "Google ADK",
+];
 
 export default function HomePage() {
     const integrations = getIntegrations();
     const features = getFeatures();
+    const categories = getFeatureCategories();
 
-    const frameworks = [
-        "LangGraph", "Mastra", "CrewAI", "PydanticAI", "Agno", "AG2",
-        "LlamaIndex", "Langroid", "AWS Strands", "Spring AI", "MAF",
-    ];
+    const deployedIntegrations = integrations.filter((i) => i.deployed);
+    const totalDemos = integrations.reduce((sum, i) => sum + i.demos.length, 0);
+
+    const liveFrameworks = new Set(
+        ALL_FRAMEWORKS.filter((fw) =>
+            integrations.find((i) => i.deployed && (i.name === fw || i.name.startsWith(fw)))
+        )
+    );
 
     return (
-        <div className="flex" style={{ height: "calc(100vh - 52px)" }}>
-            {/* Left: CopilotChat */}
-            <HomeChat />
+        <div className="flex flex-col items-center min-h-[calc(100vh-52px)] bg-[var(--bg)] px-6 py-16">
+            {/* Hero */}
+            <div className="max-w-2xl text-center mb-12">
+                <h1 className="text-3xl font-semibold text-[var(--text)] tracking-tight mb-3">
+                    Build AI-powered apps with any agent framework
+                </h1>
+                <p className="text-base text-[var(--text-secondary)] leading-relaxed">
+                    Explore live integrations, compare features across frameworks,
+                    and find the right starting point for your project.
+                </p>
+            </div>
 
-            {/* Right: Stack Nav */}
-            <div className="w-[340px] overflow-y-auto px-5 py-5 bg-[var(--bg-elevated)]">
-                <h3 className="text-[10px] font-mono uppercase tracking-[2px] text-[var(--text-faint)] mb-4">
-                    The Stack
-                </h3>
-
-                <StackLayer label="Frontend Platform">
-                    <StackChip href="/integrations">React</StackChip>
-                    <StackChip>Angular</StackChip>
-                    <StackChip>Vue</StackChip>
-                    <StackChip>TanStack</StackChip>
-                    <StackChip>React Native</StackChip>
-                    <StackChip>SwiftUI</StackChip>
-                </StackLayer>
-
-                <StackConnector />
-
-                <StackLayer label="Chat UI">
-                    <StackChip href="/integrations/langgraph-python/agentic-chat">CopilotChat</StackChip>
-                    <StackChip>Sidebar</StackChip>
-                    <StackChip>Popup</StackChip>
-                    <StackChip>Headless</StackChip>
-                </StackLayer>
-
-                <StackConnector />
-
-                <StackLayer label="Generative UI">
-                    <StackChip href="/integrations/langgraph-python/gen-ui-tool-based">Controlled</StackChip>
-                    <StackChip>Declarative</StackChip>
-                    <StackChip>Open</StackChip>
-                </StackLayer>
-
-                <StackConnector />
-
-                <StackLayer label="Interaction">
-                    <StackChip href="/integrations/langgraph-python/hitl">Human in the Loop</StackChip>
-                    <StackChip>Frontend Tools</StackChip>
-                    <StackChip>Tool Rendering</StackChip>
-                    <StackChip>Readables</StackChip>
-                    <StackChip>Agent Context</StackChip>
-                    <StackChip>Suggestions</StackChip>
-                    <StackChip>Voice</StackChip>
-                    <StackChip>Multi-modal</StackChip>
-                </StackLayer>
-
-                <StackConnector />
-
-                <div className="flex gap-2 justify-center">
-                    <div className="flex-1 text-center py-1.5 px-3 border-2 border-[var(--accent)] rounded-lg bg-[var(--accent-light)] text-[10px] font-semibold text-[var(--accent)]">
-                        CopilotKit
-                    </div>
-                    <div className="flex-1 text-center py-1.5 px-3 border-2 border-[var(--violet)] rounded-lg bg-[var(--violet-light)] text-[10px] font-semibold text-[var(--violet)]">
-                        AG-UI Protocol
-                    </div>
+            {/* Search bar */}
+            <div className="w-full max-w-lg mb-14">
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] shadow-sm cursor-pointer hover:border-[var(--text-muted)] transition-colors">
+                    <svg
+                        className="w-4 h-4 text-[var(--text-muted)] shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                    <span className="text-sm text-[var(--text-muted)] flex-1">
+                        Search integrations, features, demos...
+                    </span>
+                    <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-[var(--border)] bg-[var(--bg-elevated)] text-[10px] font-mono text-[var(--text-faint)]">
+                        ⌘K
+                    </kbd>
                 </div>
+            </div>
 
-                <StackConnector />
+            {/* Path cards — 2x2 grid */}
+            <div className="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">
+                <PathCard
+                    href="/integrations"
+                    title="I know what I want"
+                    description="Browse all integrations by framework, language, and feature."
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                    }
+                />
+                <PathCard
+                    href="/integrations?guided=true"
+                    title="Help me choose"
+                    description="Answer a few questions and get a tailored recommendation."
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                        />
+                    }
+                />
+                <PathCard
+                    href="/matrix"
+                    title="Compare everything"
+                    description="Side-by-side feature matrix across all frameworks."
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M3 10h18M3 14h18M10 3v18M14 3v18"
+                        />
+                    }
+                />
+                <PathCard
+                    href="/integrations"
+                    title="Quick start"
+                    description="Jump straight into a working demo and start building."
+                    icon={
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                    }
+                />
+            </div>
 
-                <StackLayer label="Agent Frameworks">
-                    {frameworks.map((fw) => {
-                        const match = integrations.find((i) => i.deployed && (i.name === fw || i.name.startsWith(fw)));
+            {/* Framework pills */}
+            <div className="w-full max-w-2xl mb-14">
+                <h2 className="text-[11px] font-mono uppercase tracking-[1.5px] text-[var(--text-faint)] mb-4 text-center">
+                    Agent Frameworks
+                </h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                    {ALL_FRAMEWORKS.map((fw) => {
+                        const isLive = liveFrameworks.has(fw);
+                        const match = isLive
+                            ? integrations.find((i) => i.deployed && (i.name === fw || i.name.startsWith(fw)))
+                            : undefined;
+
+                        if (isLive && match) {
+                            return (
+                                <Link
+                                    key={fw}
+                                    href={`/integrations/${match.slug}`}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+                                    {fw}
+                                </Link>
+                            );
+                        }
+
                         return (
-                            <StackChip key={fw} href={match ? `/integrations/${match.slug}` : undefined}>
+                            <span
+                                key={fw}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[var(--bg-elevated)] border border-transparent text-[var(--text-faint)] cursor-default"
+                            >
+                                <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-faint)] opacity-40" />
                                 {fw}
-                            </StackChip>
+                            </span>
                         );
                     })}
-                </StackLayer>
-
-                <StackConnector />
-
-                <StackLayer label="Platforms">
-                    <StackChip>LangSmith</StackChip>
-                    <StackChip>Google ADK</StackChip>
-                    <StackChip>AWS Agent Core</StackChip>
-                    <StackChip>Azure AI Foundry</StackChip>
-                    <StackChip>Cloudflare Workers</StackChip>
-                    <StackChip>Vercel</StackChip>
-                    <StackChip>Render</StackChip>
-                </StackLayer>
-
-                <StackConnector />
-
-                <StackLayer label="LLM Providers">
-                    <StackChip>OpenAI</StackChip>
-                    <StackChip>Anthropic</StackChip>
-                    <StackChip>Google</StackChip>
-                    <StackChip>AWS Bedrock</StackChip>
-                    <StackChip>Azure OpenAI</StackChip>
-                    <StackChip>Groq</StackChip>
-                    <StackChip>Ollama</StackChip>
-                    <StackChip>Any OpenAI-compatible</StackChip>
-                </StackLayer>
-
-                <div className="mt-6 pt-4 border-t border-[var(--border)] text-center">
-                    <p className="text-[10px] text-[var(--text-faint)]">
-                        {features.length} features · {integrations.length} integrations
-                    </p>
                 </div>
             </div>
+
+            {/* Stats bar */}
+            <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
+                <span className="font-medium text-[var(--text-secondary)]">{deployedIntegrations.length}</span>{" "}
+                live integrations
+                <span className="text-[var(--border)]">·</span>
+                <span className="font-medium text-[var(--text-secondary)]">{totalDemos}</span>{" "}
+                demos
+                <span className="text-[var(--border)]">·</span>
+                <span className="font-medium text-[var(--text-secondary)]">{features.length}</span>{" "}
+                features
+                <span className="text-[var(--border)]">·</span>
+                <span className="font-medium text-[var(--text-secondary)]">{categories.length}</span>{" "}
+                categories
+            </div>
         </div>
     );
 }
 
-function StackLayer({ label, children }: { label: string; children: React.ReactNode }) {
+function PathCard({
+    href,
+    title,
+    description,
+    icon,
+}: {
+    href: string;
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+}) {
     return (
-        <div className="mb-4">
-            <div className="text-[9px] font-mono uppercase tracking-[1.5px] text-[var(--accent)] font-semibold mb-2">
-                {label}
+        <Link
+            href={href}
+            className="group flex flex-col gap-3 p-5 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--accent)] hover:shadow-sm transition-all"
+        >
+            <div className="w-8 h-8 rounded-lg bg-[var(--accent-light)] flex items-center justify-center">
+                <svg
+                    className="w-4 h-4 text-[var(--accent)]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    {icon}
+                </svg>
             </div>
-            <div className="flex flex-wrap gap-1">
-                {children}
+            <div>
+                <h3 className="text-sm font-semibold text-[var(--text)] group-hover:text-[var(--accent)] transition-colors mb-1">
+                    {title}
+                </h3>
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                    {description}
+                </p>
             </div>
-        </div>
-    );
-}
-
-function StackChip({ children, href }: { children: React.ReactNode; href?: string }) {
-    if (href) {
-        return (
-            <Link href={href} className="px-2.5 py-1 rounded text-[10px] font-medium bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all cursor-pointer">
-                {children}
-            </Link>
-        );
-    }
-    return (
-        <span className="px-2.5 py-1 rounded text-[10px] font-medium bg-[var(--bg-elevated)] border border-[var(--border-dim)] text-[var(--text-faint)] cursor-default">
-            {children}
-        </span>
-    );
-}
-
-function StackConnector() {
-    return (
-        <div className="text-center text-[var(--text-faint)] text-[10px] py-0.5">↓</div>
+        </Link>
     );
 }
