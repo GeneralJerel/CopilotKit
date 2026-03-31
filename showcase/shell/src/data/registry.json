@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-26T05:35:27.086Z",
+  "generated_at": "2026-03-31T03:18:16.705Z",
   "feature_registry": {
     "version": "1.0.0",
     "categories": [
@@ -350,6 +350,18 @@
       "copilotkit_version": "2.0.0",
       "backend_url": "https://langgraph-python.onrender.com",
       "deployed": true,
+      "generative_ui": [
+        "constrained-explicit"
+      ],
+      "interaction_modalities": [
+        "sidebar",
+        "embedded",
+        "chat"
+      ],
+      "managed_platform": {
+        "name": "LangGraph Platform",
+        "url": "https://langsmith.com"
+      },
       "features": [
         "agentic-chat",
         "hitl",
@@ -457,6 +469,17 @@
       "copilotkit_version": "2.0.0",
       "backend_url": "https://showcase-mastra.onrender.com",
       "deployed": true,
+      "generative_ui": [
+        "constrained-explicit"
+      ],
+      "interaction_modalities": [
+        "sidebar",
+        "chat"
+      ],
+      "managed_platform": {
+        "name": "Mastra Cloud",
+        "url": "https://mastra.ai/cloud"
+      },
       "features": [
         "agentic-chat",
         "hitl",
