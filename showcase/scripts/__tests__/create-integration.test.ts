@@ -83,6 +83,10 @@ describe("Template Generator", () => {
             console.error("Validation errors:", validate.errors);
         }
         expect(valid).toBe(true);
+
+        // New fields should be present with defaults
+        expect(manifest.generative_ui).toEqual(["constrained-explicit"]);
+        expect(manifest.interaction_modalities).toEqual(["chat"]);
     });
 
     it("generates correct demo stubs for each feature", async () => {
