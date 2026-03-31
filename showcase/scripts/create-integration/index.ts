@@ -117,9 +117,28 @@ function generateManifest(args: CLIArgs, features: Feature[]): string {
         copilotkit_version: "2.0.0",
         backend_url: `https://showcase-${args.slug}.onrender.com`,
         deployed: false,
+        generative_ui: ["constrained-explicit"],
+        interaction_modalities: ["chat"],
         features: args.features,
         demos,
+        managed_platform: undefined as { name: string; url: string } | undefined,
     };
+
+    const MANAGED_PLATFORMS: Record<string, { name: string; url: string }> = {
+        "LangGraph": { name: "LangGraph Platform", url: "https://langsmith.com" },
+        "Mastra": { name: "Mastra Cloud", url: "https://mastra.ai/cloud" },
+        "CrewAI": { name: "CrewAI Enterprise", url: "https://crewai.com/amp" },
+        "Agno": { name: "Agent OS", url: "https://os.agno.com" },
+        "AG2": { name: "Agent OS", url: "https://ag2.ai/product" },
+        "Strands": { name: "AWS Bedrock AgentCore", url: "https://aws.amazon.com/bedrock/agents/" },
+    };
+
+    for (const [prefix, platform] of Object.entries(MANAGED_PLATFORMS)) {
+        if (args.name.startsWith(prefix)) {
+            manifest.managed_platform = platform;
+            break;
+        }
+    }
 
     return yaml.stringify(manifest);
 }
