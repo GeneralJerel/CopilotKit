@@ -23,17 +23,17 @@ export function KPICard({ kpi }: { kpi: KPI }) {
   const isPositive = kpi.trend === "up";
 
   return (
-    <div className="group rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900">
+    <div className="group rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-gray-300 hover:shadow-md">
       <div className="flex items-start justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10">
-          <Icon className="h-5 w-5 text-indigo-400" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
+          <Icon className="h-5 w-5 text-indigo-600" />
         </div>
         <div
           className={cn(
             "flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
             isPositive
-              ? "bg-emerald-500/10 text-emerald-400"
-              : "bg-red-500/10 text-red-400"
+              ? "bg-emerald-50 text-emerald-600"
+              : "bg-red-50 text-red-600"
           )}
         >
           {isPositive ? (
@@ -46,10 +46,10 @@ export function KPICard({ kpi }: { kpi: KPI }) {
       </div>
 
       <div className="mt-4">
-        <p className="text-2xl font-bold tracking-tight text-zinc-100">
+        <p className="text-2xl font-bold tracking-tight text-gray-900">
           {kpi.value}
         </p>
-        <p className="mt-1 text-sm text-zinc-500">{kpi.label}</p>
+        <p className="mt-1 text-sm text-gray-500">{kpi.label}</p>
       </div>
     </div>
   );

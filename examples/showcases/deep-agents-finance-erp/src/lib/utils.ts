@@ -22,18 +22,18 @@ export function formatNumber(n: number): string {
 
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
-    paid: "text-emerald-400 bg-emerald-400/10",
-    completed: "text-emerald-400 bg-emerald-400/10",
-    active: "text-emerald-400 bg-emerald-400/10",
-    "in-stock": "text-emerald-400 bg-emerald-400/10",
-    pending: "text-amber-400 bg-amber-400/10",
-    "low-stock": "text-amber-400 bg-amber-400/10",
-    "on-leave": "text-amber-400 bg-amber-400/10",
-    overdue: "text-red-400 bg-red-400/10",
-    failed: "text-red-400 bg-red-400/10",
-    "out-of-stock": "text-red-400 bg-red-400/10",
-    terminated: "text-red-400 bg-red-400/10",
-    draft: "text-zinc-400 bg-zinc-400/10",
+    paid: "text-emerald-700 bg-emerald-50",
+    completed: "text-emerald-700 bg-emerald-50",
+    active: "text-emerald-700 bg-emerald-50",
+    "in-stock": "text-emerald-700 bg-emerald-50",
+    pending: "text-amber-700 bg-amber-50",
+    "low-stock": "text-amber-700 bg-amber-50",
+    "on-leave": "text-amber-700 bg-amber-50",
+    overdue: "text-red-700 bg-red-50",
+    failed: "text-red-700 bg-red-50",
+    "out-of-stock": "text-red-700 bg-red-50",
+    terminated: "text-red-700 bg-red-50",
+    draft: "text-gray-600 bg-gray-100",
   };
   return colors[status] || "text-zinc-400 bg-zinc-400/10";
 }

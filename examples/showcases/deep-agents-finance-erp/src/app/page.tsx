@@ -39,14 +39,14 @@ export default function DashboardPage() {
         {/* Tables Row */}
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           {/* Recent Transactions */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50">
-            <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
-              <h3 className="text-sm font-semibold text-zinc-100">
+          <div className="rounded-2xl border border-gray-200 bg-white">
+            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+              <h3 className="text-sm font-semibold text-gray-900">
                 Recent Transactions
               </h3>
               <Link
                 href="/accounts"
-                className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300"
+                className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-500"
               >
                 View all <ArrowRight className="h-3 w-3" />
               </Link>
@@ -57,7 +57,7 @@ export default function DashboardPage() {
                 {
                   header: "Description",
                   accessor: "description",
-                  className: "text-zinc-200 font-medium",
+                  className: "text-gray-900 font-medium",
                 },
                 {
                   header: "Amount",
@@ -65,8 +65,8 @@ export default function DashboardPage() {
                     <span
                       className={
                         row.type === "credit"
-                          ? "text-emerald-400"
-                          : "text-zinc-300"
+                          ? "text-emerald-600"
+                          : "text-gray-700"
                       }
                     >
                       {row.type === "credit" ? "+" : "-"}
@@ -84,14 +84,14 @@ export default function DashboardPage() {
           </div>
 
           {/* Outstanding Invoices */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50">
-            <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
-              <h3 className="text-sm font-semibold text-zinc-100">
+          <div className="rounded-2xl border border-gray-200 bg-white">
+            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+              <h3 className="text-sm font-semibold text-gray-900">
                 Outstanding Invoices
               </h3>
               <Link
                 href="/invoices"
-                className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300"
+                className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-500"
               >
                 View all <ArrowRight className="h-3 w-3" />
               </Link>
@@ -103,17 +103,17 @@ export default function DashboardPage() {
                   header: "Invoice",
                   accessor: (row) => (
                     <div>
-                      <p className="font-medium text-zinc-200">
+                      <p className="font-medium text-gray-900">
                         {row.number}
                       </p>
-                      <p className="text-xs text-zinc-500">{row.client}</p>
+                      <p className="text-xs text-gray-500">{row.client}</p>
                     </div>
                   ),
                 },
                 {
                   header: "Amount",
                   accessor: (row) => (
-                    <span className="text-zinc-200">
+                    <span className="text-gray-900">
                       {formatCurrency(row.amount)}
                     </span>
                   ),
@@ -121,7 +121,7 @@ export default function DashboardPage() {
                 {
                   header: "Due",
                   accessor: "dueDate",
-                  className: "text-zinc-500",
+                  className: "text-gray-500",
                 },
                 {
                   header: "Status",
