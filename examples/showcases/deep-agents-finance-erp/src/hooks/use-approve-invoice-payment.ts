@@ -4,6 +4,7 @@ import { InvoiceApprovalCard } from "@/components/chat/invoice-approval-card";
 
 export function useApproveInvoicePayment() {
   useHumanInTheLoop({
+    agentId: "finance_erp_agent",
     name: "approve_invoice_payment",
     description:
       "Present overdue or pending invoices to the user for payment approval. The agent MUST use this tool before marking any invoice as paid. Never process payments without explicit user approval.",
