@@ -11,7 +11,9 @@ const serviceAdapter = new ExperimentalEmptyAdapter();
 const runtime = new CopilotRuntime({
   agents: {
     finance_erp_agent: new LangGraphHttpAgent({
-      url: process.env.LANGGRAPH_DEPLOYMENT_URL || "http://localhost:8123",
+      url:
+        process.env.REMOTE_ACTION_URL ||
+        "http://localhost:8123/copilotkit/agents/finance_erp_agent",
     }),
   },
 });
