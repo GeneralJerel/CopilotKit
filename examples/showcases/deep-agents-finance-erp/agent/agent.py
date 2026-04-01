@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 load_dotenv()
 from typing import Annotated, TypedDict
 
+from langchain_core.messages import AIMessage
 from langchain_openai import ChatOpenAI
-from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -31,6 +31,7 @@ from tools import (
 
 class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
+    copilotkit: dict
 
 
 # ---------------------------------------------------------------------------
@@ -49,14 +50,15 @@ tools = [
 ]
 
 # ---------------------------------------------------------------------------
-# LLM
+# LLM — unbound at module level; tools are bound dynamically per-call
+# so that frontend tools from CopilotKit are included.
 # ---------------------------------------------------------------------------
 
 llm = ChatOpenAI(
     model=os.environ.get("OPENAI_MODEL", "gpt-4o"),
     temperature=0,
     streaming=True,
-).bind_tools(tools)
+)
 
 # ---------------------------------------------------------------------------
 # Nodes
@@ -90,14 +92,64 @@ Always be precise with financial data — never hallucinate numbers."""
 
 
 async def agent_node(state: AgentState):
-    """Call the LLM with the current messages."""
+    """Call the LLM with backend + frontend tools bound dynamically."""
+    # Convert AG-UI frontend tool dicts to OpenAI function-calling format
+    frontend_actions = state.get("copilotkit", {}).get("actions", [])
+    frontend_tool_defs = []
+    for action in frontend_actions:
+        name = action.get("name") or action.get("function", {}).get("name")
+        desc = action.get("description") or action.get("function", {}).get("description", "")
+        params = action.get("parameters") or action.get("function", {}).get("parameters", {})
+        if name:
+            frontend_tool_defs.append({
+                "type": "function",
+                "function": {
+                    "name": name,
+                    "description": desc,
+                    "parameters": params,
+                },
+            })
+
+    bound_llm = llm.bind_tools(list(tools) + frontend_tool_defs)
+
     messages = [{"role": "system", "content": SYSTEM_PROMPT}] + state["messages"]
-    response = await llm.ainvoke(messages)
+    response = await bound_llm.ainvoke(messages)
     return {"messages": [response]}
 
 
+def filter_frontend_tools(state: AgentState):
+    """Strip frontend tool calls from the AIMessage before ToolNode.
+
+    Frontend tool calls are already streamed to the client via
+    on_chat_model_stream events. ToolNode only knows about backend tools
+    and would crash on unknown frontend tools.
+    """
+    frontend_actions = state.get("copilotkit", {}).get("actions", [])
+    if not frontend_actions:
+        return state
+
+    frontend_names = set()
+    for action in frontend_actions:
+        name = action.get("name") or action.get("function", {}).get("name")
+        if name:
+            frontend_names.add(name)
+
+    last = state["messages"][-1]
+    tool_calls = getattr(last, "tool_calls", []) or []
+    if not tool_calls:
+        return state
+
+    backend_calls = [tc for tc in tool_calls if tc["name"] not in frontend_names]
+
+    if len(backend_calls) == len(tool_calls):
+        return state  # No frontend calls to strip
+
+    updated = AIMessage(content=last.content, tool_calls=backend_calls, id=last.id)
+    return {"messages": [*state["messages"][:-1], updated]}
+
+
 def should_continue(state: AgentState) -> str:
-    """Route to tools if the last message has tool calls, otherwise end."""
+    """Route to tools if backend tool calls remain, otherwise end."""
     last = state["messages"][-1]
     if hasattr(last, "tool_calls") and last.tool_calls:
         return "tools"
@@ -112,10 +164,12 @@ tool_node = ToolNode(tools)
 
 builder = StateGraph(AgentState)
 builder.add_node("agent", agent_node)
+builder.add_node("filter", filter_frontend_tools)
 builder.add_node("tools", tool_node)
 
 builder.set_entry_point("agent")
-builder.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+builder.add_edge("agent", "filter")
+builder.add_conditional_edges("filter", should_continue, {"tools": "tools", END: END})
 builder.add_edge("tools", "agent")
 
-finance_erp_graph = builder.compile(checkpointer=MemorySaver())
+finance_erp_graph = builder.compile()
