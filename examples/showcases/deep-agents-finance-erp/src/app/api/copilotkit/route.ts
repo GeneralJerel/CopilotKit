@@ -1,24 +1,27 @@
 import {
   CopilotRuntime,
-  copilotRuntimeNextJSAppRouterEndpoint,
   ExperimentalEmptyAdapter,
+  copilotRuntimeNextJSAppRouterEndpoint,
 } from "@copilotkit/runtime";
 import { LangGraphHttpAgent } from "@copilotkit/runtime/langgraph";
+import { NextRequest } from "next/server";
+
+const serviceAdapter = new ExperimentalEmptyAdapter();
 
 const runtime = new CopilotRuntime({
   agents: {
     finance_erp_agent: new LangGraphHttpAgent({
-      url:
-        process.env.LANGGRAPH_DEPLOYMENT_URL || "http://localhost:8123",
+      url: process.env.LANGGRAPH_DEPLOYMENT_URL || "http://localhost:8123",
     }),
   },
 });
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
     runtime,
-    serviceAdapter: new ExperimentalEmptyAdapter(),
+    serviceAdapter,
     endpoint: "/api/copilotkit",
   });
+
   return handleRequest(req);
 };
