@@ -9,6 +9,7 @@ load_dotenv()
 from typing import Annotated, TypedDict
 
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -117,4 +118,4 @@ builder.set_entry_point("agent")
 builder.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
 builder.add_edge("tools", "agent")
 
-finance_erp_graph = builder.compile()
+finance_erp_graph = builder.compile(checkpointer=MemorySaver())
