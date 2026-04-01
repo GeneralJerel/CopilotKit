@@ -2,11 +2,14 @@
 
 import {
   CopilotSidebar,
+  CopilotSidebarView,
   useAgentContext,
-  useConfigureSuggestions,
+  useAgent,
 } from "@copilotkit/react-core/v2";
+import { cn } from "@/lib/utils";
 import { useNavigateAndFilter } from "@/hooks/use-navigate-and-filter";
 import { useRenderChart } from "@/hooks/use-render-chart";
+import { useRenderCashPosition } from "@/hooks/use-render-cash-position";
 import { useApproveInvoicePayment } from "@/hooks/use-approve-invoice-payment";
 import { useApproveInventoryReorder } from "@/hooks/use-approve-inventory-reorder";
 import { Sidebar } from "./sidebar";
@@ -43,12 +46,53 @@ const demoSuggestions = [
   },
 ];
 
-export function Shell({ children }: { children: React.ReactNode }) {
-  useConfigureSuggestions({
-    suggestions: demoSuggestions,
-    available: "always",
-  });
+function FinanceSidebarWelcomeScreen({
+  input,
+  suggestionView,
+  welcomeMessage,
+  className,
+  ...props
+}: React.ComponentProps<typeof CopilotSidebarView.WelcomeScreen>) {
+  const { agent } = useAgent({ agentId: "finance_erp_agent" });
 
+  const handlePromptClick = (message: string) => {
+    agent.addMessage({
+      id: crypto.randomUUID(),
+      role: "user",
+      content: message,
+    });
+    void agent.runAgent();
+  };
+
+  return (
+    <div className={cn("cpk:h-full cpk:flex cpk:flex-col", className)} {...props}>
+      <div className="cpk:flex-1" />
+
+      <div className="cpk:px-8 cpk:pb-4">
+        <div className="cpk:mx-auto cpk:flex cpk:max-w-3xl cpk:flex-col cpk:items-center">
+          <h2 className="cpk:mb-4 cpk:max-w-md cpk:text-center cpk:font-heading cpk:text-3xl cpk:font-medium cpk:leading-tight cpk:text-foreground">
+            Ask about invoices, accounts, inventory, or HR.
+          </h2>
+          <div className="cpk:mb-4 cpk:flex cpk:max-w-md cpk:flex-wrap cpk:justify-center cpk:gap-3">
+            {demoSuggestions.map((suggestion) => (
+              <button
+                key={suggestion.title}
+                type="button"
+                onClick={() => handlePromptClick(suggestion.message)}
+                className="cpk:rounded-full cpk:border cpk:border-border cpk:bg-background cpk:px-4 cpk:py-2 cpk:text-sm cpk:font-medium cpk:text-foreground cpk:transition-colors hover:cpk:border-primary hover:cpk:bg-muted"
+              >
+                {suggestion.title}
+              </button>
+            ))}
+          </div>
+          <div className="cpk:w-full">{input}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Shell({ children }: { children: React.ReactNode }) {
   useAgentContext({
     description: "Key performance indicators for the company",
     value: JSON.stringify(kpis),
@@ -82,6 +126,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   // Frontend tools
   useNavigateAndFilter();
   useRenderChart();
+  useRenderCashPosition();
 
   // Human-in-the-loop
   useApproveInvoicePayment();
@@ -94,10 +139,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <CopilotSidebar
         agentId="finance_erp_agent"
         defaultOpen={false}
+        welcomeScreen={FinanceSidebarWelcomeScreen}
         labels={{
           modalHeaderTitle: "FinanceOS AI",
-          welcomeMessageText:
-            "Hi! I'm your AI finance assistant. I can help you analyze invoices, review accounts, check inventory, manage HR data, and provide financial insights. What would you like to explore?",
+          welcomeMessageText: "Ask about invoices, accounts, inventory, or HR.",
         }}
       />
     </div>
