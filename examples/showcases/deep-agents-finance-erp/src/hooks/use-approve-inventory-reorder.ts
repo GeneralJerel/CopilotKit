@@ -4,6 +4,7 @@ import { InventoryReorderCard } from "@/components/chat/inventory-reorder-card";
 
 export function useApproveInventoryReorder() {
   useHumanInTheLoop({
+    agentId: "finance_erp_agent",
     name: "approve_inventory_reorder",
     description:
       "Present a purchase order for low-stock or out-of-stock items. The agent MUST use this tool before placing any reorder. Wait for user approval before proceeding.",

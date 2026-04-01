@@ -4,6 +4,7 @@ import { InlineChatChart } from "@/components/chat/inline-chart";
 
 export function useRenderChart() {
   useFrontendTool({
+    agentId: "finance_erp_agent",
     name: "render_chart",
     description:
       "Render an interactive chart directly in the chat. Use this when the user asks for visualizations, projections, or trends. Choose the best chart type: 'area' for trends over time, 'bar' for comparisons, 'line' for trajectories.",

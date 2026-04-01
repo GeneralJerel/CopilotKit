@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 
-import { CopilotKit } from "@copilotkit/react-core";
+import {
+  CopilotChatConfigurationProvider,
+  CopilotKitProvider,
+} from "@copilotkit/react-core/v2";
 import "./globals.css";
-import "@copilotkit/react-ui/styles.css";
+import "@copilotkit/react-core/v2/styles.css";
 import { Montserrat, Playfair_Display } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const playfairDisplayHeading = Playfair_Display({subsets:['latin'],variable:'--font-heading'});
+const playfairDisplayHeading = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-const montserrat = Montserrat({subsets:['latin'],variable:'--font-sans'});
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "FinanceOS | Deep Agents ERP",
@@ -22,14 +31,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", montserrat.variable, playfairDisplayHeading.variable)}>
+    <html
+      lang="en"
+      className={cn(
+        "font-sans",
+        montserrat.variable,
+        playfairDisplayHeading.variable,
+      )}
+    >
       <body className="antialiased">
-        <CopilotKit
-          runtimeUrl="/api/copilotkit"
-          agent="finance_erp_agent"
-        >
-          {children}
-        </CopilotKit>
+        <CopilotKitProvider runtimeUrl="/api/copilotkit">
+          <CopilotChatConfigurationProvider agentId="finance_erp_agent">
+            {children}
+          </CopilotChatConfigurationProvider>
+        </CopilotKitProvider>
       </body>
     </html>
   );

@@ -14,6 +14,7 @@ export function useNavigateAndFilter() {
   const router = useRouter();
 
   useFrontendTool({
+    agentId: "finance_erp_agent",
     name: "navigate_and_filter",
     description:
       "Navigate to an ERP page and optionally apply a filter. Use this when the user asks to see specific data (e.g. 'show me overdue invoices', 'go to inventory').",
