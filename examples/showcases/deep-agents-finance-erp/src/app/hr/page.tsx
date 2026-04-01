@@ -1,19 +1,40 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Shell } from "@/components/layout/shell";
 import { Header } from "@/components/layout/header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { employees } from "@/lib/data";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 import { Plus, Mail } from "lucide-react";
 
 export default function HRPage() {
+  return (
+    <Suspense>
+      <HRContent />
+    </Suspense>
+  );
+}
+
+function HRContent() {
+  const searchParams = useSearchParams();
+  const activeFilter = searchParams.get("filter") || "all";
+
+  const departments = [...new Set(employees.map((e) => e.department))];
+
+  const filtered =
+    activeFilter === "all"
+      ? employees
+      : employees.filter(
+          (e) => e.department.toLowerCase() === activeFilter.toLowerCase()
+        );
+
   const activeCount = employees.filter((e) => e.status === "active").length;
   const totalPayroll = employees
     .filter((e) => e.status === "active")
     .reduce((sum, e) => sum + e.salary, 0);
-
-  const departments = [...new Set(employees.map((e) => e.department))];
 
   return (
     <Shell>
@@ -49,7 +70,23 @@ export default function HRPage() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {["all", ...departments].map((f) => (
+              <Link
+                key={f}
+                href={f === "all" ? "/hr" : `/hr?filter=${encodeURIComponent(f)}`}
+                className={cn(
+                  "rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors",
+                  activeFilter.toLowerCase() === f.toLowerCase()
+                    ? "border-blue-200 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                )}
+              >
+                {f}
+              </Link>
+            ))}
+          </div>
           <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
             <Plus className="h-4 w-4" />
             Add Employee
@@ -58,7 +95,7 @@ export default function HRPage() {
 
         {/* Employee Cards Grid */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {employees.map((emp) => (
+          {filtered.map((emp) => (
             <div
               key={emp.id}
               className="rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-gray-300 hover:shadow-md"

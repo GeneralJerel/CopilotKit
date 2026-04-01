@@ -1,15 +1,34 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Shell } from "@/components/layout/shell";
 import { Header } from "@/components/layout/header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { inventoryItems } from "@/lib/data";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 import { AlertTriangle, Package, Plus } from "lucide-react";
 import type { InventoryItem } from "@/types/erp";
 
 export default function InventoryPage() {
+  return (
+    <Suspense>
+      <InventoryContent />
+    </Suspense>
+  );
+}
+
+function InventoryContent() {
+  const searchParams = useSearchParams();
+  const activeFilter = searchParams.get("filter") || "all";
+
+  const filtered =
+    activeFilter === "all"
+      ? inventoryItems
+      : inventoryItems.filter((item) => item.status === activeFilter);
+
   const totalValue = inventoryItems.reduce(
     (sum, item) => sum + item.quantity * item.unitCost,
     0
@@ -62,12 +81,18 @@ export default function InventoryPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {["all", "in-stock", "low-stock", "out-of-stock"].map((f) => (
-              <button
+              <Link
                 key={f}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium capitalize text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
+                href={f === "all" ? "/inventory" : `/inventory?filter=${f}`}
+                className={cn(
+                  "rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors",
+                  activeFilter === f
+                    ? "border-blue-200 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                )}
               >
                 {f.replace("-", " ")}
-              </button>
+              </Link>
             ))}
           </div>
           <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
@@ -134,7 +159,7 @@ export default function InventoryPage() {
                 accessor: (row) => <StatusBadge status={row.status} />,
               },
             ]}
-            data={inventoryItems}
+            data={filtered}
           />
         </div>
       </div>
