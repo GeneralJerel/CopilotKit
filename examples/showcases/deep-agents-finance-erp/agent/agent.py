@@ -7,10 +7,38 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from typing import Any, Callable, Awaitable
 from langchain_openai import ChatOpenAI
+from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse
 from deepagents import create_deep_agent
 from langgraph.checkpoint.memory import MemorySaver
 from copilotkit import CopilotKitMiddleware
+
+
+# ---------------------------------------------------------------------------
+# Temporary debug middleware — remove after diagnosing frontend tool injection
+# ---------------------------------------------------------------------------
+
+class DebugToolsMiddleware(AgentMiddleware):
+    @property
+    def name(self) -> str:
+        return "DebugToolsMiddleware"
+
+    async def awrap_model_call(
+        self,
+        request: ModelRequest,
+        handler: Callable[[ModelRequest], Awaitable[ModelResponse]],
+    ) -> ModelResponse:
+        frontend_tools = request.state.get("copilotkit", {}).get("actions", [])
+        print(f"[DEBUG] Frontend tools in state: {len(frontend_tools)}")
+        for t in frontend_tools:
+            name = t.get("name") if isinstance(t, dict) else getattr(t, "name", "?")
+            print(f"  - {name}")
+        print(f"[DEBUG] Request tools (before CopilotKit merge): {len(request.tools)}")
+        for t in request.tools:
+            name = t.get("name") if isinstance(t, dict) else getattr(t, "name", "?")
+            print(f"  - {name}")
+        return await handler(request)
 
 from tools import (
     query_invoices,
@@ -88,7 +116,7 @@ def build_agent():
         model=llm,
         tools=erp_tools,
         system_prompt=SYSTEM_PROMPT,
-        middleware=[CopilotKitMiddleware()],
+        middleware=[DebugToolsMiddleware(), CopilotKitMiddleware()],
         checkpointer=checkpointer,
     )
 
