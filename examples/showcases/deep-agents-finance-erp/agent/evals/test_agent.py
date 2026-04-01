@@ -9,8 +9,12 @@ Requires LANGCHAIN_API_KEY and LANGCHAIN_PROJECT environment variables.
 from __future__ import annotations
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from langsmith import Client
-from langsmith.evaluation import evaluate, LangChainStringEvaluator
+from langsmith.evaluation import aevaluate
 
 # Dataset of (input, expected_output) pairs for evaluation
 EVAL_DATASET = [
@@ -83,7 +87,17 @@ def create_or_update_dataset():
     return dataset
 
 
-def run_evaluation():
+def contains_expected(run, example) -> dict:
+    """Check if the agent output contains the expected substring."""
+    output = (run.outputs or {}).get("output", "")
+    expected = (example.outputs or {}).get("answer", "")
+    return {
+        "key": "contains_expected",
+        "score": 1.0 if expected.lower() in output.lower() else 0.0,
+    }
+
+
+async def run_evaluation():
     """Run LangSmith evaluation against the agent."""
     from agent import finance_erp_graph
 
@@ -94,15 +108,10 @@ def run_evaluation():
         last_message = result["messages"][-1]
         return {"output": last_message.content}
 
-    evaluators = [
-        LangChainStringEvaluator("criteria", config={"criteria": "correctness"}),
-        LangChainStringEvaluator("criteria", config={"criteria": "helpfulness"}),
-    ]
-
-    results = evaluate(
+    results = await aevaluate(
         predict,
         data=DATASET_NAME,
-        evaluators=evaluators,
+        evaluators=[contains_expected],
         experiment_prefix="finance-erp-eval",
         metadata={"version": "0.1.0"},
     )
@@ -112,9 +121,10 @@ def run_evaluation():
 
 
 if __name__ == "__main__":
+    import asyncio
     import sys
 
     if "--create-dataset" in sys.argv:
         create_or_update_dataset()
     else:
-        run_evaluation()
+        asyncio.run(run_evaluation())

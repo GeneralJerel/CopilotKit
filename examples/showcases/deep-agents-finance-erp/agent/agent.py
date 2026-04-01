@@ -10,6 +10,7 @@ from typing import Annotated, TypedDict
 
 from langchain_core.messages import AIMessage
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -172,4 +173,6 @@ builder.add_edge("agent", "filter")
 builder.add_conditional_edges("filter", should_continue, {"tools": "tools", END: END})
 builder.add_edge("tools", "agent")
 
-finance_erp_graph = builder.compile()
+# LangGraph Cloud injects its own checkpointer; use MemorySaver only for local dev
+_checkpointer = None if os.environ.get("LANGGRAPH_CLOUD") else MemorySaver()
+finance_erp_graph = builder.compile(checkpointer=_checkpointer)
