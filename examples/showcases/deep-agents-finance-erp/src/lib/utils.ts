@@ -33,7 +33,7 @@ export function getStatusColor(status: string): string {
     failed: "text-red-700 bg-red-50",
     "out-of-stock": "text-red-700 bg-red-50",
     terminated: "text-red-700 bg-red-50",
-    draft: "text-gray-600 bg-gray-100",
+    draft: "text-muted-foreground bg-muted",
   };
-  return colors[status] || "text-zinc-400 bg-zinc-400/10";
+  return colors[status] || "text-muted-foreground bg-muted";
 }

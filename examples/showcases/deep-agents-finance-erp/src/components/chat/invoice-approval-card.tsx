@@ -2,6 +2,7 @@
 
 import { DollarSign, Check, X } from "lucide-react";
 import { ToolCallStatus } from "@copilotkit/react-core/v2";
+import { Button } from "@/components/ui/button";
 
 type InvoiceRow = {
   number: string;
@@ -41,8 +42,8 @@ export function InvoiceApprovalCard(props: Props) {
 
   if (status === ToolCallStatus.InProgress) {
     return (
-      <div className="my-2 rounded-2xl border border-gray-200 bg-white p-5">
-        <div className="flex items-center gap-2 text-gray-400">
+      <div className="my-2 rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <DollarSign className="h-4 w-4 animate-pulse" />
           <span className="text-sm">Reviewing invoices...</span>
         </div>
@@ -63,26 +64,26 @@ export function InvoiceApprovalCard(props: Props) {
 
   return (
     <div
-      className={`my-2 rounded-2xl border bg-white p-5 ${isComplete ? "border-gray-100 opacity-80" : "border-gray-200"}`}
+      className={`my-2 rounded-2xl border bg-card p-5 ${isComplete ? "border-border/50 opacity-80" : "border-border"}`}
     >
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
-          <DollarSign className="h-4 w-4 text-amber-600" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
+          <DollarSign className="h-4 w-4 text-warning" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-foreground">
             Payment Approval Required
           </p>
-          <p className="text-xs text-gray-500">{action}</p>
+          <p className="text-xs text-muted-foreground">{action}</p>
         </div>
       </div>
 
       {/* Invoice table */}
-      <div className="mb-4 rounded-xl border border-gray-100 bg-gray-50/50">
+      <div className="mb-4 rounded-xl border border-border/50 bg-muted/50">
         <table className="w-full text-xs">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-gray-500">
+            <tr className="border-b border-border/50 text-left text-muted-foreground">
               <th className="px-3 py-2 font-medium">Invoice</th>
               <th className="px-3 py-2 font-medium">Client</th>
               <th className="px-3 py-2 font-medium text-right">Amount</th>
@@ -91,24 +92,24 @@ export function InvoiceApprovalCard(props: Props) {
           </thead>
           <tbody>
             {invoices.map((inv) => (
-              <tr key={inv.number} className="border-b border-gray-50">
-                <td className="px-3 py-2 font-mono text-gray-700">
+              <tr key={inv.number} className="border-b border-border/30">
+                <td className="px-3 py-2 font-mono text-foreground">
                   {inv.number}
                 </td>
-                <td className="px-3 py-2 text-gray-700">{inv.client}</td>
-                <td className="px-3 py-2 text-right font-medium text-gray-900">
+                <td className="px-3 py-2 text-foreground">{inv.client}</td>
+                <td className="px-3 py-2 text-right font-medium text-foreground">
                   {formatCurrency(inv.amount)}
                 </td>
-                <td className="px-3 py-2 text-right text-gray-500">
+                <td className="px-3 py-2 text-right text-muted-foreground">
                   {inv.dueDate}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex items-center justify-between border-t border-gray-200 px-3 py-2">
-          <span className="text-xs font-medium text-gray-500">Total</span>
-          <span className="text-sm font-bold text-gray-900">
+        <div className="flex items-center justify-between border-t border-border px-3 py-2">
+          <span className="text-xs font-medium text-muted-foreground">Total</span>
+          <span className="text-sm font-bold text-foreground">
             {formatCurrency(totalAmount)}
           </span>
         </div>
@@ -131,28 +132,29 @@ export function InvoiceApprovalCard(props: Props) {
       {/* Action buttons (executing state only) */}
       {status === ToolCallStatus.Executing && (
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() =>
               props.respond({
                 approved: true,
                 message: `Payment approved for ${invoices.length} invoice(s) totaling ${formatCurrency(totalAmount)}`,
               })
             }
-            className="flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-500"
+            className="flex-1 bg-emerald-600 text-white hover:bg-emerald-500"
           >
             Approve Payment
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
             onClick={() =>
               props.respond({
                 approved: false,
                 message: "Payment rejected by user",
               })
             }
-            className="flex-1 rounded-xl bg-red-50 px-4 py-2.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100"
+            className="flex-1"
           >
             Reject
-          </button>
+          </Button>
         </div>
       )}
     </div>

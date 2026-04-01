@@ -32,9 +32,9 @@ export function InlineChatChart({ args, status }: Props) {
 
   if (status === "inProgress" || !data || !series) {
     return (
-      <div className="my-2 rounded-xl border border-gray-200 bg-white p-4">
-        <div className="h-4 w-32 animate-pulse rounded bg-gray-200" />
-        <div className="mt-3 h-[180px] animate-pulse rounded bg-gray-100" />
+      <div className="my-2 rounded-xl border border-border bg-card p-4">
+        <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-[180px] animate-pulse rounded bg-muted" />
       </div>
     );
   }
@@ -114,8 +114,8 @@ export function InlineChatChart({ args, status }: Props) {
   };
 
   return (
-    <div className="my-2 rounded-xl border border-gray-200 bg-white p-4">
-      <p className="mb-3 text-sm font-semibold text-gray-900">{title}</p>
+    <div className="my-2 rounded-xl border border-border bg-card p-4">
+      <p className="mb-3 text-sm font-semibold text-foreground">{title}</p>
       <ResponsiveContainer width="100%" height={200}>
         {renderChart()}
       </ResponsiveContainer>
