@@ -8,11 +8,20 @@ load_dotenv()
 
 from ag_ui_langgraph import add_langgraph_fastapi_endpoint
 from copilotkit import LangGraphAGUIAgent
+from copilotkit.langgraph import copilotkit_customize_config
 from fastapi import FastAPI
 
-from agent import finance_erp_graph
+from agent import build_agent
 
 app = FastAPI(title="Finance ERP Agent")
+
+agent_graph = build_agent()
+
+# Emit all tool calls (backend + frontend) so the frontend can render them
+agui_config = copilotkit_customize_config(
+    emit_tool_calls=True,
+)
+agui_config["recursion_limit"] = 100
 
 add_langgraph_fastapi_endpoint(
     app=app,
@@ -23,7 +32,8 @@ add_langgraph_fastapi_endpoint(
             "check inventory levels, manage HR data, generate financial reports, "
             "and provide actionable business insights."
         ),
-        graph=finance_erp_graph,
+        graph=agent_graph,
+        config=agui_config,
     ),
     path="/copilotkit/agents/finance_erp_agent",
 )
