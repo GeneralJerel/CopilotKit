@@ -7,6 +7,7 @@ import { RevenueChart } from "@/components/charts/revenue-chart";
 import { ExpenseChart } from "@/components/charts/expense-chart";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { kpis, transactions, invoices } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
@@ -39,100 +40,104 @@ export default function DashboardPage() {
         {/* Tables Row */}
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           {/* Recent Transactions */}
-          <div className="rounded-2xl border border-gray-200 bg-white">
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900">
-                Recent Transactions
-              </h3>
-              <Link
-                href="/accounts"
-                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-500"
-              >
-                View all <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-            <DataTable<Transaction>
-              keyExtractor={(row) => row.id}
-              columns={[
-                {
-                  header: "Description",
-                  accessor: "description",
-                  className: "text-gray-900 font-medium",
-                },
-                {
-                  header: "Amount",
-                  accessor: (row) => (
-                    <span
-                      className={
-                        row.type === "credit"
-                          ? "text-emerald-600"
-                          : "text-gray-700"
-                      }
-                    >
-                      {row.type === "credit" ? "+" : "-"}
-                      {formatCurrency(row.amount)}
-                    </span>
-                  ),
-                },
-                {
-                  header: "Status",
-                  accessor: (row) => <StatusBadge status={row.status} />,
-                },
-              ]}
-              data={transactions.slice(0, 5)}
-            />
-          </div>
+          <Card>
+            <CardHeader className="border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle>Recent Transactions</CardTitle>
+                <Link
+                  href="/accounts"
+                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80"
+                >
+                  View all <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <DataTable<Transaction>
+                keyExtractor={(row) => row.id}
+                columns={[
+                  {
+                    header: "Description",
+                    accessor: "description",
+                    className: "text-foreground font-medium",
+                  },
+                  {
+                    header: "Amount",
+                    accessor: (row) => (
+                      <span
+                        className={
+                          row.type === "credit"
+                            ? "text-emerald-600"
+                            : "text-foreground"
+                        }
+                      >
+                        {row.type === "credit" ? "+" : "-"}
+                        {formatCurrency(row.amount)}
+                      </span>
+                    ),
+                  },
+                  {
+                    header: "Status",
+                    accessor: (row) => <StatusBadge status={row.status} />,
+                  },
+                ]}
+                data={transactions.slice(0, 5)}
+              />
+            </CardContent>
+          </Card>
 
           {/* Outstanding Invoices */}
-          <div className="rounded-2xl border border-gray-200 bg-white">
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h3 className="text-sm font-semibold text-gray-900">
-                Outstanding Invoices
-              </h3>
-              <Link
-                href="/invoices"
-                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-500"
-              >
-                View all <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-            <DataTable<Invoice>
-              keyExtractor={(row) => row.id}
-              columns={[
-                {
-                  header: "Invoice",
-                  accessor: (row) => (
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {row.number}
-                      </p>
-                      <p className="text-xs text-gray-500">{row.client}</p>
-                    </div>
-                  ),
-                },
-                {
-                  header: "Amount",
-                  accessor: (row) => (
-                    <span className="text-gray-900">
-                      {formatCurrency(row.amount)}
-                    </span>
-                  ),
-                },
-                {
-                  header: "Due",
-                  accessor: "dueDate",
-                  className: "text-gray-500",
-                },
-                {
-                  header: "Status",
-                  accessor: (row) => <StatusBadge status={row.status} />,
-                },
-              ]}
-              data={invoices.filter(
-                (inv) => inv.status === "pending" || inv.status === "overdue"
-              )}
-            />
-          </div>
+          <Card>
+            <CardHeader className="border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle>Outstanding Invoices</CardTitle>
+                <Link
+                  href="/invoices"
+                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80"
+                >
+                  View all <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <DataTable<Invoice>
+                keyExtractor={(row) => row.id}
+                columns={[
+                  {
+                    header: "Invoice",
+                    accessor: (row) => (
+                      <div>
+                        <p className="font-medium text-foreground">
+                          {row.number}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{row.client}</p>
+                      </div>
+                    ),
+                  },
+                  {
+                    header: "Amount",
+                    accessor: (row) => (
+                      <span className="text-foreground">
+                        {formatCurrency(row.amount)}
+                      </span>
+                    ),
+                  },
+                  {
+                    header: "Due",
+                    accessor: "dueDate",
+                    className: "text-muted-foreground",
+                  },
+                  {
+                    header: "Status",
+                    accessor: (row) => <StatusBadge status={row.status} />,
+                  },
+                ]}
+                data={invoices.filter(
+                  (inv) => inv.status === "pending" || inv.status === "overdue"
+                )}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </Shell>

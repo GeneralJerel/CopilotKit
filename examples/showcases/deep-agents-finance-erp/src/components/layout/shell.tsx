@@ -56,7 +56,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   useApproveInventoryReorder();
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-muted">
       <Sidebar />
       <main className="ml-[72px] flex-1 overflow-y-auto">{children}</main>
       <CopilotSidebar

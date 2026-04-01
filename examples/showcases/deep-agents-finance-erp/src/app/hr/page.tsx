@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Shell } from "@/components/layout/shell";
 import { Header } from "@/components/layout/header";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { employees } from "@/lib/data";
 import { formatCurrency, cn } from "@/lib/utils";
 import { Plus, Mail } from "lucide-react";
@@ -43,30 +45,36 @@ function HRContent() {
       <div className="space-y-6 p-8">
         {/* Summary */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-gray-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              Active Employees
-            </p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">
-              {activeCount}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              Departments
-            </p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">
-              {departments.length}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              Annual Payroll
-            </p>
-            <p className="mt-2 text-2xl font-bold text-gray-900">
-              {formatCurrency(totalPayroll)}
-            </p>
-          </div>
+          <Card size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Active Employees
+              </p>
+              <p className="mt-2 text-2xl font-bold text-foreground">
+                {activeCount}
+              </p>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Departments
+              </p>
+              <p className="mt-2 text-2xl font-bold text-foreground">
+                {departments.length}
+              </p>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Annual Payroll
+              </p>
+              <p className="mt-2 text-2xl font-bold text-foreground">
+                {formatCurrency(totalPayroll)}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Actions */}
@@ -79,67 +87,70 @@ function HRContent() {
                 className={cn(
                   "rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors",
                   activeFilter.toLowerCase() === f.toLowerCase()
-                    ? "border-blue-200 bg-blue-50 text-blue-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground hover:border-border hover:text-foreground"
                 )}
               >
                 {f}
               </Link>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
+          <Button>
             <Plus className="h-4 w-4" />
             Add Employee
-          </button>
+          </Button>
         </div>
 
         {/* Employee Cards Grid */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((emp) => (
-            <div
+            <Card
               key={emp.id}
-              className="rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-gray-300 hover:shadow-md"
+              size="sm"
+              className="transition-all hover:shadow-lg"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm font-bold text-white">
-                    {emp.avatar}
+              <CardContent>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                      {emp.avatar}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{emp.name}</p>
+                      <p className="text-xs text-muted-foreground">{emp.role}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{emp.name}</p>
-                    <p className="text-xs text-gray-500">{emp.role}</p>
+                  <StatusBadge status={emp.status} />
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Department</span>
+                    <span className="text-foreground">{emp.department}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Start Date</span>
+                    <span className="text-muted-foreground">{emp.startDate}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Salary</span>
+                    <span className="font-medium text-foreground">
+                      {formatCurrency(emp.salary)}
+                    </span>
                   </div>
                 </div>
-                <StatusBadge status={emp.status} />
-              </div>
 
-              <div className="mt-4 space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Department</span>
-                  <span className="text-gray-700">{emp.department}</span>
+                <div className="mt-4 border-t border-border pt-3">
+                  <a
+                    href={`mailto:${emp.email}`}
+                    className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80"
+                  >
+                    <Mail className="h-3 w-3" />
+                    {emp.email}
+                  </a>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Start Date</span>
-                  <span className="text-gray-500">{emp.startDate}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Salary</span>
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(emp.salary)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-4 border-t border-gray-100 pt-3">
-                <a
-                  href={`mailto:${emp.email}`}
-                  className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-500"
-                >
-                  <Mail className="h-3 w-3" />
-                  {emp.email}
-                </a>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

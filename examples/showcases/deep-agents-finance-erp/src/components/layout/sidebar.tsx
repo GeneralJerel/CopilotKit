@@ -25,9 +25,9 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 flex w-[72px] flex-col items-center border-r border-gray-200 bg-white py-4">
-      <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600">
-        <Bot className="h-5 w-5 text-white" />
+    <aside className="fixed inset-y-0 left-0 z-50 flex w-[72px] flex-col items-center border-r border-border bg-card py-4">
+      <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
+        <Bot className="h-5 w-5 text-primary-foreground" />
       </div>
 
       <nav className="flex flex-1 flex-col items-center gap-1">
@@ -42,16 +42,16 @@ export function Sidebar() {
               className={cn(
                 "group relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200",
                 isActive
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               <item.icon className="h-5 w-5" />
-              <span className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+              <span className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-lg bg-foreground px-3 py-1.5 text-xs font-medium text-background opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                 {item.name}
               </span>
               {isActive && (
-                <span className="absolute -left-[18px] h-5 w-1 rounded-r-full bg-blue-500" />
+                <span className="absolute -left-[18px] h-5 w-1 rounded-r-full bg-primary" />
               )}
             </Link>
           );
@@ -59,7 +59,7 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto">
-        <button className="flex h-11 w-11 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700">
+        <button className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
           <Settings className="h-5 w-5" />
         </button>
       </div>

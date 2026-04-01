@@ -7,6 +7,8 @@ import { Shell } from "@/components/layout/shell";
 import { Header } from "@/components/layout/header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { invoices } from "@/lib/data";
 import { formatCurrency, cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
@@ -48,30 +50,36 @@ function InvoicesContent() {
       <div className="space-y-6 p-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-gray-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              Outstanding
-            </p>
-            <p className="mt-2 text-2xl font-bold text-amber-600">
-              {formatCurrency(totalOutstanding)}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              Collected YTD
-            </p>
-            <p className="mt-2 text-2xl font-bold text-emerald-600">
-              {formatCurrency(totalPaid)}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-              Overdue
-            </p>
-            <p className="mt-2 text-2xl font-bold text-red-600">
-              {overdueCount} invoice{overdueCount !== 1 && "s"}
-            </p>
-          </div>
+          <Card size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Outstanding
+              </p>
+              <p className="mt-2 text-2xl font-bold text-amber-600">
+                {formatCurrency(totalOutstanding)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Collected YTD
+              </p>
+              <p className="mt-2 text-2xl font-bold text-emerald-600">
+                {formatCurrency(totalPaid)}
+              </p>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Overdue
+              </p>
+              <p className="mt-2 text-2xl font-bold text-red-600">
+                {overdueCount} invoice{overdueCount !== 1 && "s"}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Actions Bar */}
@@ -84,70 +92,72 @@ function InvoicesContent() {
                 className={cn(
                   "rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors",
                   activeFilter === f
-                    ? "border-blue-200 bg-blue-50 text-blue-700"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground hover:border-border hover:text-foreground"
                 )}
               >
                 {f}
               </Link>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
+          <Button>
             <Plus className="h-4 w-4" />
             New Invoice
-          </button>
+          </Button>
         </div>
 
         {/* Invoice Table */}
-        <div className="rounded-2xl border border-gray-200 bg-white">
-          <DataTable<Invoice>
-            keyExtractor={(row) => row.id}
-            columns={[
-              {
-                header: "Invoice",
-                accessor: (row) => (
-                  <div>
-                    <p className="font-medium text-gray-900">{row.number}</p>
-                  </div>
-                ),
-              },
-              {
-                header: "Client",
-                accessor: "client",
-                className: "text-gray-700",
-              },
-              {
-                header: "Amount",
-                accessor: (row) => (
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(row.amount)}
-                  </span>
-                ),
-              },
-              {
-                header: "Issued",
-                accessor: "issuedDate",
-                className: "text-gray-500",
-              },
-              {
-                header: "Due Date",
-                accessor: "dueDate",
-                className: "text-gray-500",
-              },
-              {
-                header: "Items",
-                accessor: (row) => (
-                  <span className="text-gray-500">{row.items.length}</span>
-                ),
-              },
-              {
-                header: "Status",
-                accessor: (row) => <StatusBadge status={row.status} />,
-              },
-            ]}
-            data={filtered}
-          />
-        </div>
+        <Card className="p-0">
+          <CardContent className="p-0">
+            <DataTable<Invoice>
+              keyExtractor={(row) => row.id}
+              columns={[
+                {
+                  header: "Invoice",
+                  accessor: (row) => (
+                    <div>
+                      <p className="font-medium text-foreground">{row.number}</p>
+                    </div>
+                  ),
+                },
+                {
+                  header: "Client",
+                  accessor: "client",
+                  className: "text-foreground",
+                },
+                {
+                  header: "Amount",
+                  accessor: (row) => (
+                    <span className="font-medium text-foreground">
+                      {formatCurrency(row.amount)}
+                    </span>
+                  ),
+                },
+                {
+                  header: "Issued",
+                  accessor: "issuedDate",
+                  className: "text-muted-foreground",
+                },
+                {
+                  header: "Due Date",
+                  accessor: "dueDate",
+                  className: "text-muted-foreground",
+                },
+                {
+                  header: "Items",
+                  accessor: (row) => (
+                    <span className="text-muted-foreground">{row.items.length}</span>
+                  ),
+                },
+                {
+                  header: "Status",
+                  accessor: (row) => <StatusBadge status={row.status} />,
+                },
+              ]}
+              data={filtered}
+            />
+          </CardContent>
+        </Card>
       </div>
     </Shell>
   );

@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+
 interface Column<T> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
@@ -18,40 +27,35 @@ export function DataTable<T>({
   keyExtractor,
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-gray-200">
-            {columns.map((col, i) => (
-              <th
-                key={i}
-                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {data.map((row) => (
-            <tr
-              key={keyExtractor(row)}
-              className="transition-colors hover:bg-gray-50"
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {columns.map((col, i) => (
+            <TableHead
+              key={i}
+              className="px-4 text-xs uppercase tracking-wider"
             >
-              {columns.map((col, i) => (
-                <td
-                  key={i}
-                  className={`px-4 py-3.5 text-sm ${col.className || "text-gray-600"}`}
-                >
-                  {typeof col.accessor === "function"
-                    ? col.accessor(row)
-                    : String(row[col.accessor])}
-                </td>
-              ))}
-            </tr>
+              {col.header}
+            </TableHead>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data.map((row) => (
+          <TableRow key={keyExtractor(row)}>
+            {columns.map((col, i) => (
+              <TableCell
+                key={i}
+                className={`px-4 py-3.5 ${col.className || "text-muted-foreground"}`}
+              >
+                {typeof col.accessor === "function"
+                  ? col.accessor(row)
+                  : String(row[col.accessor])}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

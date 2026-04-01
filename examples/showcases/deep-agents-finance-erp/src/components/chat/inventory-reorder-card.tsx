@@ -2,6 +2,7 @@
 
 import { Package, Check, SkipForward } from "lucide-react";
 import { ToolCallStatus } from "@copilotkit/react-core/v2";
+import { Button } from "@/components/ui/button";
 
 type ReorderItem = {
   sku: string;
@@ -42,8 +43,8 @@ export function InventoryReorderCard(props: Props) {
 
   if (status === ToolCallStatus.InProgress) {
     return (
-      <div className="my-2 rounded-2xl border border-gray-200 bg-white p-5">
-        <div className="flex items-center gap-2 text-gray-400">
+      <div className="my-2 rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <Package className="h-4 w-4 animate-pulse" />
           <span className="text-sm">Analyzing inventory levels...</span>
         </div>
@@ -64,28 +65,28 @@ export function InventoryReorderCard(props: Props) {
 
   return (
     <div
-      className={`my-2 rounded-2xl border bg-white p-5 ${isComplete ? "border-gray-100 opacity-80" : "border-gray-200"}`}
+      className={`my-2 rounded-2xl border bg-card p-5 ${isComplete ? "border-border/50 opacity-80" : "border-border"}`}
     >
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
-          <Package className="h-4 w-4 text-blue-600" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+          <Package className="h-4 w-4 text-primary" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-foreground">
             Purchase Order Review
           </p>
           {supplier && (
-            <p className="text-xs text-gray-500">Supplier: {supplier}</p>
+            <p className="text-xs text-muted-foreground">Supplier: {supplier}</p>
           )}
         </div>
       </div>
 
       {/* Items table */}
-      <div className="mb-4 rounded-xl border border-gray-100 bg-gray-50/50">
+      <div className="mb-4 rounded-xl border border-border/50 bg-muted/50">
         <table className="w-full text-xs">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-gray-500">
+            <tr className="border-b border-border/50 text-left text-muted-foreground">
               <th className="px-3 py-2 font-medium">SKU</th>
               <th className="px-3 py-2 font-medium">Item</th>
               <th className="px-3 py-2 font-medium text-right">Current</th>
@@ -95,31 +96,31 @@ export function InventoryReorderCard(props: Props) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.sku} className="border-b border-gray-50">
-                <td className="px-3 py-2 font-mono text-gray-500">
+              <tr key={item.sku} className="border-b border-border/30">
+                <td className="px-3 py-2 font-mono text-muted-foreground">
                   {item.sku}
                 </td>
-                <td className="px-3 py-2 text-gray-700">{item.name}</td>
+                <td className="px-3 py-2 text-foreground">{item.name}</td>
                 <td
                   className={`px-3 py-2 text-right font-medium ${item.currentQty === 0 ? "text-red-600" : "text-amber-600"}`}
                 >
                   {item.currentQty}
                 </td>
-                <td className="px-3 py-2 text-right text-gray-900">
+                <td className="px-3 py-2 text-right text-foreground">
                   {item.reorderQty}
                 </td>
-                <td className="px-3 py-2 text-right font-medium text-gray-900">
+                <td className="px-3 py-2 text-right font-medium text-foreground">
                   {formatCurrency(item.reorderQty * item.unitCost)}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex items-center justify-between border-t border-gray-200 px-3 py-2">
-          <span className="text-xs font-medium text-gray-500">
+        <div className="flex items-center justify-between border-t border-border px-3 py-2">
+          <span className="text-xs font-medium text-muted-foreground">
             Estimated PO Total
           </span>
-          <span className="text-sm font-bold text-gray-900">
+          <span className="text-sm font-bold text-foreground">
             {formatCurrency(estimatedTotal)}
           </span>
         </div>
@@ -128,7 +129,7 @@ export function InventoryReorderCard(props: Props) {
       {/* Status badge (complete state) */}
       {isComplete && (
         <div
-          className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium ${wasApproved ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-600"}`}
+          className={`mb-3 flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium ${wasApproved ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}
         >
           {wasApproved ? (
             <Check className="h-3.5 w-3.5" />
@@ -142,28 +143,29 @@ export function InventoryReorderCard(props: Props) {
       {/* Action buttons (executing state only) */}
       {status === ToolCallStatus.Executing && (
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() =>
               props.respond({
                 approved: true,
                 message: `PO approved for ${items.length} items, estimated ${formatCurrency(estimatedTotal)}`,
               })
             }
-            className="flex-1 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-blue-500"
+            className="flex-1"
           >
             Approve PO
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
             onClick={() =>
               props.respond({
                 approved: false,
                 message: "Reorder skipped by user",
               })
             }
-            className="flex-1 rounded-xl bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-200"
+            className="flex-1"
           >
             Skip Reorder
-          </button>
+          </Button>
         </div>
       )}
     </div>
