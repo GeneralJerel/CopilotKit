@@ -23,7 +23,7 @@ export function RevenueChart() {
         </div>
         <div className="flex gap-4 text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-indigo-500" />
+            <span className="h-2 w-2 rounded-full bg-blue-500" />
             <span className="text-gray-500">Revenue</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -41,8 +41,8 @@ export function RevenueChart() {
         <AreaChart data={revenueData}>
           <defs>
             <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity={0.15} />
-              <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+              <stop offset="0%" stopColor="#2563eb" stopOpacity={0.15} />
+              <stop offset="100%" stopColor="#2563eb" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="gradExpenses" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#fb7185" stopOpacity={0.1} />
@@ -84,7 +84,7 @@ export function RevenueChart() {
           <Area
             type="monotone"
             dataKey="revenue"
-            stroke="#6366f1"
+            stroke="#2563eb"
             strokeWidth={2}
             fill="url(#gradRevenue)"
           />

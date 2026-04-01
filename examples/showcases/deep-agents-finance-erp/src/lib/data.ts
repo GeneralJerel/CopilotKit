@@ -56,12 +56,12 @@ export const revenueData: RevenueDataPoint[] = [
 ];
 
 export const expenseBreakdown: ExpenseBreakdown[] = [
-  { category: "Payroll", amount: 580000, percentage: 38, color: "#6366f1" },
-  { category: "Operations", amount: 290000, percentage: 19, color: "#8b5cf6" },
-  { category: "Marketing", amount: 215000, percentage: 14, color: "#a78bfa" },
-  { category: "Infrastructure", amount: 185000, percentage: 12, color: "#c4b5fd" },
-  { category: "R&D", amount: 155000, percentage: 10, color: "#ddd6fe" },
-  { category: "Other", amount: 105000, percentage: 7, color: "#ede9fe" },
+  { category: "Payroll", amount: 580000, percentage: 38, color: "#2563eb" },
+  { category: "Operations", amount: 290000, percentage: 19, color: "#3b82f6" },
+  { category: "Marketing", amount: 215000, percentage: 14, color: "#60a5fa" },
+  { category: "Infrastructure", amount: 185000, percentage: 12, color: "#93c5fd" },
+  { category: "R&D", amount: 155000, percentage: 10, color: "#bfdbfe" },
+  { category: "Other", amount: 105000, percentage: 7, color: "#dbeafe" },
 ];
 
 export const invoices: Invoice[] = [

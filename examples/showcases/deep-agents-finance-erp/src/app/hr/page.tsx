@@ -50,7 +50,7 @@ export default function HRPage() {
 
         {/* Actions */}
         <div className="flex items-center justify-end">
-          <button className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500">
+          <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
             <Plus className="h-4 w-4" />
             Add Employee
           </button>
@@ -65,7 +65,7 @@ export default function HRPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm font-bold text-white">
                     {emp.avatar}
                   </div>
                   <div>
@@ -96,7 +96,7 @@ export default function HRPage() {
               <div className="mt-4 border-t border-gray-100 pt-3">
                 <a
                   href={`mailto:${emp.email}`}
-                  className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-500"
+                  className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-500"
                 >
                   <Mail className="h-3 w-3" />
                   {emp.email}
