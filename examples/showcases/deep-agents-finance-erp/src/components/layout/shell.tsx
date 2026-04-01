@@ -2,6 +2,10 @@
 
 import { CopilotSidebar } from "@copilotkit/react-ui";
 import { useCopilotReadable } from "@copilotkit/react-core";
+import { useNavigateAndFilter } from "@/hooks/use-navigate-and-filter";
+import { useRenderChart } from "@/hooks/use-render-chart";
+import { useApproveInvoicePayment } from "@/hooks/use-approve-invoice-payment";
+import { useApproveInventoryReorder } from "@/hooks/use-approve-inventory-reorder";
 import { Sidebar } from "./sidebar";
 import {
   kpis,
@@ -42,6 +46,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
     description: "Employee directory with roles, departments, and salaries",
     value: JSON.stringify(employees),
   });
+
+  // Frontend tools
+  useNavigateAndFilter();
+  useRenderChart();
+
+  // Human-in-the-loop
+  useApproveInvoicePayment();
+  useApproveInventoryReorder();
 
   return (
     <div className="flex h-screen bg-gray-50">

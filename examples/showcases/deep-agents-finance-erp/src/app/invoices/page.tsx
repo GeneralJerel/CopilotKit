@@ -1,15 +1,34 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Shell } from "@/components/layout/shell";
 import { Header } from "@/components/layout/header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { invoices } from "@/lib/data";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import type { Invoice } from "@/types/erp";
 
 export default function InvoicesPage() {
+  return (
+    <Suspense>
+      <InvoicesContent />
+    </Suspense>
+  );
+}
+
+function InvoicesContent() {
+  const searchParams = useSearchParams();
+  const activeFilter = searchParams.get("filter") || "all";
+
+  const filtered =
+    activeFilter === "all"
+      ? invoices
+      : invoices.filter((inv) => inv.status === activeFilter);
+
   const totalOutstanding = invoices
     .filter((inv) => inv.status === "pending" || inv.status === "overdue")
     .reduce((sum, inv) => sum + inv.amount, 0);
@@ -58,13 +77,19 @@ export default function InvoicesPage() {
         {/* Actions Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {["all", "paid", "pending", "overdue", "draft"].map((filter) => (
-              <button
-                key={filter}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium capitalize text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
+            {["all", "paid", "pending", "overdue", "draft"].map((f) => (
+              <Link
+                key={f}
+                href={f === "all" ? "/invoices" : `/invoices?filter=${f}`}
+                className={cn(
+                  "rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors",
+                  activeFilter === f
+                    ? "border-blue-200 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                )}
               >
-                {filter}
-              </button>
+                {f}
+              </Link>
             ))}
           </div>
           <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
@@ -120,7 +145,7 @@ export default function InvoicesPage() {
                 accessor: (row) => <StatusBadge status={row.status} />,
               },
             ]}
-            data={invoices}
+            data={filtered}
           />
         </div>
       </div>
