@@ -22,27 +22,27 @@ export default function HRPage() {
       <div className="space-y-6 p-8">
         {/* Summary */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Active Employees
             </p>
-            <p className="mt-2 text-2xl font-bold text-zinc-100">
+            <p className="mt-2 text-2xl font-bold text-gray-900">
               {activeCount}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Departments
             </p>
-            <p className="mt-2 text-2xl font-bold text-zinc-100">
+            <p className="mt-2 text-2xl font-bold text-gray-900">
               {departments.length}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Annual Payroll
             </p>
-            <p className="mt-2 text-2xl font-bold text-zinc-100">
+            <p className="mt-2 text-2xl font-bold text-gray-900">
               {formatCurrency(totalPayroll)}
             </p>
           </div>
@@ -61,7 +61,7 @@ export default function HRPage() {
           {employees.map((emp) => (
             <div
               key={emp.id}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 transition-all hover:border-zinc-700"
+              className="rounded-2xl border border-gray-200 bg-white p-5 transition-all hover:border-gray-300 hover:shadow-md"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -69,8 +69,8 @@ export default function HRPage() {
                     {emp.avatar}
                   </div>
                   <div>
-                    <p className="font-medium text-zinc-200">{emp.name}</p>
-                    <p className="text-xs text-zinc-500">{emp.role}</p>
+                    <p className="font-medium text-gray-900">{emp.name}</p>
+                    <p className="text-xs text-gray-500">{emp.role}</p>
                   </div>
                 </div>
                 <StatusBadge status={emp.status} />
@@ -78,25 +78,25 @@ export default function HRPage() {
 
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-500">Department</span>
-                  <span className="text-zinc-300">{emp.department}</span>
+                  <span className="text-gray-500">Department</span>
+                  <span className="text-gray-700">{emp.department}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-500">Start Date</span>
-                  <span className="text-zinc-400">{emp.startDate}</span>
+                  <span className="text-gray-500">Start Date</span>
+                  <span className="text-gray-500">{emp.startDate}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-500">Salary</span>
-                  <span className="font-medium text-zinc-200">
+                  <span className="text-gray-500">Salary</span>
+                  <span className="font-medium text-gray-900">
                     {formatCurrency(emp.salary)}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4 border-t border-zinc-800 pt-3">
+              <div className="mt-4 border-t border-gray-100 pt-3">
                 <a
                   href={`mailto:${emp.email}`}
-                  className="flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300"
+                  className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-500"
                 >
                   <Mail className="h-3 w-3" />
                   {emp.email}

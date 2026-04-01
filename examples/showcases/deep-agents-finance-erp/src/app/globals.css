@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-foreground: #fafafa;
-  --border: #27272a;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --border: #e4e4e7;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
   --accent: #6366f1;
-  --accent-foreground: #fafafa;
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --success: #10b981;
   --warning: #f59e0b;
@@ -45,17 +45,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #d4d4d8;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #a1a1aa;
 }
 
-/* CopilotKit overrides for dark theme */
+/* CopilotKit overrides */
 .copilotKitSidebar {
-  --copilot-kit-background-color: #18181b;
-  --copilot-kit-secondary-color: #27272a;
   --copilot-kit-primary-color: #6366f1;
 }

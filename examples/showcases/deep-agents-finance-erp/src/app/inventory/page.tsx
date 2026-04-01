@@ -26,33 +26,33 @@ export default function InventoryPage() {
       <div className="space-y-6 p-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
             <div className="flex items-center gap-2">
-              <Package className="h-4 w-4 text-indigo-400" />
-              <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+              <Package className="h-4 w-4 text-indigo-600" />
+              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
                 Total SKUs
               </p>
             </div>
-            <p className="mt-2 text-2xl font-bold text-zinc-100">
+            <p className="mt-2 text-2xl font-bold text-gray-900">
               {totalSKUs}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Inventory Value
             </p>
-            <p className="mt-2 text-2xl font-bold text-zinc-100">
+            <p className="mt-2 text-2xl font-bold text-gray-900">
               {formatCurrency(totalValue)}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-400" />
-              <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
                 Low / Out of Stock
               </p>
             </div>
-            <p className="mt-2 text-2xl font-bold text-amber-400">
+            <p className="mt-2 text-2xl font-bold text-amber-600">
               {lowStockCount} items
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function InventoryPage() {
             {["all", "in-stock", "low-stock", "out-of-stock"].map((f) => (
               <button
                 key={f}
-                className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-medium capitalize text-zinc-400 transition-colors hover:border-zinc-700 hover:text-zinc-200"
+                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium capitalize text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
                 {f.replace("-", " ")}
               </button>
@@ -77,24 +77,24 @@ export default function InventoryPage() {
         </div>
 
         {/* Inventory Table */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50">
+        <div className="rounded-2xl border border-gray-200 bg-white">
           <DataTable<InventoryItem>
             keyExtractor={(row) => row.id}
             columns={[
               {
                 header: "SKU",
                 accessor: "sku",
-                className: "font-mono text-zinc-400 text-xs",
+                className: "font-mono text-gray-500 text-xs",
               },
               {
                 header: "Item Name",
                 accessor: "name",
-                className: "text-zinc-200 font-medium",
+                className: "text-gray-900 font-medium",
               },
               {
                 header: "Category",
                 accessor: "category",
-                className: "text-zinc-400",
+                className: "text-gray-500",
               },
               {
                 header: "Qty",
@@ -102,8 +102,8 @@ export default function InventoryPage() {
                   <span
                     className={
                       row.quantity <= row.reorderLevel
-                        ? "font-medium text-amber-400"
-                        : "text-zinc-300"
+                        ? "font-medium text-amber-600"
+                        : "text-gray-700"
                     }
                   >
                     {row.quantity}
@@ -113,13 +113,13 @@ export default function InventoryPage() {
               {
                 header: "Reorder Lvl",
                 accessor: (row) => (
-                  <span className="text-zinc-500">{row.reorderLevel}</span>
+                  <span className="text-gray-500">{row.reorderLevel}</span>
                 ),
               },
               {
                 header: "Unit Cost",
                 accessor: (row) => (
-                  <span className="text-zinc-300">
+                  <span className="text-gray-700">
                     {formatCurrency(row.unitCost)}
                   </span>
                 ),
@@ -127,7 +127,7 @@ export default function InventoryPage() {
               {
                 header: "Location",
                 accessor: "location",
-                className: "text-zinc-500",
+                className: "text-gray-500",
               },
               {
                 header: "Status",

@@ -9,11 +9,11 @@ import { formatCurrency } from "@/lib/utils";
 import type { Account, Transaction } from "@/types/erp";
 
 const accountTypeColors: Record<string, string> = {
-  asset: "text-emerald-400 bg-emerald-400/10",
-  liability: "text-rose-400 bg-rose-400/10",
-  equity: "text-indigo-400 bg-indigo-400/10",
-  revenue: "text-sky-400 bg-sky-400/10",
-  expense: "text-amber-400 bg-amber-400/10",
+  asset: "text-emerald-700 bg-emerald-50",
+  liability: "text-rose-700 bg-rose-50",
+  equity: "text-indigo-700 bg-indigo-50",
+  revenue: "text-sky-700 bg-sky-50",
+  expense: "text-amber-700 bg-amber-50",
 };
 
 export default function AccountsPage() {
@@ -31,36 +31,36 @@ export default function AccountsPage() {
       <div className="space-y-6 p-8">
         {/* Balance Summary */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Total Assets
             </p>
-            <p className="mt-2 text-2xl font-bold text-emerald-400">
+            <p className="mt-2 text-2xl font-bold text-emerald-600">
               {formatCurrency(totalAssets)}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Total Liabilities
             </p>
-            <p className="mt-2 text-2xl font-bold text-rose-400">
+            <p className="mt-2 text-2xl font-bold text-rose-600">
               {formatCurrency(totalLiabilities)}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Net Position
             </p>
-            <p className="mt-2 text-2xl font-bold text-indigo-400">
+            <p className="mt-2 text-2xl font-bold text-indigo-600">
               {formatCurrency(totalAssets - totalLiabilities)}
             </p>
           </div>
         </div>
 
         {/* Chart of Accounts */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50">
-          <div className="border-b border-zinc-800 px-6 py-4">
-            <h3 className="text-sm font-semibold text-zinc-100">
+        <div className="rounded-2xl border border-gray-200 bg-white">
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h3 className="text-sm font-semibold text-gray-900">
               Chart of Accounts
             </h3>
           </div>
@@ -70,12 +70,12 @@ export default function AccountsPage() {
               {
                 header: "Code",
                 accessor: "code",
-                className: "font-mono text-zinc-400",
+                className: "font-mono text-gray-500",
               },
               {
                 header: "Account Name",
                 accessor: "name",
-                className: "text-zinc-200 font-medium",
+                className: "text-gray-900 font-medium",
               },
               {
                 header: "Type",
@@ -90,7 +90,7 @@ export default function AccountsPage() {
               {
                 header: "Balance",
                 accessor: (row) => (
-                  <span className="font-medium text-zinc-200">
+                  <span className="font-medium text-gray-900">
                     {formatCurrency(row.balance)}
                   </span>
                 ),
@@ -101,9 +101,9 @@ export default function AccountsPage() {
         </div>
 
         {/* Transaction Ledger */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50">
-          <div className="border-b border-zinc-800 px-6 py-4">
-            <h3 className="text-sm font-semibold text-zinc-100">
+        <div className="rounded-2xl border border-gray-200 bg-white">
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h3 className="text-sm font-semibold text-gray-900">
               Transaction Ledger
             </h3>
           </div>
@@ -113,22 +113,22 @@ export default function AccountsPage() {
               {
                 header: "Date",
                 accessor: "date",
-                className: "text-zinc-500",
+                className: "text-gray-500",
               },
               {
                 header: "Description",
                 accessor: "description",
-                className: "text-zinc-200 font-medium",
+                className: "text-gray-900 font-medium",
               },
               {
                 header: "Category",
                 accessor: "category",
-                className: "text-zinc-400",
+                className: "text-gray-500",
               },
               {
                 header: "Account",
                 accessor: "accountCode",
-                className: "font-mono text-zinc-500",
+                className: "font-mono text-gray-500",
               },
               {
                 header: "Amount",
@@ -136,8 +136,8 @@ export default function AccountsPage() {
                   <span
                     className={
                       row.type === "credit"
-                        ? "font-medium text-emerald-400"
-                        : "font-medium text-zinc-300"
+                        ? "font-medium text-emerald-600"
+                        : "font-medium text-gray-700"
                     }
                   >
                     {row.type === "credit" ? "+" : "-"}

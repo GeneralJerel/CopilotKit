@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { invoices } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
-import { Plus, Filter } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Invoice } from "@/types/erp";
 
 export default function InvoicesPage() {
@@ -29,27 +29,27 @@ export default function InvoicesPage() {
       <div className="space-y-6 p-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Outstanding
             </p>
-            <p className="mt-2 text-2xl font-bold text-amber-400">
+            <p className="mt-2 text-2xl font-bold text-amber-600">
               {formatCurrency(totalOutstanding)}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Collected YTD
             </p>
-            <p className="mt-2 text-2xl font-bold text-emerald-400">
+            <p className="mt-2 text-2xl font-bold text-emerald-600">
               {formatCurrency(totalPaid)}
             </p>
           </div>
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Overdue
             </p>
-            <p className="mt-2 text-2xl font-bold text-red-400">
+            <p className="mt-2 text-2xl font-bold text-red-600">
               {overdueCount} invoice{overdueCount !== 1 && "s"}
             </p>
           </div>
@@ -61,7 +61,7 @@ export default function InvoicesPage() {
             {["all", "paid", "pending", "overdue", "draft"].map((filter) => (
               <button
                 key={filter}
-                className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-medium capitalize text-zinc-400 transition-colors hover:border-zinc-700 hover:text-zinc-200"
+                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium capitalize text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
                 {filter}
               </button>
@@ -74,7 +74,7 @@ export default function InvoicesPage() {
         </div>
 
         {/* Invoice Table */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50">
+        <div className="rounded-2xl border border-gray-200 bg-white">
           <DataTable<Invoice>
             keyExtractor={(row) => row.id}
             columns={[
@@ -82,19 +82,19 @@ export default function InvoicesPage() {
                 header: "Invoice",
                 accessor: (row) => (
                   <div>
-                    <p className="font-medium text-zinc-200">{row.number}</p>
+                    <p className="font-medium text-gray-900">{row.number}</p>
                   </div>
                 ),
               },
               {
                 header: "Client",
                 accessor: "client",
-                className: "text-zinc-300",
+                className: "text-gray-700",
               },
               {
                 header: "Amount",
                 accessor: (row) => (
-                  <span className="font-medium text-zinc-200">
+                  <span className="font-medium text-gray-900">
                     {formatCurrency(row.amount)}
                   </span>
                 ),
@@ -102,17 +102,17 @@ export default function InvoicesPage() {
               {
                 header: "Issued",
                 accessor: "issuedDate",
-                className: "text-zinc-500",
+                className: "text-gray-500",
               },
               {
                 header: "Due Date",
                 accessor: "dueDate",
-                className: "text-zinc-500",
+                className: "text-gray-500",
               },
               {
                 header: "Items",
                 accessor: (row) => (
-                  <span className="text-zinc-400">{row.items.length}</span>
+                  <span className="text-gray-500">{row.items.length}</span>
                 ),
               },
               {
