@@ -25,8 +25,8 @@ export function KPICard({ kpi }: { kpi: KPI }) {
   return (
     <div className="group rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-gray-300 hover:shadow-md">
       <div className="flex items-start justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
-          <Icon className="h-5 w-5 text-indigo-600" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+          <Icon className="h-5 w-5 text-blue-600" />
         </div>
         <div
           className={cn(

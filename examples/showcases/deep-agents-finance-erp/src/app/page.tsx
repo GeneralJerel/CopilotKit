@@ -46,7 +46,7 @@ export default function DashboardPage() {
               </h3>
               <Link
                 href="/accounts"
-                className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-500"
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-500"
               >
                 View all <ArrowRight className="h-3 w-3" />
               </Link>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
               </h3>
               <Link
                 href="/invoices"
-                className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-500"
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-500"
               >
                 View all <ArrowRight className="h-3 w-3" />
               </Link>

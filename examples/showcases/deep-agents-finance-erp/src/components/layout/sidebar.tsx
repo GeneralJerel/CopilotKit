@@ -26,7 +26,7 @@ export function Sidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-50 flex w-[72px] flex-col items-center border-r border-gray-200 bg-white py-4">
-      <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
+      <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600">
         <Bot className="h-5 w-5 text-white" />
       </div>
 
@@ -42,7 +42,7 @@ export function Sidebar() {
               className={cn(
                 "group relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200",
                 isActive
-                  ? "bg-indigo-50 text-indigo-600"
+                  ? "bg-blue-50 text-blue-600"
                   : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
               )}
             >
@@ -51,7 +51,7 @@ export function Sidebar() {
                 {item.name}
               </span>
               {isActive && (
-                <span className="absolute -left-[18px] h-5 w-1 rounded-r-full bg-indigo-500" />
+                <span className="absolute -left-[18px] h-5 w-1 rounded-r-full bg-blue-500" />
               )}
             </Link>
           );

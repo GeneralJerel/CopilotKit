@@ -28,7 +28,7 @@ export default function InventoryPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-gray-200 bg-white p-5">
             <div className="flex items-center gap-2">
-              <Package className="h-4 w-4 text-indigo-600" />
+              <Package className="h-4 w-4 text-blue-600" />
               <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
                 Total SKUs
               </p>
@@ -70,7 +70,7 @@ export default function InventoryPage() {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500">
+          <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
             <Plus className="h-4 w-4" />
             Add Item
           </button>

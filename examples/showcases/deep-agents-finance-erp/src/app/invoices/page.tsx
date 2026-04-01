@@ -67,7 +67,7 @@ export default function InvoicesPage() {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500">
+          <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500">
             <Plus className="h-4 w-4" />
             New Invoice
           </button>

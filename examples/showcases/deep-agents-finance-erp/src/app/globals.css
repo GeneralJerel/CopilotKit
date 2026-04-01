@@ -8,7 +8,7 @@
   --border: #e4e4e7;
   --muted: #f4f4f5;
   --muted-foreground: #71717a;
-  --accent: #6366f1;
+  --accent: #2563eb;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --success: #10b981;
@@ -55,5 +55,5 @@ body {
 
 /* CopilotKit overrides */
 .copilotKitSidebar {
-  --copilot-kit-primary-color: #6366f1;
+  --copilot-kit-primary-color: #2563eb;
 }

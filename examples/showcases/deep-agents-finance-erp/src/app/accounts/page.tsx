@@ -11,7 +11,7 @@ import type { Account, Transaction } from "@/types/erp";
 const accountTypeColors: Record<string, string> = {
   asset: "text-emerald-700 bg-emerald-50",
   liability: "text-rose-700 bg-rose-50",
-  equity: "text-indigo-700 bg-indigo-50",
+  equity: "text-blue-700 bg-blue-50",
   revenue: "text-sky-700 bg-sky-50",
   expense: "text-amber-700 bg-amber-50",
 };
@@ -51,7 +51,7 @@ export default function AccountsPage() {
             <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
               Net Position
             </p>
-            <p className="mt-2 text-2xl font-bold text-indigo-600">
+            <p className="mt-2 text-2xl font-bold text-blue-600">
               {formatCurrency(totalAssets - totalLiabilities)}
             </p>
           </div>
