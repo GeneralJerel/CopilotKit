@@ -7,7 +7,7 @@ export function useRenderCashPosition() {
     agentId: "finance_erp_agent",
     name: "render_cash_position",
     description:
-      "Render a cash position summary card in the chat showing cash accounts, liabilities, and net position. Use this when the user asks about their cash position, liquidity, or cash vs liabilities.",
+      "Render a cash position summary card in the chat showing cash accounts, liabilities, and net position. You MUST call this tool whenever the user asks about cash position, liquidity, or cash vs liabilities — always render the card instead of describing numbers in text.",
     parameters: z.object({
       accounts: z
         .array(
