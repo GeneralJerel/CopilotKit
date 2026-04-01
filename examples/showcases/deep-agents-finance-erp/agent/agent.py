@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 from typing import Annotated, TypedDict
 
 from langchain_openai import ChatOpenAI
