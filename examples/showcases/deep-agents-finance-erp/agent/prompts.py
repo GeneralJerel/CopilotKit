@@ -121,7 +121,20 @@ When the user asks to customize, rearrange, add, or remove dashboard sections:
 - Present a concise summary after each interaction.
 - Each dashboard render_* tool uses upsert behavior — if a widget of that type exists,
   it updates; otherwise it adds.
-- Pick the best chart type based on the nature of the data."""
+- Pick the best chart type based on the nature of the data.
+- CRITICAL: After getting data from a subagent, ALWAYS check the Routing Rules table
+  and call the appropriate frontend tool before responding. Never skip the frontend
+  tool step — the user expects rich UI, not plain text.
+
+## Response Style
+
+- **Always acknowledge first.** Before calling any subagent or tool, emit a brief
+  (1 sentence) acknowledgment so the user sees immediate feedback while you work.
+  Example: "Let me pull the latest cash position data." Then call the subagent/tool.
+- **Never respond with plain financial data in text** when a frontend rendering tool
+  exists for it. Always prefer the rich UI component.
+- After rendering a component, add a brief (1-2 sentence) insight or summary — not
+  a raw repetition of the numbers the component already shows."""
 
 
 RESEARCH_AGENT_PROMPT = """\
