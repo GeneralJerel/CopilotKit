@@ -23,19 +23,7 @@ import { useUpdateDashboardLayout } from "@/hooks/use-update-dashboard-layout";
 import { useResetDashboard } from "@/hooks/use-reset-dashboard";
 import { DashboardProvider, useDashboard } from "@/context/dashboard-context";
 import { Sidebar } from "./sidebar";
-import {
-  kpis,
-  invoices,
-  accounts,
-  transactions,
-  inventoryItems,
-  employees,
-  quarterlyRevenue,
-  cashFlowData,
-  arAging,
-  budgetVsActual,
-  monthlyExpenseByCategory,
-} from "@/lib/data";
+import { kpis } from "@/lib/data";
 
 const demoSuggestions = [
   {
@@ -128,72 +116,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
 function ShellInner({ children }: { children: React.ReactNode }) {
   const { widgets } = useDashboard();
 
-  // ERP data context
+  // Lightweight context — detailed data is available via backend research tools
   useAgentContext({
     description: "Key performance indicators for the company",
-    value: JSON.stringify(kpis),
-  });
-
-  useAgentContext({
-    description: "List of all invoices with client, amount, status, and dates",
-    value: JSON.stringify(invoices),
-  });
-
-  useAgentContext({
-    description: "Chart of accounts with balances and types",
-    value: JSON.stringify(accounts),
-  });
-
-  useAgentContext({
-    description: "Recent financial transactions",
-    value: JSON.stringify(transactions),
-  });
-
-  useAgentContext({
-    description: "Inventory items with stock levels and locations",
-    value: JSON.stringify(inventoryItems),
-  });
-
-  useAgentContext({
-    description: "Employee directory with roles, departments, and salaries",
-    value: JSON.stringify(employees),
-  });
-
-  useAgentContext({
-    description:
-      "Quarterly revenue history (8 quarters, FY2024 Q1 through FY2025 Q4) with revenue, expenses, and profit per quarter",
-    value: JSON.stringify(quarterlyRevenue),
-  });
-
-  useAgentContext({
-    description:
-      "Quarterly cash flow components (operating, investing, financing, net) for FY2024-FY2025",
-    value: JSON.stringify(cashFlowData),
-  });
-
-  useAgentContext({
-    description:
-      "Accounts receivable aging breakdown: current (0-30 days), 31-60 days, 61-90 days, 90+ days, and collection rate",
-    value: JSON.stringify(arAging),
-  });
-
-  useAgentContext({
-    description:
-      "Budget vs actual for current quarter (Q1 2026) by expense category with variance",
-    value: JSON.stringify(budgetVsActual),
-  });
-
-  useAgentContext({
-    description:
-      "Monthly expense breakdown by category for the current fiscal year — use for expense trend analysis and identifying spending patterns",
-    value: JSON.stringify(monthlyExpenseByCategory),
+    value: kpis,
   });
 
   // Dashboard layout context — agent uses this to know current widget IDs and configuration
   useAgentContext({
     description:
       "Current dashboard layout — list of widgets with their IDs, types, column spans, order, and configuration. Use widget IDs when removing or updating widgets.",
-    value: JSON.stringify(widgets),
+    value: widgets,
   });
 
   // Existing frontend tools (render in chat)
@@ -226,6 +159,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         agentId="finance_erp_agent"
         defaultOpen={false}
         welcomeScreen={FinanceSidebarWelcomeScreen}
+        instructions="You are the FinanceOS AI assistant. Always use the research subagent for data queries and the projections subagent for forecasts. Prefer rendering rich UI components (charts, cards, dashboard widgets) over plain text whenever possible."
         labels={{
           modalHeaderTitle: "FinanceOS AI",
           welcomeMessageText: "Ask about invoices, accounts, inventory, or HR.",

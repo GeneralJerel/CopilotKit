@@ -437,6 +437,24 @@ def query_ar_aging() -> str:
     return json.dumps(_AR_AGING, indent=2)
 
 
+@tool
+def query_monthly_expenses(category: str | None = None) -> str:
+    """Return monthly expense data for the current fiscal year as JSON.
+
+    Each entry has month plus expense amounts by category.
+    Optionally filter to a single category: payroll, operations, marketing,
+    infrastructure, rnd, other.
+    """
+    if category:
+        cat = category.lower().replace("&", "").replace(" ", "")
+        if cat == "rd":
+            cat = "rnd"
+        data = [{"month": row["month"], category: row.get(cat, 0)} for row in _MONTHLY_EXPENSES]
+    else:
+        data = _MONTHLY_EXPENSES
+    return json.dumps(data, indent=2)
+
+
 # ---------------------------------------------------------------------------
 # Projection tools (compute forecasts from historical data)
 # ---------------------------------------------------------------------------
@@ -711,6 +729,7 @@ research_tools = [
     query_cash_flow_components,
     query_budget_vs_actual,
     query_ar_aging,
+    query_monthly_expenses,
 ]
 
 projections_tools = [
