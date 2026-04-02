@@ -12,6 +12,16 @@ import { useRenderChart } from "@/hooks/use-render-chart";
 import { useRenderCashPosition } from "@/hooks/use-render-cash-position";
 import { useApproveInvoicePayment } from "@/hooks/use-approve-invoice-payment";
 import { useApproveInventoryReorder } from "@/hooks/use-approve-inventory-reorder";
+import { useRenderKpiCards } from "@/hooks/use-render-kpi-cards";
+import { useRenderRevenueChart } from "@/hooks/use-render-revenue-chart";
+import { useRenderExpenseBreakdown } from "@/hooks/use-render-expense-breakdown";
+import { useRenderTransactions } from "@/hooks/use-render-transactions";
+import { useRenderInvoices } from "@/hooks/use-render-invoices";
+import { useRenderCustomChart } from "@/hooks/use-render-custom-chart";
+import { useRemoveDashboardWidget } from "@/hooks/use-remove-dashboard-widget";
+import { useUpdateDashboardLayout } from "@/hooks/use-update-dashboard-layout";
+import { useResetDashboard } from "@/hooks/use-reset-dashboard";
+import { DashboardProvider, useDashboard } from "@/context/dashboard-context";
 import { Sidebar } from "./sidebar";
 import {
   kpis,
@@ -41,8 +51,13 @@ const demoSuggestions = [
     message: "Process payment for all overdue invoices",
   },
   {
-    title: "Reorder Inventory",
-    message: "Check inventory levels and reorder anything that needs restocking",
+    title: "Customize Dashboard",
+    message:
+      "Remove the expense breakdown and make the revenue chart full width",
+  },
+  {
+    title: "Add Forecast",
+    message: "Add a quarterly revenue forecast chart to my dashboard",
   },
 ];
 
@@ -93,6 +108,17 @@ function FinanceSidebarWelcomeScreen({
 }
 
 export function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <DashboardProvider>
+      <ShellInner>{children}</ShellInner>
+    </DashboardProvider>
+  );
+}
+
+function ShellInner({ children }: { children: React.ReactNode }) {
+  const { widgets } = useDashboard();
+
+  // ERP data context
   useAgentContext({
     description: "Key performance indicators for the company",
     value: JSON.stringify(kpis),
@@ -123,7 +149,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
     value: JSON.stringify(employees),
   });
 
-  // Frontend tools
+  // Dashboard layout context — agent uses this to know current widget IDs and configuration
+  useAgentContext({
+    description:
+      "Current dashboard layout — list of widgets with their IDs, types, column spans, order, and configuration. Use widget IDs when removing or updating widgets.",
+    value: JSON.stringify(widgets),
+  });
+
+  // Existing frontend tools (render in chat)
   useNavigateAndFilter();
   useRenderChart();
   useRenderCashPosition();
@@ -131,6 +164,19 @@ export function Shell({ children }: { children: React.ReactNode }) {
   // Human-in-the-loop
   useApproveInvoicePayment();
   useApproveInventoryReorder();
+
+  // Dashboard widget tools (render on dashboard page)
+  useRenderKpiCards();
+  useRenderRevenueChart();
+  useRenderExpenseBreakdown();
+  useRenderTransactions();
+  useRenderInvoices();
+  useRenderCustomChart();
+
+  // Dashboard management tools
+  useRemoveDashboardWidget();
+  useUpdateDashboardLayout();
+  useResetDashboard();
 
   return (
     <div className="flex h-screen bg-muted">
