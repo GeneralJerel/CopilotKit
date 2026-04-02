@@ -1,6 +1,6 @@
 # FinanceOS Deep Agents — Live Demo Guide
 
-A ~10 minute live demo showcasing CopilotKit's three frontend primitives: **useCopilotReadable** (context sharing), **useFrontendTool** (agent-driven UI), and **useHumanInTheLoop** (approval workflows).
+A ~12 minute live demo showcasing CopilotKit's frontend primitives: **useCopilotReadable** (context sharing), **useFrontendTool** (agent-driven UI), **useHumanInTheLoop** (approval workflows), and **customizable dashboard** (agent-designed layouts).
 
 ---
 
@@ -164,16 +164,73 @@ Check inventory levels and reorder anything that needs restocking
 
 ---
 
+## Act 6: Customizable Dashboard (3 min)
+
+> The finale: the agent redesigns the dashboard layout in real time via frontend tools.
+
+### Say
+"Everything we've seen so far — context, navigation, charts, approvals — those are tools the agent uses inside the chat. But what if the agent could redesign the application itself? Every widget on this dashboard is a frontend tool. The agent can add, remove, resize, and rearrange them on command."
+
+### Navigate back to Dashboard
+Click the Dashboard icon in the sidebar (or type `/` in the browser).
+
+### Type
+```
+Remove the expense breakdown and make the revenue chart full width
+```
+
+### See
+1. The Expense Breakdown widget disappears from the dashboard
+2. The Revenue vs Expenses chart expands to fill the full width (4 columns)
+3. The agent confirms what it changed
+
+### Say (after)
+"The agent just modified the live dashboard. It called `remove_dashboard_widget` to remove the expense breakdown, then `update_dashboard_layout` to resize the revenue chart. These are `useFrontendTool` hooks that mutate React state — the dashboard re-renders instantly."
+
+### Type
+```
+Add a quarterly revenue forecast chart to my dashboard
+```
+
+### See
+1. A new chart widget appears on the dashboard with:
+   - Title like "Revenue Forecast — Next 4 Quarters"
+   - Line or area chart with projected revenue data
+   - Rendered using the same Recharts components as the built-in charts
+2. The agent confirms the addition
+
+### Say (after)
+"The agent just created a brand new visualization and placed it on the dashboard. It called `render_custom_chart` with the data it generated from its forecast analysis. The chart is rendered using the same component library as the rest of the app — it's not a screenshot or an image, it's a live, interactive Recharts component."
+
+### Type
+```
+Reset my dashboard
+```
+
+### See
+- Dashboard returns to its original default layout (KPIs, revenue chart, expense breakdown, transactions, invoices)
+
+### Code Callout
+> `src/hooks/` — nine dashboard tools: `render_kpi_cards`, `render_revenue_chart`, `render_expense_breakdown`, `render_transactions`, `render_invoices`, `render_custom_chart`, `remove_dashboard_widget`, `update_dashboard_layout`, `reset_dashboard`. Each is a `useFrontendTool` that mutates the `DashboardProvider` context.
+
+> `src/context/dashboard-context.tsx` — React context holding the widget list. Default state matches the original hardcoded layout. Exposes `addWidget`, `removeWidget`, `updateWidget`, `setWidgets`, `resetToDefault`.
+
+> `src/components/dashboard/widget-renderer.tsx` — maps widget type to component. `dashboard-grid.tsx` reads the sorted widget list and renders them in a CSS grid.
+
+---
+
 ## Closing (1 min)
 
 ### Say
-"Let's recap what we just saw — three CopilotKit primitives powering an entire AI-native ERP:
+"Let's recap what we just saw — four CopilotKit patterns powering an entire AI-native ERP:
 
 1. **`useCopilotReadable`** — shared all our financial data with the agent in six lines of code. No custom API endpoints, no data serialization logic.
 
 2. **`useFrontendTool`** — gave the agent the ability to drive the UI. Navigate pages, apply filters, render charts inline. The agent becomes a co-pilot, not just a chatbot.
 
 3. **`useHumanInTheLoop`** — the guardrail for high-stakes actions. The agent proposes, the human approves. Payments don't process and purchase orders don't submit without explicit confirmation.
+
+4. **Customizable Dashboard** — every dashboard widget is a frontend tool. The agent can add, remove, resize, and rearrange them. Users design their own dashboard experience through natural language. The same `useFrontendTool` primitive, but now it's modifying the application layout itself.
 
 These are composable React hooks. You register them in your components, and CopilotKit handles the agent communication, the rendering lifecycle, and the approval flow. Your agent framework — LangGraph, CrewAI, whatever you're using — just sees tools. The magic is in the frontend."
 
@@ -188,6 +245,9 @@ These are composable React hooks. You register them in your components, and Copi
 | Approval card appears but buttons don't work | Ensure the component checks `status === ToolCallStatus.Executing` before rendering buttons with `respond` |
 | Agent processes payment without asking | Update agent system prompt to explicitly require approval tool usage before any data mutations |
 | Filter doesn't apply after navigation | Check that the page component reads `searchParams.filter` and filters data accordingly |
+| Dashboard widget doesn't appear/disappear | Verify `DashboardProvider` wraps `ShellInner` in `shell.tsx` and the hook calls `useDashboard()` |
+| Agent doesn't know widget IDs | Check that the dashboard layout `useAgentContext` call is present in `ShellInner` |
+| Custom chart shows no data | Ensure the agent's `render_custom_chart` call includes valid `data` and `series` arrays |
 
 ---
 
