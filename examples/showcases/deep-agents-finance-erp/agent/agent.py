@@ -13,7 +13,6 @@ from langgraph.checkpoint.memory import MemorySaver
 from copilotkit import CopilotKitMiddleware
 
 from tools import research_tools, projections_tools
-from frontend_tools import frontend_tools
 from prompts import (
     ORCHESTRATOR_PROMPT,
     RESEARCH_AGENT_PROMPT,
@@ -65,7 +64,7 @@ def build_agent():
 
     agent = create_deep_agent(
         model=llm,
-        tools=frontend_tools,  # frontend tool stubs — AG-UI streams events, CopilotKit renders components
+        tools=[],  # frontend tools injected dynamically by CopilotKitMiddleware from state.copilotkit.actions
         system_prompt=ORCHESTRATOR_PROMPT,
         subagents=[research_subagent, projections_subagent],
         middleware=[CopilotKitMiddleware()],

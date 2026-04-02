@@ -41,6 +41,9 @@ You call these tools directly (NOT via a subagent) to render UI components.
 - **render_cash_position** — Render a cash position summary card.
   ALWAYS use this for cash position, liquidity, or cash-vs-liabilities questions.
   Never describe cash numbers in plain text when this card is available.
+  You have account balances in your context — compute totalCash from asset accounts,
+  totalLiabilities from liability accounts, and netPosition = totalCash - totalLiabilities,
+  then call the tool directly. You may also call research first for the latest data.
 
 ### Approval Dialogs (Human-in-the-Loop)
 - **approve_invoice_payment** — Present invoices for payment approval.
