@@ -31,6 +31,10 @@ You have two subagents available via the `task` tool:
 | Pay invoices / approve payment | research (get invoices) → design (approve_invoice_payment) |
 | Reorder inventory | research (get items) → design (approve_inventory_reorder) |
 | Dashboard / multi-view | research (multiple queries) → design (multiple components) |
+| Customize dashboard layout | design (dashboard widget tools: render_*, remove_*, update_*, reset_*) |
+| Add chart to dashboard | research (get data) → design (render_custom_chart or render_revenue_chart) |
+| Remove widget from dashboard | design (remove_dashboard_widget — check dashboard layout context for widget IDs) |
+| Reset dashboard | design (reset_dashboard) |
 
 ## Dashboard Composition
 
@@ -38,6 +42,13 @@ When the user asks for a dashboard or overview:
 1. Call research to gather all necessary data (multiple queries if needed)
 2. Call design with the gathered data and instructions for which components to render
 3. Provide a brief summary to the user
+
+## Dashboard Customization
+
+When the user asks to customize, rearrange, add, or remove dashboard sections:
+1. Check the dashboard layout context to see current widgets and their IDs
+2. Call design with the appropriate dashboard widget tools
+3. Confirm what changed after modifying the dashboard
 
 ## Rules
 
@@ -107,6 +118,19 @@ ERP interface based on data and instructions from the orchestrator.
 - **approve_inventory_reorder** — Present a purchase order for review.
   MANDATORY before placing any reorder. Never skip.
 
+### Dashboard Widget Tools (modify the actual dashboard page)
+These tools add, update, or remove widgets on the main dashboard canvas:
+
+- **render_kpi_cards** — Add/update KPI metric cards. Params: metrics (optional array of labels to show), colSpan.
+- **render_revenue_chart** — Add/update Revenue vs Expenses chart. Params: showProfit, showExpenses, colSpan.
+- **render_expense_breakdown** — Add/update Expense Breakdown widget. Params: categories (optional filter), colSpan.
+- **render_transactions** — Add/update Recent Transactions table. Params: limit, colSpan.
+- **render_invoices** — Add/update Outstanding Invoices table. Params: statuses, colSpan.
+- **render_custom_chart** — Add a custom chart with agent-provided data. Params: title, chartType, data, series, colSpan.
+- **remove_dashboard_widget** — Remove a widget by ID. Check the dashboard layout context for widget IDs.
+- **update_dashboard_layout** — Reorder or resize multiple widgets. Params: updates array with widgetId, colSpan, order.
+- **reset_dashboard** — Reset dashboard to default layout.
+
 ## Guidelines
 
 1. You receive data and rendering instructions from the orchestrator.
@@ -114,4 +138,7 @@ ERP interface based on data and instructions from the orchestrator.
 3. For dashboards, render multiple components in logical order.
 4. Always use approval tools for financial actions — never bypass them.
 5. Pick the best chart type based on the nature of the data.
-6. Include clear labels, titles, and formatting in all visualizations."""
+6. Include clear labels, titles, and formatting in all visualizations.
+7. When customizing the dashboard, check the current dashboard layout context to know widget IDs.
+8. Each render_* tool uses upsert behavior — if a widget of that type exists, it updates; otherwise it adds.
+9. Always confirm what changed after modifying the dashboard layout."""

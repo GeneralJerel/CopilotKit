@@ -12,7 +12,15 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { revenueData } from "@/lib/data";
 
-export function RevenueChart() {
+interface RevenueChartConfig {
+  showProfit?: boolean;
+  showExpenses?: boolean;
+}
+
+export function RevenueChart({ config }: { config?: RevenueChartConfig }) {
+  const showExpenses = config?.showExpenses ?? true;
+  const showProfit = config?.showProfit ?? true;
+
   return (
     <Card>
       <CardHeader>
@@ -26,14 +34,18 @@ export function RevenueChart() {
               <span className="h-2 w-2 rounded-full bg-chart-1" />
               <span className="text-muted-foreground">Revenue</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-rose-400" />
-              <span className="text-muted-foreground">Expenses</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              <span className="text-muted-foreground">Profit</span>
-            </div>
+            {showExpenses && (
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-rose-400" />
+                <span className="text-muted-foreground">Expenses</span>
+              </div>
+            )}
+            {showProfit && (
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="text-muted-foreground">Profit</span>
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -90,20 +102,24 @@ export function RevenueChart() {
               strokeWidth={2}
               fill="url(#gradRevenue)"
             />
-            <Area
-              type="monotone"
-              dataKey="expenses"
-              stroke="#fb7185"
-              strokeWidth={2}
-              fill="url(#gradExpenses)"
-            />
-            <Area
-              type="monotone"
-              dataKey="profit"
-              stroke="#10b981"
-              strokeWidth={2}
-              fill="url(#gradProfit)"
-            />
+            {showExpenses && (
+              <Area
+                type="monotone"
+                dataKey="expenses"
+                stroke="#fb7185"
+                strokeWidth={2}
+                fill="url(#gradExpenses)"
+              />
+            )}
+            {showProfit && (
+              <Area
+                type="monotone"
+                dataKey="profit"
+                stroke="#10b981"
+                strokeWidth={2}
+                fill="url(#gradProfit)"
+              />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </CardContent>

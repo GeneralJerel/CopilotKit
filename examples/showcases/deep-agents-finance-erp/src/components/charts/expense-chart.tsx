@@ -4,8 +4,15 @@ import { expenseBreakdown } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
-export function ExpenseChart() {
-  const total = expenseBreakdown.reduce((sum, item) => sum + item.amount, 0);
+interface ExpenseChartConfig {
+  categories?: string[];
+}
+
+export function ExpenseChart({ config }: { config?: ExpenseChartConfig }) {
+  const items = config?.categories
+    ? expenseBreakdown.filter((e) => config.categories!.includes(e.category))
+    : expenseBreakdown;
+  const total = items.reduce((sum, item) => sum + item.amount, 0);
 
   return (
     <Card>
@@ -16,7 +23,7 @@ export function ExpenseChart() {
 
       <CardContent>
         <div className="space-y-4">
-          {expenseBreakdown.map((item) => (
+          {items.map((item) => (
             <div key={item.category}>
               <div className="mb-1.5 flex items-center justify-between text-sm">
                 <span className="text-foreground">{item.category}</span>
