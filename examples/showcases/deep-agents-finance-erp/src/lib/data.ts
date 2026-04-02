@@ -7,6 +7,10 @@ import type {
   RevenueDataPoint,
   ExpenseBreakdown,
   KPI,
+  QuarterlyDataPoint,
+  CashFlowDataPoint,
+  ARAgingData,
+  BudgetVsActual,
 } from "@/types/erp";
 
 export const kpis: KPI[] = [
@@ -214,4 +218,60 @@ export const employees: Employee[] = [
   { id: "emp-008", name: "Robert Chen", email: "r.chen@company.com", role: "DevOps Engineer", department: "Engineering", startDate: "2022-04-18", status: "active", salary: 135000, avatar: "RC" },
   { id: "emp-009", name: "Ana Martinez", email: "a.martinez@company.com", role: "UX Designer", department: "Product", startDate: "2023-01-09", status: "active", salary: 112000, avatar: "AM" },
   { id: "emp-010", name: "Tom Walsh", email: "t.walsh@company.com", role: "Sales Director", department: "Sales", startDate: "2020-07-22", status: "active", salary: 165000, avatar: "TW" },
+];
+
+// ---------------------------------------------------------------------------
+// Quarterly financial history (8 quarters: FY2024 Q1 – FY2025 Q4)
+// ---------------------------------------------------------------------------
+
+export const quarterlyRevenue: QuarterlyDataPoint[] = [
+  { quarter: "Q1 2024", revenue: 480000, expenses: 340000, profit: 140000 },
+  { quarter: "Q2 2024", revenue: 520000, expenses: 355000, profit: 165000 },
+  { quarter: "Q3 2024", revenue: 560000, expenses: 370000, profit: 190000 },
+  { quarter: "Q4 2024", revenue: 610000, expenses: 390000, profit: 220000 },
+  { quarter: "Q1 2025", revenue: 628000, expenses: 383000, profit: 245000 },
+  { quarter: "Q2 2025", revenue: 696000, expenses: 390000, profit: 306000 },
+  { quarter: "Q3 2025", revenue: 851000, expenses: 435000, profit: 416000 },
+  { quarter: "Q4 2025", revenue: 951000, expenses: 457000, profit: 494000 },
+];
+
+// ---------------------------------------------------------------------------
+// Cash flow components (quarterly, matches quarterlyRevenue periods)
+// ---------------------------------------------------------------------------
+
+export const cashFlowData: CashFlowDataPoint[] = [
+  { quarter: "Q1 2024", operating: 95000, investing: -45000, financing: -20000, net: 30000 },
+  { quarter: "Q2 2024", operating: 110000, investing: -30000, financing: -25000, net: 55000 },
+  { quarter: "Q3 2024", operating: 135000, investing: -55000, financing: -15000, net: 65000 },
+  { quarter: "Q4 2024", operating: 158000, investing: -40000, financing: -30000, net: 88000 },
+  { quarter: "Q1 2025", operating: 170000, investing: -60000, financing: -20000, net: 90000 },
+  { quarter: "Q2 2025", operating: 210000, investing: -35000, financing: -25000, net: 150000 },
+  { quarter: "Q3 2025", operating: 285000, investing: -70000, financing: -50000, net: 165000 },
+  { quarter: "Q4 2025", operating: 340000, investing: -45000, financing: -30000, net: 265000 },
+];
+
+// ---------------------------------------------------------------------------
+// Accounts receivable aging
+// ---------------------------------------------------------------------------
+
+export const arAging: ARAgingData = {
+  current: 180000,
+  thirtyDay: 125000,
+  sixtyDay: 95000,
+  ninetyPlus: 56000,
+  total: 456000,
+  collectionRate: 0.87,
+};
+
+// ---------------------------------------------------------------------------
+// Budget vs actual (current quarter — Q1 2026)
+// ---------------------------------------------------------------------------
+
+export const budgetVsActual: BudgetVsActual[] = [
+  { category: "Revenue", budget: 780000, actual: 696000, variance: -84000 },
+  { category: "Payroll", budget: 300000, actual: 285000, variance: 15000 },
+  { category: "Operations", budget: 160000, actual: 152000, variance: 8000 },
+  { category: "Marketing", budget: 120000, actual: 135000, variance: -15000 },
+  { category: "Infrastructure", budget: 100000, actual: 93000, variance: 7000 },
+  { category: "R&D", budget: 85000, actual: 78000, variance: 7000 },
 ];

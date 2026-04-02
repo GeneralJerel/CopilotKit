@@ -83,3 +83,34 @@ export interface ExpenseBreakdown {
   percentage: number;
   color: string;
 }
+
+export interface QuarterlyDataPoint {
+  quarter: string;
+  revenue: number;
+  expenses: number;
+  profit: number;
+}
+
+export interface CashFlowDataPoint {
+  quarter: string;
+  operating: number;
+  investing: number;
+  financing: number;
+  net: number;
+}
+
+export interface ARAgingData {
+  current: number;
+  thirtyDay: number;
+  sixtyDay: number;
+  ninetyPlus: number;
+  total: number;
+  collectionRate: number;
+}
+
+export interface BudgetVsActual {
+  category: string;
+  budget: number;
+  actual: number;
+  variance: number;
+}

@@ -30,6 +30,10 @@ import {
   transactions,
   inventoryItems,
   employees,
+  quarterlyRevenue,
+  cashFlowData,
+  arAging,
+  budgetVsActual,
 } from "@/lib/data";
 
 const demoSuggestions = [
@@ -151,6 +155,30 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   useAgentContext({
     description: "Employee directory with roles, departments, and salaries",
     value: JSON.stringify(employees),
+  });
+
+  useAgentContext({
+    description:
+      "Quarterly revenue history (8 quarters, FY2024 Q1 through FY2025 Q4) with revenue, expenses, and profit per quarter",
+    value: JSON.stringify(quarterlyRevenue),
+  });
+
+  useAgentContext({
+    description:
+      "Quarterly cash flow components (operating, investing, financing, net) for FY2024-FY2025",
+    value: JSON.stringify(cashFlowData),
+  });
+
+  useAgentContext({
+    description:
+      "Accounts receivable aging breakdown: current (0-30 days), 31-60 days, 61-90 days, 90+ days, and collection rate",
+    value: JSON.stringify(arAging),
+  });
+
+  useAgentContext({
+    description:
+      "Budget vs actual for current quarter (Q1 2026) by expense category with variance",
+    value: JSON.stringify(budgetVsActual),
   });
 
   // Dashboard layout context — agent uses this to know current widget IDs and configuration

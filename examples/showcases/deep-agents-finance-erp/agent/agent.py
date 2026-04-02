@@ -12,32 +12,13 @@ from deepagents import create_deep_agent
 from langgraph.checkpoint.memory import MemorySaver
 from copilotkit import CopilotKitMiddleware
 
-from tools import (
-    query_invoices,
-    query_accounts,
-    query_transactions,
-    query_inventory,
-    query_employees,
-    generate_financial_report,
-    analyze_cash_flow,
-    forecast_revenue,
+from tools import research_tools, projections_tools
+from prompts import (
+    ORCHESTRATOR_PROMPT,
+    RESEARCH_AGENT_PROMPT,
+    DESIGN_AGENT_PROMPT,
+    PROJECTIONS_AGENT_PROMPT,
 )
-from prompts import ORCHESTRATOR_PROMPT, RESEARCH_AGENT_PROMPT, DESIGN_AGENT_PROMPT
-
-# ---------------------------------------------------------------------------
-# Tool sets
-# ---------------------------------------------------------------------------
-
-research_tools = [
-    query_invoices,
-    query_accounts,
-    query_transactions,
-    query_inventory,
-    query_employees,
-    generate_financial_report,
-    analyze_cash_flow,
-    forecast_revenue,
-]
 
 # ---------------------------------------------------------------------------
 # Subagent definitions
@@ -53,6 +34,18 @@ research_subagent = {
     ),
     "system_prompt": RESEARCH_AGENT_PROMPT,
     "tools": research_tools,
+}
+
+projections_subagent = {
+    "name": "projections",
+    "description": (
+        "Financial projections specialist. Analyzes historical trends, "
+        "computes growth rates, generates revenue/cash flow/profitability "
+        "forecasts, and runs what-if scenarios. Use when the user asks about "
+        "future projections, forecasts, trends, or scenario analysis."
+    ),
+    "system_prompt": PROJECTIONS_AGENT_PROMPT,
+    "tools": projections_tools,
 }
 
 design_subagent = {
@@ -87,7 +80,7 @@ def build_agent():
         model=llm,
         tools=[],  # orchestrator delegates via task() — no direct tools
         system_prompt=ORCHESTRATOR_PROMPT,
-        subagents=[research_subagent, design_subagent],
+        subagents=[research_subagent, projections_subagent, design_subagent],
         middleware=[CopilotKitMiddleware()],
         checkpointer=checkpointer,
     )
