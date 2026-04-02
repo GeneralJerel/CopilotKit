@@ -61,7 +61,7 @@ def build_agent():
         streaming=True,
     )
 
-    checkpointer = None if os.environ.get("LANGGRAPH_CLOUD") else MemorySaver()
+    checkpointer = None
 
     agent = create_deep_agent(
         model=llm,
@@ -73,3 +73,6 @@ def build_agent():
     )
 
     return agent
+
+
+finance_erp_graph = build_agent()
