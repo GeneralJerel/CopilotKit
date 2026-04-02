@@ -1,4 +1,4 @@
-"""Finance ERP multi-agent — orchestrator with research & design subagents."""
+"""Finance ERP multi-agent — orchestrator with research & projections subagents."""
 
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ from langgraph.checkpoint.memory import MemorySaver
 from copilotkit import CopilotKitMiddleware
 
 from tools import research_tools, projections_tools
+from frontend_tools import frontend_tools
 from prompts import (
     ORCHESTRATOR_PROMPT,
     RESEARCH_AGENT_PROMPT,
-    DESIGN_AGENT_PROMPT,
     PROJECTIONS_AGENT_PROMPT,
 )
 
@@ -48,26 +48,13 @@ projections_subagent = {
     "tools": projections_tools,
 }
 
-design_subagent = {
-    "name": "design",
-    "description": (
-        "UI design specialist. Renders frontend components: page navigation, "
-        "charts, cash position cards, and approval dialogs. Use when the user "
-        "wants to SEE something or when human approval is required for "
-        "financial actions. Always provide the data it needs to render."
-    ),
-    "system_prompt": DESIGN_AGENT_PROMPT,
-    "tools": [],  # frontend tools injected at runtime by CopilotKitMiddleware
-    "middleware": [CopilotKitMiddleware()],
-}
-
 # ---------------------------------------------------------------------------
 # Agent builder
 # ---------------------------------------------------------------------------
 
 
 def build_agent():
-    """Build the Finance ERP orchestrator with research & design subagents."""
+    """Build the Finance ERP orchestrator with research & projections subagents."""
     llm = ChatOpenAI(
         model=os.environ.get("OPENAI_MODEL", "gpt-4o"),
         temperature=0,
@@ -78,9 +65,9 @@ def build_agent():
 
     agent = create_deep_agent(
         model=llm,
-        tools=[],  # orchestrator delegates via task() — no direct tools
+        tools=frontend_tools,  # frontend tool stubs — AG-UI streams events, CopilotKit renders components
         system_prompt=ORCHESTRATOR_PROMPT,
-        subagents=[research_subagent, projections_subagent, design_subagent],
+        subagents=[research_subagent, projections_subagent],
         middleware=[CopilotKitMiddleware()],
         checkpointer=checkpointer,
     )
