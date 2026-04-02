@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useRef } from "react";
 import type { DashboardWidget } from "@/types/dashboard";
 
 const DEFAULT_WIDGETS: DashboardWidget[] = [
@@ -43,9 +43,15 @@ const DEFAULT_WIDGETS: DashboardWidget[] = [
 
 interface DashboardContextValue {
   widgets: DashboardWidget[];
+  getWidgets: () => DashboardWidget[];
   addWidget: (widget: DashboardWidget) => void;
   removeWidget: (widgetId: string) => void;
   updateWidget: (widgetId: string, updates: Partial<DashboardWidget>) => void;
+  upsertWidget: (
+    type: DashboardWidget["type"],
+    create: (order: number) => DashboardWidget,
+    updates: Partial<DashboardWidget>,
+  ) => { existed: boolean; id: string };
   setWidgets: (widgets: DashboardWidget[]) => void;
   resetToDefault: () => void;
 }
@@ -54,6 +60,10 @@ const DashboardContext = createContext<DashboardContextValue | null>(null);
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [widgets, setWidgetsState] = useState<DashboardWidget[]>(DEFAULT_WIDGETS);
+  const widgetsRef = useRef(widgets);
+  widgetsRef.current = widgets;
+
+  const getWidgets = useCallback(() => widgetsRef.current, []);
 
   const addWidget = useCallback((widget: DashboardWidget) => {
     setWidgetsState((prev) => [...prev, widget]);
@@ -72,6 +82,27 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const upsertWidget = useCallback(
+    (
+      type: DashboardWidget["type"],
+      create: (order: number) => DashboardWidget,
+      updates: Partial<DashboardWidget>,
+    ) => {
+      const current = widgetsRef.current;
+      const existing = current.find((w) => w.type === type);
+      if (existing) {
+        setWidgetsState((prev) =>
+          prev.map((w) => (w.id === existing.id ? { ...w, ...updates } as DashboardWidget : w))
+        );
+        return { existed: true, id: existing.id };
+      }
+      const widget = create(current.length);
+      setWidgetsState((prev) => [...prev, widget]);
+      return { existed: false, id: widget.id };
+    },
+    []
+  );
+
   const setWidgets = useCallback((newWidgets: DashboardWidget[]) => {
     setWidgetsState(newWidgets);
   }, []);
@@ -82,7 +113,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <DashboardContext.Provider
-      value={{ widgets, addWidget, removeWidget, updateWidget, setWidgets, resetToDefault }}
+      value={{ widgets, getWidgets, addWidget, removeWidget, updateWidget, upsertWidget, setWidgets, resetToDefault }}
     >
       {children}
     </DashboardContext.Provider>

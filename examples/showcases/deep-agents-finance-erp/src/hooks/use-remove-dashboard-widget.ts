@@ -2,9 +2,8 @@ import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 import { useDashboard } from "@/context/dashboard-context";
 
-
 export function useRemoveDashboardWidget() {
-  const { widgets, removeWidget } = useDashboard();
+  const { getWidgets, removeWidget } = useDashboard();
 
   useFrontendTool({
     agentId: "finance_erp_agent",
@@ -15,7 +14,7 @@ export function useRemoveDashboardWidget() {
       widgetId: z.string().describe("The ID of the widget to remove"),
     }),
     handler: async ({ widgetId }) => {
-      const widget = widgets.find((w) => w.id === widgetId);
+      const widget = getWidgets().find((w) => w.id === widgetId);
       const widgetType = widget?.type ?? widgetId;
       removeWidget(widgetId);
       return { action: "removed", widgetType, widgetId };

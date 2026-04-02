@@ -2,9 +2,8 @@ import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 import { useDashboard } from "@/context/dashboard-context";
 
-
 export function useRenderRevenueChart() {
-  const { widgets, addWidget, updateWidget } = useDashboard();
+  const { upsertWidget } = useDashboard();
 
   useFrontendTool({
     agentId: "finance_erp_agent",
@@ -22,23 +21,22 @@ export function useRenderRevenueChart() {
         .describe("Grid column span (1-4). Default: 3"),
     }),
     handler: async ({ showProfit, showExpenses, colSpan }) => {
-      const existing = widgets.find((w) => w.type === "revenue-chart");
       const config = {
         showProfit: showProfit ?? true,
         showExpenses: showExpenses ?? true,
       };
-      if (existing) {
-        updateWidget(existing.id, { config, colSpan: (colSpan ?? existing.colSpan) as 1 | 2 | 3 | 4 });
-      } else {
-        addWidget({
+      const { existed } = upsertWidget(
+        "revenue-chart",
+        (order) => ({
           id: `revenue-chart-${Date.now()}`,
           type: "revenue-chart",
           colSpan: (colSpan ?? 3) as 1 | 2 | 3 | 4,
-          order: widgets.length,
+          order,
           config,
-        });
-      }
-      return { action: existing ? "updated" : "added", widgetType: "Revenue Chart" };
+        }),
+        { config, ...(colSpan !== undefined && { colSpan: colSpan as 1 | 2 | 3 | 4 }) },
+      );
+      return { action: existed ? "updated" : "added", widgetType: "Revenue Chart" };
     },
   });
 }

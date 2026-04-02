@@ -2,9 +2,8 @@ import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 import { useDashboard } from "@/context/dashboard-context";
 
-
 export function useRenderKpiCards() {
-  const { widgets, addWidget, updateWidget } = useDashboard();
+  const { upsertWidget } = useDashboard();
 
   useFrontendTool({
     agentId: "finance_erp_agent",
@@ -26,19 +25,18 @@ export function useRenderKpiCards() {
         .describe("Grid column span (1-4). Default: 4 (full width)"),
     }),
     handler: async ({ metrics, colSpan }) => {
-      const existing = widgets.find((w) => w.type === "kpi-cards");
-      if (existing) {
-        updateWidget(existing.id, { config: { metrics }, colSpan: (colSpan ?? existing.colSpan) as 1 | 2 | 3 | 4 });
-      } else {
-        addWidget({
+      const { existed } = upsertWidget(
+        "kpi-cards",
+        (order) => ({
           id: `kpi-cards-${Date.now()}`,
           type: "kpi-cards",
           colSpan: (colSpan ?? 4) as 1 | 2 | 3 | 4,
-          order: widgets.length,
+          order,
           config: { metrics },
-        });
-      }
-      return { action: existing ? "updated" : "added", widgetType: "KPI Cards" };
+        }),
+        { config: { metrics }, ...(colSpan !== undefined && { colSpan: colSpan as 1 | 2 | 3 | 4 }) },
+      );
+      return { action: existed ? "updated" : "added", widgetType: "KPI Cards" };
     },
   });
 }

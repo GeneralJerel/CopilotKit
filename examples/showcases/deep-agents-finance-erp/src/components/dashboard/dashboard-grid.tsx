@@ -9,7 +9,7 @@ export function DashboardGrid() {
 
   return (
     <div className="space-y-8 p-8">
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         {sorted.map((widget) => (
           <div key={widget.id} className={colSpanClass(widget.colSpan)}>
             <WidgetRenderer widget={widget} />

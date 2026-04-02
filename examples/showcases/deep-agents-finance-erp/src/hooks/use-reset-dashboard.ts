@@ -2,7 +2,6 @@ import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 import { useDashboard } from "@/context/dashboard-context";
 
-
 export function useResetDashboard() {
   const { resetToDefault } = useDashboard();
 
