@@ -2,9 +2,8 @@ import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 import { useDashboard } from "@/context/dashboard-context";
 
-
 export function useRenderCustomChart() {
-  const { widgets, addWidget } = useDashboard();
+  const { addWidget, getWidgets } = useDashboard();
 
   useFrontendTool({
     agentId: "finance_erp_agent",
@@ -47,7 +46,7 @@ export function useRenderCustomChart() {
         id,
         type: "custom-chart",
         colSpan: (colSpan ?? 2) as 1 | 2 | 3 | 4,
-        order: widgets.length,
+        order: getWidgets().length,
         config: { title, chartType, data, series },
       });
       return { action: "added", widgetType: title };

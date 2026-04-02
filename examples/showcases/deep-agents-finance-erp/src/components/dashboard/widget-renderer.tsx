@@ -15,14 +15,14 @@ import type { Transaction, Invoice } from "@/types/erp";
 import type { DashboardWidget } from "@/types/dashboard";
 
 const COL_SPAN_CLASS: Record<number, string> = {
-  1: "col-span-1",
-  2: "col-span-2",
-  3: "col-span-3",
-  4: "col-span-4",
+  1: "col-span-1 md:col-span-1 xl:col-span-1",
+  2: "col-span-1 md:col-span-1 xl:col-span-2",
+  3: "col-span-1 md:col-span-2 xl:col-span-3",
+  4: "col-span-1 md:col-span-2 xl:col-span-4",
 };
 
 export function colSpanClass(span: number) {
-  return COL_SPAN_CLASS[span] || "col-span-2";
+  return COL_SPAN_CLASS[span] || COL_SPAN_CLASS[2];
 }
 
 export function WidgetRenderer({ widget }: { widget: DashboardWidget }) {

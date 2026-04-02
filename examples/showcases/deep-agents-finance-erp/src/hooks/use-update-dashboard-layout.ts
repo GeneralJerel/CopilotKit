@@ -2,9 +2,8 @@ import { useFrontendTool } from "@copilotkit/react-core/v2";
 import { z } from "zod";
 import { useDashboard } from "@/context/dashboard-context";
 
-
 export function useUpdateDashboardLayout() {
-  const { widgets, setWidgets } = useDashboard();
+  const { getWidgets, setWidgets } = useDashboard();
 
   useFrontendTool({
     agentId: "finance_erp_agent",
@@ -28,7 +27,7 @@ export function useUpdateDashboardLayout() {
         .describe("Array of widget updates"),
     }),
     handler: async ({ updates }) => {
-      const updatedWidgets = widgets.map((w) => {
+      const updatedWidgets = getWidgets().map((w) => {
         const update = updates.find((u) => u.widgetId === w.id);
         if (!update) return w;
         return {

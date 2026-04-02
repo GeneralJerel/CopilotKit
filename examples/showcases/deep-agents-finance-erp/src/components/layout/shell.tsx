@@ -51,6 +51,10 @@ const demoSuggestions = [
     message: "Process payment for all overdue invoices",
   },
   {
+    title: "Reorder Inventory",
+    message: "Check inventory levels and reorder anything that needs restocking",
+  },
+  {
     title: "Customize Dashboard",
     message:
       "Remove the expense breakdown and make the revenue chart full width",
