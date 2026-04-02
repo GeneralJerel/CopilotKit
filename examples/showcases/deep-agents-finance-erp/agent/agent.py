@@ -60,7 +60,7 @@ def build_agent():
         streaming=True,
     )
 
-    checkpointer = None
+    checkpointer = MemorySaver()
 
     agent = create_deep_agent(
         model=llm,
