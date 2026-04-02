@@ -114,3 +114,13 @@ export interface BudgetVsActual {
   actual: number;
   variance: number;
 }
+
+export interface MonthlyExpenseByCategory {
+  month: string;
+  payroll: number;
+  operations: number;
+  marketing: number;
+  infrastructure: number;
+  rnd: number;
+  other: number;
+}

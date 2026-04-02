@@ -34,6 +34,7 @@ import {
   cashFlowData,
   arAging,
   budgetVsActual,
+  monthlyExpenseByCategory,
 } from "@/lib/data";
 
 const demoSuggestions = [
@@ -59,13 +60,14 @@ const demoSuggestions = [
     message: "Check inventory levels and reorder anything that needs restocking",
   },
   {
-    title: "Customize Dashboard",
+    title: "Cash Flow Dashboard",
     message:
-      "Remove the expense breakdown and make the revenue chart full width",
+      "Build me a dashboard focused on cash flow risk — show AR aging, overdue invoices at the top, and a quarterly cash projection",
   },
   {
-    title: "Add Forecast",
-    message: "Add a quarterly revenue forecast chart to my dashboard",
+    title: "Cost Control Dashboard",
+    message:
+      "I'm concerned about the Marketing overspend — set up a cost control view with budget tracking and spending trends",
   },
 ];
 
@@ -179,6 +181,12 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     description:
       "Budget vs actual for current quarter (Q1 2026) by expense category with variance",
     value: JSON.stringify(budgetVsActual),
+  });
+
+  useAgentContext({
+    description:
+      "Monthly expense breakdown by category for the current fiscal year — use for expense trend analysis and identifying spending patterns",
+    value: JSON.stringify(monthlyExpenseByCategory),
   });
 
   // Dashboard layout context — agent uses this to know current widget IDs and configuration

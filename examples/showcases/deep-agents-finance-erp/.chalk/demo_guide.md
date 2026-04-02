@@ -52,7 +52,7 @@ Show me all overdue invoices
 ### See
 1. The app navigates from Dashboard to `/invoices?filter=overdue`
 2. The filter button "overdue" is now highlighted/active
-3. The table shows only overdue invoices (Initech LLC — $67,200)
+3. The table shows 3 overdue invoices: Initech LLC ($67,200), Soylent Industries ($34,500), Cyberdyne Systems ($51,800) — totaling $153,500
 4. The URL bar shows `?filter=overdue` — the agent wrote that
 
 ### Say (after)
@@ -115,9 +115,9 @@ Process payment for all overdue invoices
 1. Brief "Reviewing invoices..." loading state in the chat
 2. A rich approval card appears with:
    - Header: "Payment Approval Required" with a dollar icon
-   - Table listing each overdue invoice: number, client, amount, due date
-   - Bold total at the bottom
-   - Action description: "Mark 1 invoice as paid"
+   - Table listing 3 overdue invoices: Initech LLC ($67,200), Soylent Industries ($34,500), Cyberdyne Systems ($51,800)
+   - Bold total at the bottom: $153,500
+   - Action description: "Mark 3 invoices as paid"
    - Two buttons: green "Approve Payment" and red "Reject"
 3. **The agent is paused** — it's waiting for the user to decide
 4. Click **"Approve Payment"**
@@ -164,43 +164,30 @@ Check inventory levels and reorder anything that needs restocking
 
 ---
 
-## Act 6: Customizable Dashboard (3 min)
+## Act 6: CFO Dashboard Composition (3 min)
 
-> The finale: the agent redesigns the dashboard layout in real time via frontend tools.
+> The finale: the agent composes entirely new dashboards tailored to specific CFO concerns — not just moving widgets, but making editorial decisions about what matters.
 
 ### Say
-"Everything we've seen so far — context, navigation, charts, approvals — those are tools the agent uses inside the chat. But what if the agent could redesign the application itself? Every widget on this dashboard is a frontend tool. The agent can add, remove, resize, and rearrange them on command."
+"Everything we've seen so far — context, navigation, charts, approvals — those are tools the agent uses inside the chat. But what if the agent could redesign the application itself? Every widget on this dashboard is a frontend tool. The agent can add, remove, resize, and rearrange them — and because it understands the financial data, it can compose dashboards tailored to specific business concerns."
 
 ### Navigate back to Dashboard
 Click the Dashboard icon in the sidebar (or type `/` in the browser).
 
 ### Type
 ```
-Remove the expense breakdown and make the revenue chart full width
+Build me a dashboard focused on cash flow risk — show AR aging, overdue invoices at the top, and a quarterly cash projection
 ```
 
 ### See
-1. The Expense Breakdown widget disappears from the dashboard
-2. The Revenue vs Expenses chart expands to fill the full width (4 columns)
-3. The agent confirms what it changed
+1. The agent removes widgets that aren't relevant to cash flow (e.g. expense breakdown)
+2. Overdue invoices move to a prominent position
+3. New custom charts appear: an AR Aging bar chart (current/30/60/90+ day buckets) and a Cash Flow Projection area chart
+4. KPI cards remain (AR up 15.8% is the key metric)
+5. The dashboard now tells a cash flow risk story
 
 ### Say (after)
-"The agent just modified the live dashboard. It called `remove_dashboard_widget` to remove the expense breakdown, then `update_dashboard_layout` to resize the revenue chart. These are `useFrontendTool` hooks that mutate React state — the dashboard re-renders instantly."
-
-### Type
-```
-Add a quarterly revenue forecast chart to my dashboard
-```
-
-### See
-1. A new chart widget appears on the dashboard with:
-   - Title like "Revenue Forecast — Next 4 Quarters"
-   - Line or area chart with projected revenue data
-   - Rendered using the same Recharts components as the built-in charts
-2. The agent confirms the addition
-
-### Say (after)
-"The agent just created a brand new visualization and placed it on the dashboard. It called `render_custom_chart` with the data it generated from its forecast analysis. The chart is rendered using the same component library as the rest of the app — it's not a screenshot or an image, it's a live, interactive Recharts component."
+"The agent just redesigned the entire dashboard for a specific CFO use case. It didn't just move widgets — it decided what's relevant to cash flow risk, removed what's not, and composed custom charts from the financial data. It called `remove_dashboard_widget`, `update_dashboard_layout`, and `render_custom_chart` — multiple frontend tools in one conversation turn."
 
 ### Type
 ```
@@ -208,7 +195,30 @@ Reset my dashboard
 ```
 
 ### See
-- Dashboard returns to its original default layout (KPIs, revenue chart, expense breakdown, transactions, invoices)
+- Dashboard returns to its original default layout
+
+### Type
+```
+I'm concerned about the Marketing overspend — set up a cost control view with budget tracking and spending trends
+```
+
+### See
+1. The agent removes widgets not relevant to cost control (e.g. revenue chart, invoices)
+2. New custom charts appear: a Budget vs Actual bar chart showing Marketing 32% over budget, and a Monthly Marketing Spend line chart showing the Feb-Mar spike
+3. Expense breakdown stays (relevant to cost analysis)
+4. KPI cards may narrow to Operating Expenses and Net Profit
+5. The dashboard now tells a cost control story
+
+### Say (after)
+"Same primitives, completely different dashboard. The agent identified that Marketing is 32% over budget — driven by conference sponsorships and ad campaigns — and composed a dashboard around that insight. It's not following a template; it's reading the data, identifying the story, and designing a view that highlights what matters. That's the power of combining `useFrontendTool` with `useCopilotReadable` — the agent has the context to make editorial decisions."
+
+### Type
+```
+Reset my dashboard
+```
+
+### See
+- Dashboard returns to default layout (clean finish)
 
 ### Code Callout
 > `src/hooks/` — nine dashboard tools: `render_kpi_cards`, `render_revenue_chart`, `render_expense_breakdown`, `render_transactions`, `render_invoices`, `render_custom_chart`, `remove_dashboard_widget`, `update_dashboard_layout`, `reset_dashboard`. Each is a `useFrontendTool` that mutates the `DashboardProvider` context.
@@ -216,6 +226,8 @@ Reset my dashboard
 > `src/context/dashboard-context.tsx` — React context holding the widget list. Default state matches the original hardcoded layout. Exposes `addWidget`, `removeWidget`, `updateWidget`, `setWidgets`, `resetToDefault`.
 
 > `src/components/dashboard/widget-renderer.tsx` — maps widget type to component. `dashboard-grid.tsx` reads the sorted widget list and renders them in a CSS grid.
+
+> `src/lib/data.ts` — monthly expense data by category enables the agent to build trend charts showing the Marketing spike in Feb-Mar.
 
 ---
 

@@ -11,6 +11,7 @@ import type {
   CashFlowDataPoint,
   ARAgingData,
   BudgetVsActual,
+  MonthlyExpenseByCategory,
 } from "@/types/erp";
 
 export const kpis: KPI[] = [
@@ -30,9 +31,9 @@ export const kpis: KPI[] = [
   },
   {
     label: "Accounts Receivable",
-    value: "$456,200",
-    change: -3.1,
-    trend: "down",
+    value: "$542,500",
+    change: 15.8,
+    trend: "up",
     icon: "file-text",
   },
   {
@@ -61,11 +62,11 @@ export const revenueData: RevenueDataPoint[] = [
 
 export const expenseBreakdown: ExpenseBreakdown[] = [
   { category: "Payroll", amount: 580000, percentage: 38, color: "#2563eb" },
-  { category: "Operations", amount: 290000, percentage: 19, color: "#3b82f6" },
-  { category: "Marketing", amount: 215000, percentage: 14, color: "#60a5fa" },
+  { category: "Operations", amount: 277000, percentage: 18, color: "#3b82f6" },
+  { category: "Marketing", amount: 238000, percentage: 16, color: "#60a5fa" },
   { category: "Infrastructure", amount: 185000, percentage: 12, color: "#93c5fd" },
-  { category: "R&D", amount: 155000, percentage: 10, color: "#bfdbfe" },
-  { category: "Other", amount: 105000, percentage: 7, color: "#dbeafe" },
+  { category: "R&D", amount: 168000, percentage: 11, color: "#bfdbfe" },
+  { category: "Other", amount: 82000, percentage: 5, color: "#dbeafe" },
 ];
 
 export const invoices: Invoice[] = [
@@ -166,11 +167,39 @@ export const invoices: Invoice[] = [
       { description: "Monitoring Package", quantity: 1, unitPrice: 14300 },
     ],
   },
+  {
+    id: "inv-008",
+    number: "INV-2026-008",
+    client: "Soylent Industries",
+    amount: 34500,
+    currency: "USD",
+    status: "overdue",
+    issuedDate: "2026-02-01",
+    dueDate: "2026-03-01",
+    items: [
+      { description: "Analytics Module License", quantity: 1, unitPrice: 22000 },
+      { description: "Onboarding & Training", quantity: 1, unitPrice: 12500 },
+    ],
+  },
+  {
+    id: "inv-009",
+    number: "INV-2026-009",
+    client: "Cyberdyne Systems",
+    amount: 51800,
+    currency: "USD",
+    status: "overdue",
+    issuedDate: "2026-02-10",
+    dueDate: "2026-03-10",
+    items: [
+      { description: "Predictive Modeling Suite", quantity: 1, unitPrice: 38000 },
+      { description: "Integration Services", quantity: 20, unitPrice: 690 },
+    ],
+  },
 ];
 
 export const accounts: Account[] = [
   { id: "acc-001", name: "Cash & Equivalents", type: "asset", balance: 1245000, currency: "USD", code: "1000" },
-  { id: "acc-002", name: "Accounts Receivable", type: "asset", balance: 456200, currency: "USD", code: "1100" },
+  { id: "acc-002", name: "Accounts Receivable", type: "asset", balance: 542500, currency: "USD", code: "1100" },
   { id: "acc-003", name: "Inventory", type: "asset", balance: 312400, currency: "USD", code: "1200" },
   { id: "acc-004", name: "Fixed Assets", type: "asset", balance: 890000, currency: "USD", code: "1500" },
   { id: "acc-005", name: "Accounts Payable", type: "liability", balance: 234500, currency: "USD", code: "2000" },
@@ -194,6 +223,11 @@ export const transactions: Transaction[] = [
   { id: "txn-008", date: "2026-03-24", description: "Software Licenses Renewal", amount: 5600, type: "debit", category: "Infrastructure", accountCode: "5100", status: "completed" },
   { id: "txn-009", date: "2026-03-23", description: "Insurance Premium Q2", amount: 15000, type: "debit", category: "Operations", accountCode: "5100", status: "pending" },
   { id: "txn-010", date: "2026-03-22", description: "Contractor Payment - Design", amount: 7800, type: "debit", category: "Operations", accountCode: "5100", status: "completed" },
+  { id: "txn-011", date: "2026-03-20", description: "Cyberdyne Systems - Partial Payment", amount: 15000, type: "credit", category: "Revenue", accountCode: "4000", status: "completed" },
+  { id: "txn-012", date: "2026-03-18", description: "Facebook Ads - Q1 Campaign", amount: 18500, type: "debit", category: "Marketing", accountCode: "5100", status: "completed" },
+  { id: "txn-013", date: "2026-03-15", description: "Payroll - March Cycle 1", amount: 48500, type: "debit", category: "Payroll", accountCode: "5000", status: "completed" },
+  { id: "txn-014", date: "2026-03-12", description: "Conference Sponsorship - SaaStr", amount: 22000, type: "debit", category: "Marketing", accountCode: "5100", status: "completed" },
+  { id: "txn-015", date: "2026-03-08", description: "Soylent Industries - Partial Payment", amount: 10000, type: "credit", category: "Revenue", accountCode: "4000", status: "completed" },
 ];
 
 export const inventoryItems: InventoryItem[] = [
@@ -218,6 +252,7 @@ export const employees: Employee[] = [
   { id: "emp-008", name: "Robert Chen", email: "r.chen@company.com", role: "DevOps Engineer", department: "Engineering", startDate: "2022-04-18", status: "active", salary: 135000, avatar: "RC" },
   { id: "emp-009", name: "Ana Martinez", email: "a.martinez@company.com", role: "UX Designer", department: "Product", startDate: "2023-01-09", status: "active", salary: 112000, avatar: "AM" },
   { id: "emp-010", name: "Tom Walsh", email: "t.walsh@company.com", role: "Sales Director", department: "Sales", startDate: "2020-07-22", status: "active", salary: 165000, avatar: "TW" },
+  { id: "emp-011", name: "Jordan Blake", email: "j.blake@company.com", role: "Marketing Coordinator", department: "Marketing", startDate: "2026-01-15", status: "active", salary: 72000, avatar: "JB" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -257,10 +292,10 @@ export const cashFlowData: CashFlowDataPoint[] = [
 export const arAging: ARAgingData = {
   current: 180000,
   thirtyDay: 125000,
-  sixtyDay: 95000,
+  sixtyDay: 181300,
   ninetyPlus: 56000,
-  total: 456000,
-  collectionRate: 0.87,
+  total: 542300,
+  collectionRate: 0.84,
 };
 
 // ---------------------------------------------------------------------------
@@ -271,7 +306,26 @@ export const budgetVsActual: BudgetVsActual[] = [
   { category: "Revenue", budget: 780000, actual: 696000, variance: -84000 },
   { category: "Payroll", budget: 300000, actual: 285000, variance: 15000 },
   { category: "Operations", budget: 160000, actual: 152000, variance: 8000 },
-  { category: "Marketing", budget: 120000, actual: 135000, variance: -15000 },
+  { category: "Marketing", budget: 120000, actual: 158000, variance: -38000 },
   { category: "Infrastructure", budget: 100000, actual: 93000, variance: 7000 },
-  { category: "R&D", budget: 85000, actual: 78000, variance: 7000 },
+  { category: "R&D", budget: 85000, actual: 91000, variance: -6000 },
+];
+
+// ---------------------------------------------------------------------------
+// Monthly expense by category (current fiscal year)
+// ---------------------------------------------------------------------------
+
+export const monthlyExpenseByCategory: MonthlyExpenseByCategory[] = [
+  { month: "Jan", payroll: 48000, operations: 23000, marketing: 12000, infrastructure: 15000, rnd: 14000, other: 7000 },
+  { month: "Feb", payroll: 48000, operations: 23000, marketing: 28000, infrastructure: 15000, rnd: 14000, other: 7000 },
+  { month: "Mar", payroll: 49000, operations: 24000, marketing: 35000, infrastructure: 16000, rnd: 14000, other: 7000 },
+  { month: "Apr", payroll: 48000, operations: 23000, marketing: 22000, infrastructure: 15000, rnd: 14000, other: 7000 },
+  { month: "May", payroll: 48000, operations: 22000, marketing: 18000, infrastructure: 15000, rnd: 14000, other: 6000 },
+  { month: "Jun", payroll: 48000, operations: 23000, marketing: 20000, infrastructure: 16000, rnd: 14000, other: 7000 },
+  { month: "Jul", payroll: 49000, operations: 24000, marketing: 21000, infrastructure: 16000, rnd: 14000, other: 7000 },
+  { month: "Aug", payroll: 48000, operations: 23000, marketing: 18000, infrastructure: 15000, rnd: 14000, other: 7000 },
+  { month: "Sep", payroll: 49000, operations: 24000, marketing: 20000, infrastructure: 16000, rnd: 14000, other: 7000 },
+  { month: "Oct", payroll: 48000, operations: 23000, marketing: 17000, infrastructure: 15000, rnd: 14000, other: 6000 },
+  { month: "Nov", payroll: 49000, operations: 23000, marketing: 15000, infrastructure: 16000, rnd: 14000, other: 7000 },
+  { month: "Dec", payroll: 48000, operations: 22000, marketing: 12000, infrastructure: 15000, rnd: 14000, other: 7000 },
 ];

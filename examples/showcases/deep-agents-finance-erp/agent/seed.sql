@@ -67,12 +67,14 @@ INSERT INTO invoices VALUES
     ('inv-004', 'INV-2026-004', 'Massive Dynamic', 18750, 'USD', 'paid', '2026-03-05', '2026-04-05'),
     ('inv-005', 'INV-2026-005', 'Umbrella Corp', 93400, 'USD', 'pending', '2026-03-20', '2026-04-20'),
     ('inv-006', 'INV-2026-006', 'Wayne Enterprises', 124000, 'USD', 'draft', '2026-03-28', '2026-04-28'),
-    ('inv-007', 'INV-2026-007', 'Stark Industries', 56300, 'USD', 'paid', '2026-02-20', '2026-03-20');
+    ('inv-007', 'INV-2026-007', 'Stark Industries', 56300, 'USD', 'paid', '2026-02-20', '2026-03-20'),
+    ('inv-008', 'INV-2026-008', 'Soylent Industries', 34500, 'USD', 'overdue', '2026-02-01', '2026-03-01'),
+    ('inv-009', 'INV-2026-009', 'Cyberdyne Systems', 51800, 'USD', 'overdue', '2026-02-10', '2026-03-10');
 
 -- Seed accounts
 INSERT INTO accounts VALUES
     ('acc-001', '1000', 'Cash & Equivalents', 'asset', 1245000, 'USD'),
-    ('acc-002', '1100', 'Accounts Receivable', 'asset', 456200, 'USD'),
+    ('acc-002', '1100', 'Accounts Receivable', 'asset', 542500, 'USD'),
     ('acc-003', '1200', 'Inventory', 'asset', 312400, 'USD'),
     ('acc-004', '1500', 'Fixed Assets', 'asset', 890000, 'USD'),
     ('acc-005', '2000', 'Accounts Payable', 'liability', 234500, 'USD'),
@@ -95,7 +97,12 @@ INSERT INTO transactions VALUES
     ('txn-007', '2026-03-25', 'Massive Dynamic - Payment', 18750, 'credit', 'Revenue', '4000', 'completed'),
     ('txn-008', '2026-03-24', 'Software Licenses Renewal', 5600, 'debit', 'Infrastructure', '5100', 'completed'),
     ('txn-009', '2026-03-23', 'Insurance Premium Q2', 15000, 'debit', 'Operations', '5100', 'pending'),
-    ('txn-010', '2026-03-22', 'Contractor Payment - Design', 7800, 'debit', 'Operations', '5100', 'completed');
+    ('txn-010', '2026-03-22', 'Contractor Payment - Design', 7800, 'debit', 'Operations', '5100', 'completed'),
+    ('txn-011', '2026-03-20', 'Cyberdyne Systems - Partial Payment', 15000, 'credit', 'Revenue', '4000', 'completed'),
+    ('txn-012', '2026-03-18', 'Facebook Ads - Q1 Campaign', 18500, 'debit', 'Marketing', '5100', 'completed'),
+    ('txn-013', '2026-03-15', 'Payroll - March Cycle 1', 48500, 'debit', 'Payroll', '5000', 'completed'),
+    ('txn-014', '2026-03-12', 'Conference Sponsorship - SaaStr', 22000, 'debit', 'Marketing', '5100', 'completed'),
+    ('txn-015', '2026-03-08', 'Soylent Industries - Partial Payment', 10000, 'credit', 'Revenue', '4000', 'completed');
 
 -- Seed inventory
 INSERT INTO inventory VALUES
@@ -119,4 +126,5 @@ INSERT INTO employees VALUES
     ('emp-007', 'Lisa Nakamura', 'l.nakamura@company.com', 'Marketing Manager', 'Marketing', '2021-09-01', 'active', 118000),
     ('emp-008', 'Robert Chen', 'r.chen@company.com', 'DevOps Engineer', 'Engineering', '2022-04-18', 'active', 135000),
     ('emp-009', 'Ana Martinez', 'a.martinez@company.com', 'UX Designer', 'Product', '2023-01-09', 'active', 112000),
-    ('emp-010', 'Tom Walsh', 't.walsh@company.com', 'Sales Director', 'Sales', '2020-07-22', 'active', 165000);
+    ('emp-010', 'Tom Walsh', 't.walsh@company.com', 'Sales Director', 'Sales', '2020-07-22', 'active', 165000),
+    ('emp-011', 'Jordan Blake', 'j.blake@company.com', 'Marketing Coordinator', 'Marketing', '2026-01-15', 'active', 72000);

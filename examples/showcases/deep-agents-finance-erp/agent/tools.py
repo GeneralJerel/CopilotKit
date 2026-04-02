@@ -22,11 +22,13 @@ _INVOICES = [
     {"number": "INV-2026-005", "client": "Umbrella Corp", "amount": 93400, "status": "pending", "due": "2026-04-20"},
     {"number": "INV-2026-006", "client": "Wayne Enterprises", "amount": 124000, "status": "draft", "due": "2026-04-28"},
     {"number": "INV-2026-007", "client": "Stark Industries", "amount": 56300, "status": "paid", "due": "2026-03-20"},
+    {"number": "INV-2026-008", "client": "Soylent Industries", "amount": 34500, "status": "overdue", "due": "2026-03-01"},
+    {"number": "INV-2026-009", "client": "Cyberdyne Systems", "amount": 51800, "status": "overdue", "due": "2026-03-10"},
 ]
 
 _ACCOUNTS = [
     {"code": "1000", "name": "Cash & Equivalents", "type": "asset", "balance": 1245000},
-    {"code": "1100", "name": "Accounts Receivable", "type": "asset", "balance": 456200},
+    {"code": "1100", "name": "Accounts Receivable", "type": "asset", "balance": 542500},
     {"code": "1200", "name": "Inventory", "type": "asset", "balance": 312400},
     {"code": "1500", "name": "Fixed Assets", "type": "asset", "balance": 890000},
     {"code": "2000", "name": "Accounts Payable", "type": "liability", "balance": 234500},
@@ -50,6 +52,11 @@ _TRANSACTIONS = [
     {"date": "2026-03-24", "desc": "Software Licenses Renewal", "amount": 5600, "type": "debit", "category": "Infrastructure"},
     {"date": "2026-03-23", "desc": "Insurance Premium Q2", "amount": 15000, "type": "debit", "category": "Operations"},
     {"date": "2026-03-22", "desc": "Contractor Payment - Design", "amount": 7800, "type": "debit", "category": "Operations"},
+    {"date": "2026-03-20", "desc": "Cyberdyne Systems - Partial Payment", "amount": 15000, "type": "credit", "category": "Revenue"},
+    {"date": "2026-03-18", "desc": "Facebook Ads - Q1 Campaign", "amount": 18500, "type": "debit", "category": "Marketing"},
+    {"date": "2026-03-15", "desc": "Payroll - March Cycle 1", "amount": 48500, "type": "debit", "category": "Payroll"},
+    {"date": "2026-03-12", "desc": "Conference Sponsorship - SaaStr", "amount": 22000, "type": "debit", "category": "Marketing"},
+    {"date": "2026-03-08", "desc": "Soylent Industries - Partial Payment", "amount": 10000, "type": "credit", "category": "Revenue"},
 ]
 
 _INVENTORY = [
@@ -74,6 +81,7 @@ _EMPLOYEES = [
     {"name": "Robert Chen", "role": "DevOps Engineer", "dept": "Engineering", "salary": 135000, "status": "active"},
     {"name": "Ana Martinez", "role": "UX Designer", "dept": "Product", "salary": 112000, "status": "active"},
     {"name": "Tom Walsh", "role": "Sales Director", "dept": "Sales", "salary": 165000, "status": "active"},
+    {"name": "Jordan Blake", "role": "Marketing Coordinator", "dept": "Marketing", "salary": 72000, "status": "active"},
 ]
 
 # Quarterly financials (8 quarters: FY2024 Q1 – FY2025 Q4)
@@ -104,10 +112,10 @@ _CASH_FLOW = [
 _AR_AGING = {
     "current": 180000,
     "thirtyDay": 125000,
-    "sixtyDay": 95000,
+    "sixtyDay": 181300,
     "ninetyPlus": 56000,
-    "total": 456000,
-    "collectionRate": 0.87,
+    "total": 542300,
+    "collectionRate": 0.84,
 }
 
 # Budget vs actual (Q1 2026)
@@ -115,9 +123,25 @@ _BUDGET_VS_ACTUAL = [
     {"category": "Revenue", "budget": 780000, "actual": 696000, "variance": -84000},
     {"category": "Payroll", "budget": 300000, "actual": 285000, "variance": 15000},
     {"category": "Operations", "budget": 160000, "actual": 152000, "variance": 8000},
-    {"category": "Marketing", "budget": 120000, "actual": 135000, "variance": -15000},
+    {"category": "Marketing", "budget": 120000, "actual": 158000, "variance": -38000},
     {"category": "Infrastructure", "budget": 100000, "actual": 93000, "variance": 7000},
-    {"category": "R&D", "budget": 85000, "actual": 78000, "variance": 7000},
+    {"category": "R&D", "budget": 85000, "actual": 91000, "variance": -6000},
+]
+
+# Monthly expense by category (current fiscal year)
+_MONTHLY_EXPENSES = [
+    {"month": "Jan", "payroll": 48000, "operations": 23000, "marketing": 12000, "infrastructure": 15000, "rnd": 14000, "other": 7000},
+    {"month": "Feb", "payroll": 48000, "operations": 23000, "marketing": 28000, "infrastructure": 15000, "rnd": 14000, "other": 7000},
+    {"month": "Mar", "payroll": 49000, "operations": 24000, "marketing": 35000, "infrastructure": 16000, "rnd": 14000, "other": 7000},
+    {"month": "Apr", "payroll": 48000, "operations": 23000, "marketing": 22000, "infrastructure": 15000, "rnd": 14000, "other": 7000},
+    {"month": "May", "payroll": 48000, "operations": 22000, "marketing": 18000, "infrastructure": 15000, "rnd": 14000, "other": 6000},
+    {"month": "Jun", "payroll": 48000, "operations": 23000, "marketing": 20000, "infrastructure": 16000, "rnd": 14000, "other": 7000},
+    {"month": "Jul", "payroll": 49000, "operations": 24000, "marketing": 21000, "infrastructure": 16000, "rnd": 14000, "other": 7000},
+    {"month": "Aug", "payroll": 48000, "operations": 23000, "marketing": 18000, "infrastructure": 15000, "rnd": 14000, "other": 7000},
+    {"month": "Sep", "payroll": 49000, "operations": 24000, "marketing": 20000, "infrastructure": 16000, "rnd": 14000, "other": 7000},
+    {"month": "Oct", "payroll": 48000, "operations": 23000, "marketing": 17000, "infrastructure": 15000, "rnd": 14000, "other": 6000},
+    {"month": "Nov", "payroll": 49000, "operations": 23000, "marketing": 15000, "infrastructure": 16000, "rnd": 14000, "other": 7000},
+    {"month": "Dec", "payroll": 48000, "operations": 22000, "marketing": 12000, "infrastructure": 15000, "rnd": 14000, "other": 7000},
 ]
 
 

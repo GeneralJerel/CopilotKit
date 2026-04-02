@@ -80,14 +80,20 @@ const invoiceApprovalArgs = {
       dueDate: "2026-03-15",
     },
     {
-      number: "INV-2026-002",
-      client: "Globex Industries",
-      amount: 28500,
-      dueDate: "2026-04-10",
+      number: "INV-2026-008",
+      client: "Soylent Industries",
+      amount: 34500,
+      dueDate: "2026-03-01",
+    },
+    {
+      number: "INV-2026-009",
+      client: "Cyberdyne Systems",
+      amount: 51800,
+      dueDate: "2026-03-10",
     },
   ],
-  totalAmount: 95700,
-  action: "Process payment for overdue invoices",
+  totalAmount: 153500,
+  action: "Process payment for 3 overdue invoices",
 };
 
 const inventoryReorderArgs = {

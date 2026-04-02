@@ -20,7 +20,7 @@ from langsmith.evaluation import aevaluate
 EVAL_DATASET = [
     {
         "input": "How many overdue invoices do we have?",
-        "expected": "1 overdue invoice",
+        "expected": "3 overdue invoice",
         "tags": ["invoices", "query"],
     },
     {
