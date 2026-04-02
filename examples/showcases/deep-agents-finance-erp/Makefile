@@ -28,16 +28,14 @@ agent-install:
 	@cd agent && ( [ -d .venv ] || python -m venv .venv ) && \
 		. .venv/bin/activate && pip install -q -e .
 
-# Run the LangGraph agent dev server (port 2024)
+# Run the agent via FastAPI (port 8123)
 agent: agent-install
-	@cd agent && . .venv/bin/activate && langgraph dev --no-browser
+	@cd agent && . .venv/bin/activate && python main.py
 
 # Create .env.local if missing
 .env.local:
 	@cp .env.local.example .env.local
-	@sed -i '' 's|localhost:8123|localhost:2024|' .env.local 2>/dev/null || \
-		sed -i 's|localhost:8123|localhost:2024|' .env.local
-	@echo "Created .env.local (agent URL → localhost:2024)"
+	@echo "Created .env.local (agent URL → localhost:8123)"
 
 # Run the Next.js frontend (port 3000)
 frontend: .env.local
@@ -52,7 +50,7 @@ dev:
 
 # Stop all services
 stop:
-	@pkill -f "langgraph dev" 2>/dev/null || true
+	@pkill -f "python main.py" 2>/dev/null || true
 	@pkill -f "next dev" 2>/dev/null || true
 	@docker stop $(CONTAINER) 2>/dev/null || true
 	@echo "All services stopped"
