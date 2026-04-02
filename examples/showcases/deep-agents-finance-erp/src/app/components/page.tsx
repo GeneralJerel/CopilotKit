@@ -525,7 +525,7 @@ function BentoPreview({ toolId }: { toolId: string }) {
       );
     case "render_kpi_cards":
       return (
-        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {kpis.map((kpi) => (
             <KPICard key={kpi.label} kpi={kpi} />
           ))}
@@ -641,12 +641,12 @@ function BentoCard({
 }) {
   const spanClass =
     tool.colSpan === 4
-      ? "col-span-4"
+      ? "col-span-1 sm:col-span-2 lg:col-span-4"
       : tool.colSpan === 3
-        ? "col-span-4 md:col-span-3"
+        ? "col-span-1 sm:col-span-2 lg:col-span-3"
         : tool.colSpan === 2
-          ? "col-span-4 md:col-span-2"
-          : "col-span-4 sm:col-span-2 md:col-span-1";
+          ? "col-span-1 sm:col-span-2"
+          : "col-span-1";
 
   return (
     <div
@@ -757,7 +757,7 @@ function DetailView({
       <div className="rounded-xl border border-border bg-card p-6 space-y-5">
         <h3 className="text-sm font-semibold text-foreground">Usage Guide</h3>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <p className="text-xs text-muted-foreground">Tool name</p>
             <p className="mt-1 font-mono text-sm text-foreground">{tool.toolName}</p>
@@ -831,11 +831,11 @@ export default function ComponentsPage() {
   const categories = ["chat", "dashboard", "management"] as const;
 
   return (
-    <div className="min-h-screen bg-muted p-8">
-      <div className="mx-auto max-w-7xl">
+    <div className="min-h-screen bg-muted px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-heading text-3xl font-bold text-foreground">
+          <h1 className="font-heading text-2xl font-bold text-foreground sm:text-3xl">
             Frontend Tool Components
           </h1>
           <p className="mt-2 text-muted-foreground">
@@ -856,7 +856,7 @@ export default function ComponentsPage() {
                   <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {CATEGORY_LABELS[cat]}
                   </h2>
-                  <div className="grid grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {tools.map((tool) => (
                       <BentoCard
                         key={tool.id}
