@@ -25,8 +25,8 @@ logging.basicConfig(level=logging.INFO)
 # AG-UI RunAgentInput.tools, but when that list is empty this fallback ensures
 # the middleware still intercepts them.
 #
-# NOTE: HITL tools (approve_*) are excluded — they MUST execute on the backend
-# because they call copilotkit_interrupt() to pause the graph for approval.
+# NOTE: HITL tools (request_approval) are excluded — they MUST execute on the
+# backend because they call copilotkit_interrupt() to pause the graph.
 _UI_TOOL_SCHEMAS = []
 for _tool in ui_tools:
     schema = _tool.get_input_schema().model_json_schema() if hasattr(_tool, "get_input_schema") else {}

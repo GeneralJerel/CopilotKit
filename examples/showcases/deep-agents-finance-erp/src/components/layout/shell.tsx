@@ -8,20 +8,11 @@ import {
   useRenderTool,
 } from "@copilotkit/react-core/v2";
 import { cn } from "@/lib/utils";
+import { useRenderChatVisual } from "@/hooks/use-render-chat-visual";
 import { useNavigateAndFilter } from "@/hooks/use-navigate-and-filter";
-import { useRenderChart } from "@/hooks/use-render-chart";
-import { useRenderCashPosition } from "@/hooks/use-render-cash-position";
-import { useApproveInvoicePayment } from "@/hooks/use-approve-invoice-payment";
-import { useApproveInventoryReorder } from "@/hooks/use-approve-inventory-reorder";
-import { useRenderKpiCards } from "@/hooks/use-render-kpi-cards";
-import { useRenderRevenueChart } from "@/hooks/use-render-revenue-chart";
-import { useRenderExpenseBreakdown } from "@/hooks/use-render-expense-breakdown";
-import { useRenderTransactions } from "@/hooks/use-render-transactions";
-import { useRenderInvoices } from "@/hooks/use-render-invoices";
-import { useRenderCustomChart } from "@/hooks/use-render-custom-chart";
-import { useRemoveDashboardWidget } from "@/hooks/use-remove-dashboard-widget";
-import { useUpdateDashboardLayout } from "@/hooks/use-update-dashboard-layout";
-import { useResetDashboard } from "@/hooks/use-reset-dashboard";
+import { useRequestApproval } from "@/hooks/use-request-approval";
+import { useUpdateDashboard } from "@/hooks/use-update-dashboard";
+import { useManageDashboard } from "@/hooks/use-manage-dashboard";
 import { DashboardProvider, useDashboard } from "@/context/dashboard-context";
 import { Sidebar } from "./sidebar";
 import { kpis } from "@/lib/data";
@@ -150,27 +141,12 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  // Existing frontend tools (render in chat)
-  useNavigateAndFilter();
-  useRenderChart();
-  useRenderCashPosition();
-
-  // Human-in-the-loop
-  useApproveInvoicePayment();
-  useApproveInventoryReorder();
-
-  // Dashboard widget tools (render on dashboard page)
-  useRenderKpiCards();
-  useRenderRevenueChart();
-  useRenderExpenseBreakdown();
-  useRenderTransactions();
-  useRenderInvoices();
-  useRenderCustomChart();
-
-  // Dashboard management tools
-  useRemoveDashboardWidget();
-  useUpdateDashboardLayout();
-  useResetDashboard();
+  // Consolidated frontend tools (5 hooks replacing 14)
+  useRenderChatVisual();     // Inline chart + cash position card
+  useNavigateAndFilter();    // SPA navigation
+  useRequestApproval();      // HITL: invoice payment + inventory reorder
+  useUpdateDashboard();      // Add/update dashboard widgets (batch)
+  useManageDashboard();      // Reset/remove/reorder dashboard
 
   return (
     <div className="flex h-screen bg-muted">
