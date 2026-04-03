@@ -221,14 +221,14 @@ def reset_dashboard() -> str:
 # Export
 # ---------------------------------------------------------------------------
 
-frontend_tools = [
+# Tools whose execution is intercepted by CopilotKitMiddleware and forwarded to
+# the frontend for rendering via useFrontendTool. Backend stubs exist only so
+# the LLM has tool schemas; actual execution + rendering happens in the browser.
+ui_tools = [
     # Chat rendering
     render_chart,
     render_cash_position,
     navigate_and_filter,
-    # Human-in-the-loop
-    approve_invoice_payment,
-    approve_inventory_reorder,
     # Dashboard widgets
     render_kpi_cards,
     render_revenue_chart,
@@ -241,3 +241,13 @@ frontend_tools = [
     update_dashboard_layout,
     reset_dashboard,
 ]
+
+# Human-in-the-loop tools — these MUST execute on the backend because they call
+# copilotkit_interrupt() to pause the graph for user approval.
+hitl_tools = [
+    approve_invoice_payment,
+    approve_inventory_reorder,
+]
+
+# All frontend tools (backward-compatible export)
+frontend_tools = [*ui_tools, *hitl_tools]

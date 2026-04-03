@@ -53,6 +53,7 @@ class LangGraphAGUIAgent(LangGraphAgent):
     def __init__(self, *, name: str, graph: CompiledStateGraph, description: Optional[str] = None, config: Union[Optional[RunnableConfig], dict] = None):
         super().__init__(name=name, graph=graph, description=description, config=config)
         self.constant_schema_keys = self.constant_schema_keys + ["copilotkit"]
+        self._tool_call_names: Dict[str, str] = {}
 
     def _dispatch_event(self, event) -> str:
         """Override the dispatch event method to handle custom CopilotKit events and filtering.
@@ -142,31 +143,52 @@ class LangGraphAGUIAgent(LangGraphAgent):
                 )
 
         # Handle filtering based on metadata for text messages and tool calls
+        is_message_event = event.type in [
+            EventType.TEXT_MESSAGE_START,
+            EventType.TEXT_MESSAGE_CONTENT,
+            EventType.TEXT_MESSAGE_END
+        ]
+        is_tool_event = event.type in [
+            EventType.TOOL_CALL_START,
+            EventType.TOOL_CALL_ARGS,
+            EventType.TOOL_CALL_END,
+            EventType.TOOL_CALL_RESULT,
+        ]
+
+        # Track tool_call_id → name from START events (before filtering)
+        if event.type == EventType.TOOL_CALL_START:
+            tc_id = getattr(event, 'tool_call_id', None)
+            tc_name = getattr(event, 'tool_call_name', None)
+            if tc_id and tc_name:
+                self._tool_call_names[tc_id] = tc_name
+
+        # Resolve metadata: prefer raw_event metadata, fall back to agent config
+        # Handle both dict and object cases for raw_event
+        # See: https://github.com/CopilotKit/CopilotKit/issues/2066
         raw_event = getattr(event, 'raw_event', None)
         if raw_event:
-            is_message_event = event.type in [
-                EventType.TEXT_MESSAGE_START,
-                EventType.TEXT_MESSAGE_CONTENT,
-                EventType.TEXT_MESSAGE_END
-            ]
-            is_tool_event = event.type in [
-                EventType.TOOL_CALL_START,
-                EventType.TOOL_CALL_ARGS,
-                EventType.TOOL_CALL_END
-            ]
-
-            # Handle both dict and object cases for raw_event
-            # See: https://github.com/CopilotKit/CopilotKit/issues/2066
             metadata = (raw_event.get('metadata', {}) if isinstance(raw_event, dict)
                         else getattr(raw_event, 'metadata', {})) or {}
+        else:
+            metadata = (self.config or {}).get("metadata", {}) or {}
 
-            if "copilotkit:emit-tool-calls" in metadata:
-                if metadata["copilotkit:emit-tool-calls"] is False and is_tool_event:
-                    return None  # Don't dispatch this event
+        if "copilotkit:emit-tool-calls" in metadata and is_tool_event:
+            emit_cfg = metadata["copilotkit:emit-tool-calls"]
+            if emit_cfg is False:
+                return None  # Don't dispatch this event
+            if isinstance(emit_cfg, (list, str)):
+                tc_id = getattr(event, 'tool_call_id', None)
+                tool_name = (
+                    getattr(event, 'tool_call_name', None)
+                    or self._tool_call_names.get(tc_id)
+                )
+                allowed = emit_cfg if isinstance(emit_cfg, list) else [emit_cfg]
+                if tool_name and tool_name not in allowed:
+                    return None  # Tool not in the allowed list
 
-            if "copilotkit:emit-messages" in metadata:
-                if metadata["copilotkit:emit-messages"] is False and is_message_event:
-                    return None  # Don't dispatch this event
+        if "copilotkit:emit-messages" in metadata:
+            if metadata["copilotkit:emit-messages"] is False and is_message_event:
+                return None  # Don't dispatch this event
 
         return super()._dispatch_event(event)
 

@@ -5,6 +5,7 @@ import {
   CopilotSidebarView,
   useAgentContext,
   useAgent,
+  useRenderTool,
 } from "@copilotkit/react-core/v2";
 import { cn } from "@/lib/utils";
 import { useNavigateAndFilter } from "@/hooks/use-navigate-and-filter";
@@ -128,6 +129,26 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       "Current dashboard layout — list of widgets with their IDs, types, column spans, order, and configuration. Use widget IDs when removing or updating widgets.",
     value: widgets,
   });
+
+  // Render the internal "task" tool (subagent delegation) as a clean loading state
+  useRenderTool(
+    {
+      name: "task",
+      render: ({ status, args }) => {
+        if (status === "complete") return null;
+        const label =
+          args?.subagent_type === "projections"
+            ? "Running projections..."
+            : "Researching...";
+        return (
+          <p className="text-sm text-muted-foreground animate-pulse py-1">
+            {label}
+          </p>
+        );
+      },
+    },
+    [],
+  );
 
   // Existing frontend tools (render in chat)
   useNavigateAndFilter();
