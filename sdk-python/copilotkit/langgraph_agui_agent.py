@@ -170,7 +170,14 @@ class LangGraphAGUIAgent(LangGraphAgent):
             metadata = (raw_event.get('metadata', {}) if isinstance(raw_event, dict)
                         else getattr(raw_event, 'metadata', {})) or {}
         else:
-            metadata = (self.config or {}).get("metadata", {}) or {}
+            metadata = {}
+
+        # Fall back to agent-level config for copilotkit filter keys that may
+        # not propagate into subgraph raw_event metadata.
+        config_metadata = (self.config or {}).get("metadata", {}) or {}
+        for key in ("copilotkit:emit-tool-calls", "copilotkit:emit-messages"):
+            if key not in metadata and key in config_metadata:
+                metadata[key] = config_metadata[key]
 
         if "copilotkit:emit-tool-calls" in metadata and is_tool_event:
             emit_cfg = metadata["copilotkit:emit-tool-calls"]

@@ -135,3 +135,86 @@ async def _collect_async_gen(agen):
     async for item in agen:
         items.append(item)
     return items
+
+
+# ---------- Config metadata fallback for subgraph events ----------
+
+class TestConfigMetadataFallback:
+    """When raw_event metadata lacks copilotkit filter keys, fall back to agent config."""
+
+    def test_subgraph_event_falls_back_to_config_for_excluded_tool(self):
+        """raw_event has metadata but without emit-tool-calls; config excludes tool."""
+        mock_graph = MagicMock()
+        mock_graph.get_state = MagicMock()
+        agent = LangGraphAGUIAgent(
+            name="test",
+            graph=mock_graph,
+            config={"metadata": {"copilotkit:emit-tool-calls": ["render_chart"]}},
+        )
+        agent.active_run = {"id": "run-1", "thread_id": "t-1"}
+
+        # Subgraph event: raw_event has metadata, but no copilotkit keys
+        event = ToolCallStartEvent(
+            toolCallId="tc-1",
+            toolCallName="task",
+            rawEvent={"metadata": {"langgraph_node": "research"}},
+        )
+        result = agent._dispatch_event(event)
+        assert result is None  # "task" is not in the allowed list
+
+    def test_subgraph_event_allows_listed_tool(self):
+        """raw_event has metadata without emit-tool-calls; config allows the tool."""
+        mock_graph = MagicMock()
+        mock_graph.get_state = MagicMock()
+        agent = LangGraphAGUIAgent(
+            name="test",
+            graph=mock_graph,
+            config={"metadata": {"copilotkit:emit-tool-calls": ["render_chart"]}},
+        )
+        agent.active_run = {"id": "run-1", "thread_id": "t-1"}
+
+        event = ToolCallStartEvent(
+            toolCallId="tc-2",
+            toolCallName="render_chart",
+            rawEvent={"metadata": {"langgraph_node": "orchestrator"}},
+        )
+        result = agent._dispatch_event(event)
+        assert result is not None  # "render_chart" IS in the allowed list
+
+    def test_raw_event_metadata_takes_precedence_over_config(self):
+        """When raw_event metadata HAS the key, it takes precedence over config."""
+        mock_graph = MagicMock()
+        mock_graph.get_state = MagicMock()
+        agent = LangGraphAGUIAgent(
+            name="test",
+            graph=mock_graph,
+            config={"metadata": {"copilotkit:emit-tool-calls": ["render_chart"]}},
+        )
+        agent.active_run = {"id": "run-1", "thread_id": "t-1"}
+
+        # raw_event explicitly allows all tool calls (overrides config list)
+        event = ToolCallStartEvent(
+            toolCallId="tc-3",
+            toolCallName="task",
+            rawEvent={"metadata": {"copilotkit:emit-tool-calls": True}},
+        )
+        result = agent._dispatch_event(event)
+        assert result is not None  # True means emit all, "task" passes through
+
+    def test_no_raw_event_falls_back_to_config(self):
+        """When there is no raw_event at all, config metadata is used."""
+        mock_graph = MagicMock()
+        mock_graph.get_state = MagicMock()
+        agent = LangGraphAGUIAgent(
+            name="test",
+            graph=mock_graph,
+            config={"metadata": {"copilotkit:emit-tool-calls": ["render_chart"]}},
+        )
+        agent.active_run = {"id": "run-1", "thread_id": "t-1"}
+
+        event = ToolCallStartEvent(
+            toolCallId="tc-4",
+            toolCallName="task",
+        )
+        result = agent._dispatch_event(event)
+        assert result is None  # "task" is not in the allowed list
