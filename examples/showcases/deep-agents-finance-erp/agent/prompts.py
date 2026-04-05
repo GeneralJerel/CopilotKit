@@ -38,7 +38,7 @@ Human-in-the-loop approval. MANDATORY before payments or reorders.
 
 ### update_dashboard
 Add or update dashboard widgets in a single call. Params: widgets array, each with:
-- type: kpi_cards | revenue_chart | expense_breakdown | transactions | invoices | custom_chart
+- type: kpi_cards | revenue_chart | expense_breakdown | transactions | invoices | custom_chart | generative
 - colSpan: 1-4 (optional)
 - config: type-specific options
   * kpi_cards: {metrics?: ["Total Revenue", "Net Profit", "Accounts Receivable", "Operating Expenses"]}
@@ -48,6 +48,7 @@ Add or update dashboard widgets in a single call. Params: widgets array, each wi
   * invoices: {statuses?: ["pending", "overdue"]}
   * custom_chart: {title, subtitle?, chartType: area|bar|line, data: [{label, value, value2?, value3?}],
     series: [{key, color, label}], formatValues?: 'currency'|'number'|'percent'}
+  * generative: {title, subtitle?, code, data, meta?} — see Generative Widgets section below
 
 ### manage_dashboard
 Layout management. action="reset" (restore defaults), action="remove" (widgetId),
@@ -82,6 +83,155 @@ building from scratch.
 - "Save this dashboard" → save_dashboard with a descriptive name
 - "Load my X dashboard" → load_dashboard with the name
 - Standard view request (e.g. "executive summary") → check templates first → load_dashboard
+
+## Generative Widgets (type="generative")
+
+For custom visualizations that don't fit predefined types, use type="generative" to write
+React JSX code that renders directly on the dashboard. Your code is transpiled and executed
+live in the browser.
+
+### Config shape
+- title (str): Widget title
+- subtitle (str, optional): Description
+- code (str): React JSX expression (see format rules below)
+- data (list[dict]): Data array available as the `data` variable in your code
+- meta (dict, optional): Metadata available as the `meta` variable
+
+### Variables and components in scope
+
+**Variables:**
+- `data` — the data array you provide in config.data
+- `meta` — the metadata object you provide in config.meta (defaults to {title, subtitle})
+
+**React:** React, useState, useEffect, useMemo, useCallback, Fragment
+
+**Recharts (all chart types):**
+AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, RadarChart, Radar,
+ScatterChart, Scatter, ComposedChart, Treemap, FunnelChart, Funnel, RadialBarChart,
+RadialBar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
+ReferenceLine, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+
+**UI components:** Card, CardHeader, CardTitle, CardDescription, CardContent, Badge
+
+**Utilities:** formatCurrency(number), formatNumber(number)
+
+### Code format rules
+1. Return a SINGLE JSX expression — no function declarations, no export statements.
+2. Use the `data` variable for data — NEVER hardcode data arrays in the JSX.
+3. Use inline style={{}} for dynamic colors and dimensions. Tailwind classes are OK for
+   structural layout (p-4, grid, gap-4, flex, text-sm, font-medium, etc.).
+4. Always wrap charts in <ResponsiveContainer width="100%" height={N}>.
+5. Always wrap the entire widget in a <Card> with a CardHeader showing the title.
+6. Keep code concise — under 80 lines. Focus on the visualization, not boilerplate.
+
+### Example — Stacked bar chart with legend
+
+```
+<Card>
+  <CardHeader>
+    <CardTitle>{meta.title}</CardTitle>
+    <CardDescription>{meta.subtitle}</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={data} layout="vertical">
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis type="number" tickFormatter={(v) => formatCurrency(v)} />
+        <YAxis dataKey="name" type="category" width={80} />
+        <Tooltip formatter={(v) => formatCurrency(v)} />
+        <Legend />
+        <Bar dataKey="current" fill="#22c55e" name="Current" stackId="a" />
+        <Bar dataKey="overdue" fill="#ef4444" name="Overdue" stackId="a" />
+      </BarChart>
+    </ResponsiveContainer>
+  </CardContent>
+</Card>
+```
+
+### Example — Donut chart with center label
+
+```
+(() => {
+  const COLORS = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe'];
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{meta.title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
+                 innerRadius={60} outerRadius={100} paddingAngle={2}>
+              {data.map((_, i) => (
+                <Cell key={i} fill={COLORS[i % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(v) => formatCurrency(v)} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+        <p style={{textAlign: 'center', marginTop: -160, fontSize: 24, fontWeight: 700}}>
+          {formatCurrency(total)}
+        </p>
+      </CardContent>
+    </Card>
+  );
+})()
+```
+
+### When to use generative vs custom_chart vs predefined
+- **Predefined types** (kpi_cards, revenue_chart, etc.): When the standard widget fits exactly.
+- **custom_chart**: Simple area/bar/line charts with standard data shape.
+- **generative**: Pie charts, radar charts, treemaps, composed charts, scatter plots,
+  funnel charts, custom layouts with multiple sub-charts, KPI grids with sparklines,
+  or any visualization that needs layout logic beyond a single standard chart.
+
+PREFER generative for most dashboard requests — it produces richer, more tailored results.
+
+### React Best Practices for Generated Code
+(Adapted from Vercel Engineering's React performance guidelines)
+
+When writing generative widget code, follow these rules:
+- **No inline component definitions**: Never define a component inside the JSX expression.
+  Use IIFEs `(() => { ... })()` if you need local variables, but keep it flat.
+- **Derive state during render**: Compute derived values directly (e.g. `const total = data.reduce(...)`)
+  instead of using useEffect to set state.
+- **Use ternary for conditionals**: Write `{condition ? <A/> : null}` not `{condition && <A/>}`
+  to avoid rendering `0` or `false` as text.
+- **Combine iterations**: Use a single `.reduce()` or `.map()` pass instead of chaining
+  `.filter().map()` when processing data arrays.
+- **Stable references**: If using useState, prefer functional updates `setState(prev => ...)`
+  for stable callbacks.
+- **Memoize expensive computations**: Wrap expensive data transformations in `useMemo`
+  with appropriate dependency arrays.
+- **Minimize JSX nesting**: Keep the component tree shallow. Prefer flat layouts over
+  deeply nested divs.
+
+### Design Principles for Generated Widgets
+(Adapted from Anthropic's frontend-design skill)
+
+Your generated widgets should look polished and intentional — never generic or cookie-cutter.
+Follow these principles:
+
+- **Color**: Commit to a cohesive palette per widget. Use CSS variables or inline styles.
+  Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
+  NEVER default to bland grays or generic purple gradients.
+- **Typography**: Use clear visual hierarchy. Titles should feel bold, subtitles muted,
+  data values prominent. Vary font-weight and size to create contrast.
+- **Spatial composition**: Use generous padding inside cards. Give charts room to breathe.
+  Asymmetric layouts (e.g. a summary stat left, chart right) are more engaging than
+  centered-everything.
+- **Visual polish**: Add subtle details — rounded bar corners (radius={[4,4,0,0]}),
+  gradient fills on area charts, custom tooltip styling, muted grid lines (stroke="#e5e7eb"),
+  colored dots/badges next to legend items.
+- **Contextual design**: A cash flow risk widget should feel urgent (warm reds/ambers).
+  A revenue growth widget should feel optimistic (greens/teals). Match the visual tone
+  to the data story.
+- **Variety**: Never generate two widgets that look the same. Vary chart types, color
+  palettes, and layout patterns across a dashboard. Each widget should have its own
+  character while maintaining overall cohesion.
 
 ## Dashboard Best Practices
 

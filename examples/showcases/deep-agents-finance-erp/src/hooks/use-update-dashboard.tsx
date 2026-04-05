@@ -13,6 +13,7 @@ const TYPE_MAP: Record<string, string> = {
   transactions: "recent-transactions",
   invoices: "outstanding-invoices",
   custom_chart: "custom-chart",
+  generative: "generative",
 };
 
 const DEFAULT_COLSPAN: Record<string, 1 | 2 | 3 | 4> = {
@@ -22,6 +23,7 @@ const DEFAULT_COLSPAN: Record<string, 1 | 2 | 3 | 4> = {
   "recent-transactions": 2,
   "outstanding-invoices": 2,
   "custom-chart": 2,
+  generative: 2,
 };
 
 interface WidgetSpec {
@@ -59,11 +61,11 @@ function DashboardUpdater({
           2) as 1 | 2 | 3 | 4;
         const config = w.config ?? {};
 
-        if (internalType === "custom-chart") {
-          const id = `custom-chart-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        if (internalType === "custom-chart" || internalType === "generative") {
+          const id = `${internalType}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
           addWidget({
             id,
-            type: "custom-chart",
+            type: internalType as any,
             colSpan,
             order: getWidgets().length,
             config: config as any,

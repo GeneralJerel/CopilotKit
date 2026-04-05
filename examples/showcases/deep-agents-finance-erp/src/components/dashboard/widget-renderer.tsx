@@ -6,6 +6,7 @@ import { ExpenseChart } from "@/components/charts/expense-chart";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { DashboardCustomChart } from "@/components/dashboard/dashboard-custom-chart";
+import { GenerativeWidget } from "@/components/dashboard/generative-widget";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { kpis, transactions, invoices } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
@@ -39,6 +40,8 @@ export function WidgetRenderer({ widget }: { widget: DashboardWidget }) {
       return <OutstandingInvoicesSection config={widget.config} />;
     case "custom-chart":
       return <DashboardCustomChart config={widget.config} colSpan={widget.colSpan} />;
+    case "generative":
+      return <GenerativeWidget config={widget.config} colSpan={widget.colSpan} />;
     default:
       return null;
   }

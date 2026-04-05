@@ -110,7 +110,7 @@ def update_dashboard(widgets: list) -> str:
     Args:
         widgets: Array of widget configs. Each widget has:
             - type (str): Widget type — 'kpi_cards', 'revenue_chart', 'expense_breakdown',
-              'transactions', 'invoices', or 'custom_chart'.
+              'transactions', 'invoices', 'custom_chart', or 'generative'.
             - colSpan (int, optional): Grid column span 1-4. Defaults vary by type.
             - config (dict, optional): Type-specific configuration:
               * kpi_cards: { metrics?: string[] } — KPI labels to show.
@@ -121,6 +121,9 @@ def update_dashboard(widgets: list) -> str:
               * custom_chart: { title: str, subtitle?: str, chartType: 'area'|'bar'|'line',
                   data: [{label, value, value2?, value3?}], series: [{key, color, label}],
                   formatValues?: 'currency'|'number'|'percent' }
+              * generative: { title: str, subtitle?: str, code: str, data: list[dict],
+                  meta?: dict } — Agent-generated React JSX code rendered live on the
+                  dashboard. See generative widget guidelines in system prompt.
     """
     types = [w.get("type", "widget") for w in widgets]
     return f"Dashboard updated: {', '.join(types)}"

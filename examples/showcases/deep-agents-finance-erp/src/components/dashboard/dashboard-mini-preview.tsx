@@ -9,6 +9,7 @@ const TYPE_COLORS: Record<string, string> = {
   "recent-transactions": "bg-purple-400/60",
   "outstanding-invoices": "bg-rose-400/60",
   "custom-chart": "bg-teal-400/60",
+  generative: "bg-indigo-400/60",
 };
 
 /**

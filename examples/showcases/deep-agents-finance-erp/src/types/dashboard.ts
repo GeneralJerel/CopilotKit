@@ -4,7 +4,8 @@ export type WidgetType =
   | "expense-breakdown"
   | "recent-transactions"
   | "outstanding-invoices"
-  | "custom-chart";
+  | "custom-chart"
+  | "generative";
 
 export interface BaseWidget {
   id: string;
@@ -50,13 +51,25 @@ export interface CustomChartWidget extends BaseWidget {
   };
 }
 
+export interface GenerativeWidget extends BaseWidget {
+  type: "generative";
+  config: {
+    title: string;
+    subtitle?: string;
+    code: string;
+    data: Record<string, unknown>[];
+    meta?: Record<string, unknown>;
+  };
+}
+
 export type DashboardWidget =
   | KpiCardsWidget
   | RevenueChartWidget
   | ExpenseBreakdownWidget
   | RecentTransactionsWidget
   | OutstandingInvoicesWidget
-  | CustomChartWidget;
+  | CustomChartWidget
+  | GenerativeWidget;
 
 export interface SavedDashboard {
   id: string;
