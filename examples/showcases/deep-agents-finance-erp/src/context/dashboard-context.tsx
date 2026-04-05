@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useCallback, useRef, useEffect } f
 import type { DashboardWidget, SavedDashboard } from "@/types/dashboard";
 import {
   getSavedDashboards,
-  saveDashboard as saveDashboardToStorage,
+  saveDashboard as saveDashboardApi,
   deleteSavedDashboard,
   loadSavedDashboard,
   findSavedDashboardByName,
@@ -64,11 +64,11 @@ interface DashboardContextValue {
   // Save/load
   savedDashboards: SavedDashboard[];
   currentDashboardName: string | null;
-  saveCurrent: (name: string) => SavedDashboard;
-  loadSaved: (id: string) => boolean;
-  loadSavedByName: (name: string) => boolean;
-  deleteSaved: (id: string) => void;
-  refreshSaved: () => void;
+  saveCurrent: (name: string) => Promise<SavedDashboard>;
+  loadSaved: (id: string) => Promise<boolean>;
+  loadSavedByName: (name: string) => Promise<boolean>;
+  deleteSaved: (id: string) => Promise<void>;
+  refreshSaved: () => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextValue | null>(null);
@@ -81,13 +81,14 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const [savedDashboards, setSavedDashboards] = useState<SavedDashboard[]>([]);
   const [currentDashboardName, setCurrentDashboardName] = useState<string | null>(null);
 
-  // Load saved dashboards from localStorage on mount
+  // Load saved dashboards from API on mount
   useEffect(() => {
-    setSavedDashboards(getSavedDashboards());
+    getSavedDashboards().then(setSavedDashboards);
   }, []);
 
-  const refreshSaved = useCallback(() => {
-    setSavedDashboards(getSavedDashboards());
+  const refreshSaved = useCallback(async () => {
+    const dashboards = await getSavedDashboards();
+    setSavedDashboards(dashboards);
   }, []);
 
   const getWidgets = useCallback(() => widgetsRef.current, []);
@@ -142,34 +143,35 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     setCurrentDashboardName(null);
   }, []);
 
-  const saveCurrent = useCallback((name: string) => {
-    const entry = saveDashboardToStorage(name, widgetsRef.current);
-    setSavedDashboards(getSavedDashboards());
+  const saveCurrent = useCallback(async (name: string) => {
+    const entry = await saveDashboardApi(name, widgetsRef.current);
+    await refreshSaved();
     setCurrentDashboardName(name);
     return entry;
-  }, []);
+  }, [refreshSaved]);
 
-  const loadSaved = useCallback((id: string) => {
-    const widgets = loadSavedDashboard(id);
-    if (!widgets) return false;
-    setWidgetsState(widgets);
-    const dashboard = getSavedDashboards().find((d) => d.id === id);
+  const loadSaved = useCallback(async (id: string) => {
+    const loadedWidgets = await loadSavedDashboard(id);
+    if (!loadedWidgets) return false;
+    setWidgetsState(loadedWidgets);
+    const dashboards = await getSavedDashboards();
+    const dashboard = dashboards.find((d) => d.id === id);
     setCurrentDashboardName(dashboard?.name ?? null);
     return true;
   }, []);
 
-  const loadSavedByName = useCallback((name: string) => {
-    const dashboard = findSavedDashboardByName(name);
+  const loadSavedByName = useCallback(async (name: string) => {
+    const dashboard = await findSavedDashboardByName(name);
     if (!dashboard) return false;
     setWidgetsState(dashboard.widgets);
     setCurrentDashboardName(dashboard.name);
     return true;
   }, []);
 
-  const deleteSaved = useCallback((id: string) => {
-    deleteSavedDashboard(id);
-    setSavedDashboards(getSavedDashboards());
-  }, []);
+  const deleteSaved = useCallback(async (id: string) => {
+    await deleteSavedDashboard(id);
+    await refreshSaved();
+  }, [refreshSaved]);
 
   return (
     <DashboardContext.Provider

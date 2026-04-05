@@ -17,7 +17,7 @@ import { useRequestApproval } from "@/hooks/use-request-approval";
 import { useUpdateDashboard } from "@/hooks/use-update-dashboard";
 import { useManageDashboard } from "@/hooks/use-manage-dashboard";
 import { useSaveDashboard } from "@/hooks/use-save-dashboard";
-import { DashboardProvider, useDashboard } from "@/context/dashboard-context";
+import { useDashboard } from "@/context/dashboard-context";
 import { Sidebar } from "./sidebar";
 import { kpis } from "@/lib/data";
 
@@ -103,11 +103,7 @@ function FinanceSidebarWelcomeScreen({
 }
 
 export function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <DashboardProvider>
-      <ShellInner>{children}</ShellInner>
-    </DashboardProvider>
-  );
+  return <ShellInner>{children}</ShellInner>;
 }
 
 function ShellInner({ children }: { children: React.ReactNode }) {
@@ -129,10 +125,11 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   // Saved dashboards context — agent can reference when loading saved layouts
   useAgentContext({
     description:
-      "Saved dashboard configurations. Use save_dashboard to save the current layout, load_dashboard to restore a saved one.",
+      "Saved dashboard configurations (templates and custom). Use load_dashboard to restore a saved one, save_dashboard to save the current layout. When the user asks for a standard view, suggest loading a template before building from scratch.",
     value: savedDashboards.map((d) => ({
       id: d.id,
       name: d.name,
+      category: d.category,
       widgetCount: d.widgets.length,
       updatedAt: d.updatedAt,
     })),

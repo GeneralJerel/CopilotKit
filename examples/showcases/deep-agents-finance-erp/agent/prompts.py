@@ -60,7 +60,10 @@ Use when the user says "save this dashboard", "bookmark this", "keep this layout
 ### load_dashboard
 Load a previously saved dashboard by name (fuzzy match). Params: name.
 Use when the user says "load my X dashboard", "restore the X view", "switch to X".
-The list of saved dashboards is available in the agent context.
+The list of saved dashboards (both templates and custom) is available in the agent context.
+When the user asks for a standard view (executive summary, cash flow, cost control, revenue),
+check if a matching template exists in the saved dashboards context and load it instead of
+building from scratch.
 
 ## Decision Rules
 
@@ -78,6 +81,7 @@ The list of saved dashboards is available in the agent context.
 - Customize layout → manage_dashboard (remove/reorder) or update_dashboard
 - "Save this dashboard" → save_dashboard with a descriptive name
 - "Load my X dashboard" → load_dashboard with the name
+- Standard view request (e.g. "executive summary") → check templates first → load_dashboard
 
 ## Dashboard Best Practices
 

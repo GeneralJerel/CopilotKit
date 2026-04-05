@@ -8,6 +8,7 @@ import "./globals.css";
 import "@copilotkit/react-core/v2/styles.css";
 import { Montserrat, Playfair_Display } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { DashboardProvider } from "@/context/dashboard-context";
 
 const playfairDisplayHeading = Playfair_Display({
   subsets: ["latin"],
@@ -42,7 +43,9 @@ export default function RootLayout({
       <body className="antialiased">
         <CopilotKitProvider runtimeUrl="/api/copilotkit">
           <CopilotChatConfigurationProvider agentId="finance_erp_agent">
-            {children}
+            <DashboardProvider>
+              {children}
+            </DashboardProvider>
           </CopilotChatConfigurationProvider>
         </CopilotKitProvider>
       </body>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  LayoutGrid,
   FileText,
   Landmark,
   Package,
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboards", href: "/dashboards", icon: LayoutGrid },
   { name: "Invoices", href: "/invoices", icon: FileText },
   { name: "Accounts", href: "/accounts", icon: Landmark },
   { name: "Inventory", href: "/inventory", icon: Package },

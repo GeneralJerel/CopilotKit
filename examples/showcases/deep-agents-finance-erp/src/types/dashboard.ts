@@ -61,6 +61,8 @@ export type DashboardWidget =
 export interface SavedDashboard {
   id: string;
   name: string;
+  description?: string;
+  category: "template" | "custom";
   widgets: DashboardWidget[];
   createdAt: string;
   updatedAt: string;
