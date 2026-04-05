@@ -5,14 +5,18 @@ import {
   CopilotSidebarView,
   useAgentContext,
   useAgent,
+  useCopilotKit,
   useRenderTool,
+  ToolCallStatus,
 } from "@copilotkit/react-core/v2";
+import { ToolCard } from "@/components/chat/tool-card";
 import { cn } from "@/lib/utils";
 import { useRenderChatVisual } from "@/hooks/use-render-chat-visual";
 import { useNavigateAndFilter } from "@/hooks/use-navigate-and-filter";
 import { useRequestApproval } from "@/hooks/use-request-approval";
 import { useUpdateDashboard } from "@/hooks/use-update-dashboard";
 import { useManageDashboard } from "@/hooks/use-manage-dashboard";
+import { useSaveDashboard } from "@/hooks/use-save-dashboard";
 import { DashboardProvider, useDashboard } from "@/context/dashboard-context";
 import { Sidebar } from "./sidebar";
 import { kpis } from "@/lib/data";
@@ -59,6 +63,7 @@ function FinanceSidebarWelcomeScreen({
   ...props
 }: React.ComponentProps<typeof CopilotSidebarView.WelcomeScreen>) {
   const { agent } = useAgent({ agentId: "finance_erp_agent" });
+  const { copilotkit } = useCopilotKit();
 
   const handlePromptClick = (message: string) => {
     agent.addMessage({
@@ -66,7 +71,7 @@ function FinanceSidebarWelcomeScreen({
       role: "user",
       content: message,
     });
-    void agent.runAgent();
+    void copilotkit.runAgent({ agent });
   };
 
   return (
@@ -106,7 +111,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function ShellInner({ children }: { children: React.ReactNode }) {
-  const { widgets } = useDashboard();
+  const { widgets, savedDashboards } = useDashboard();
 
   // Lightweight context — detailed data is available via backend research tools
   useAgentContext({
@@ -121,20 +126,33 @@ function ShellInner({ children }: { children: React.ReactNode }) {
     value: widgets,
   });
 
-  // Render the internal "task" tool (subagent delegation) as a clean loading state
+  // Saved dashboards context — agent can reference when loading saved layouts
+  useAgentContext({
+    description:
+      "Saved dashboard configurations. Use save_dashboard to save the current layout, load_dashboard to restore a saved one.",
+    value: savedDashboards.map((d) => ({
+      id: d.id,
+      name: d.name,
+      widgetCount: d.widgets.length,
+      updatedAt: d.updatedAt,
+    })),
+  });
+
+  // Wildcard tool renderer — catches do_research, do_projections, and any
+  // other tools not handled by a named hook. Shows persistent ToolCards.
   useRenderTool(
     {
-      name: "task",
-      render: ({ status, args }) => {
-        if (status === "complete") return null;
-        const label =
-          args?.subagent_type === "projections"
-            ? "Running projections..."
-            : "Researching...";
+      name: "*",
+      render: ({ name, status, args, result }) => {
+        const mappedStatus =
+          status === ToolCallStatus.Complete ? "complete" : "inProgress";
         return (
-          <p className="text-sm text-muted-foreground animate-pulse py-1">
-            {label}
-          </p>
+          <ToolCard
+            name={name}
+            status={mappedStatus}
+            args={args ?? {}}
+            result={result}
+          />
         );
       },
     },
@@ -147,6 +165,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
   useRequestApproval();      // HITL: invoice payment + inventory reorder
   useUpdateDashboard();      // Add/update dashboard widgets (batch)
   useManageDashboard();      // Reset/remove/reorder dashboard
+  useSaveDashboard();        // Save/load dashboard configurations
 
   return (
     <div className="flex h-screen bg-muted">
@@ -156,7 +175,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         agentId="finance_erp_agent"
         defaultOpen={false}
         welcomeScreen={FinanceSidebarWelcomeScreen}
-        instructions="You are the FinanceOS AI assistant. Always use the research subagent for data queries and the projections subagent for forecasts. Prefer rendering rich UI components (charts, cards, dashboard widgets) over plain text whenever possible."
+        instructions="You are the FinanceOS AI assistant. Always use do_research for data queries and do_projections for forecasts. Prefer rendering rich UI components (charts, cards, dashboard widgets) over plain text whenever possible."
         labels={{
           modalHeaderTitle: "FinanceOS AI",
           welcomeMessageText: "Ask about invoices, accounts, inventory, or HR.",
