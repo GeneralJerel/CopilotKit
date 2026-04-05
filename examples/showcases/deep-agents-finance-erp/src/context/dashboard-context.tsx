@@ -1,7 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useRef } from "react";
-import type { DashboardWidget } from "@/types/dashboard";
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
+import type { DashboardWidget, SavedDashboard } from "@/types/dashboard";
+import {
+  getSavedDashboards,
+  saveDashboard as saveDashboardToStorage,
+  deleteSavedDashboard,
+  loadSavedDashboard,
+  findSavedDashboardByName,
+} from "@/lib/saved-dashboards";
 
 const DEFAULT_WIDGETS: DashboardWidget[] = [
   {
@@ -54,6 +61,14 @@ interface DashboardContextValue {
   ) => { existed: boolean; id: string };
   setWidgets: (widgets: DashboardWidget[]) => void;
   resetToDefault: () => void;
+  // Save/load
+  savedDashboards: SavedDashboard[];
+  currentDashboardName: string | null;
+  saveCurrent: (name: string) => SavedDashboard;
+  loadSaved: (id: string) => boolean;
+  loadSavedByName: (name: string) => boolean;
+  deleteSaved: (id: string) => void;
+  refreshSaved: () => void;
 }
 
 const DashboardContext = createContext<DashboardContextValue | null>(null);
@@ -63,14 +78,28 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const widgetsRef = useRef(widgets);
   widgetsRef.current = widgets;
 
+  const [savedDashboards, setSavedDashboards] = useState<SavedDashboard[]>([]);
+  const [currentDashboardName, setCurrentDashboardName] = useState<string | null>(null);
+
+  // Load saved dashboards from localStorage on mount
+  useEffect(() => {
+    setSavedDashboards(getSavedDashboards());
+  }, []);
+
+  const refreshSaved = useCallback(() => {
+    setSavedDashboards(getSavedDashboards());
+  }, []);
+
   const getWidgets = useCallback(() => widgetsRef.current, []);
 
   const addWidget = useCallback((widget: DashboardWidget) => {
     setWidgetsState((prev) => [...prev, widget]);
+    setCurrentDashboardName(null);
   }, []);
 
   const removeWidget = useCallback((widgetId: string) => {
     setWidgetsState((prev) => prev.filter((w) => w.id !== widgetId));
+    setCurrentDashboardName(null);
   }, []);
 
   const updateWidget = useCallback(
@@ -105,15 +134,62 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
 
   const setWidgets = useCallback((newWidgets: DashboardWidget[]) => {
     setWidgetsState(newWidgets);
+    setCurrentDashboardName(null);
   }, []);
 
   const resetToDefault = useCallback(() => {
     setWidgetsState(DEFAULT_WIDGETS);
+    setCurrentDashboardName(null);
+  }, []);
+
+  const saveCurrent = useCallback((name: string) => {
+    const entry = saveDashboardToStorage(name, widgetsRef.current);
+    setSavedDashboards(getSavedDashboards());
+    setCurrentDashboardName(name);
+    return entry;
+  }, []);
+
+  const loadSaved = useCallback((id: string) => {
+    const widgets = loadSavedDashboard(id);
+    if (!widgets) return false;
+    setWidgetsState(widgets);
+    const dashboard = getSavedDashboards().find((d) => d.id === id);
+    setCurrentDashboardName(dashboard?.name ?? null);
+    return true;
+  }, []);
+
+  const loadSavedByName = useCallback((name: string) => {
+    const dashboard = findSavedDashboardByName(name);
+    if (!dashboard) return false;
+    setWidgetsState(dashboard.widgets);
+    setCurrentDashboardName(dashboard.name);
+    return true;
+  }, []);
+
+  const deleteSaved = useCallback((id: string) => {
+    deleteSavedDashboard(id);
+    setSavedDashboards(getSavedDashboards());
   }, []);
 
   return (
     <DashboardContext.Provider
-      value={{ widgets, getWidgets, addWidget, removeWidget, updateWidget, upsertWidget, setWidgets, resetToDefault }}
+      value={{
+        widgets,
+        getWidgets,
+        addWidget,
+        removeWidget,
+        updateWidget,
+        upsertWidget,
+        setWidgets,
+        resetToDefault,
+        savedDashboards,
+        currentDashboardName,
+        saveCurrent,
+        loadSaved,
+        loadSavedByName,
+        deleteSaved,
+        refreshSaved,
+      }}
     >
       {children}
     </DashboardContext.Provider>

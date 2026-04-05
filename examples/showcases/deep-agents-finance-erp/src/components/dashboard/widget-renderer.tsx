@@ -38,7 +38,7 @@ export function WidgetRenderer({ widget }: { widget: DashboardWidget }) {
     case "outstanding-invoices":
       return <OutstandingInvoicesSection config={widget.config} />;
     case "custom-chart":
-      return <DashboardCustomChart config={widget.config} />;
+      return <DashboardCustomChart config={widget.config} colSpan={widget.colSpan} />;
     default:
       return null;
   }

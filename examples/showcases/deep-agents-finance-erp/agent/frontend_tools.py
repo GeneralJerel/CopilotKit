@@ -1,4 +1,4 @@
-"""Consolidated frontend tool stubs (6 tools, down from 14).
+"""Consolidated frontend tool stubs (5 tools, down from 14).
 
 These tools are registered at agent creation time so the model can call them
 via function calling. The AG-UI adapter streams ToolCall events, which the
@@ -118,8 +118,9 @@ def update_dashboard(widgets: list) -> str:
               * expense_breakdown: { categories?: string[] }
               * transactions: { limit?: int }
               * invoices: { statuses?: ['pending', 'overdue'] }
-              * custom_chart: { title: str, chartType: 'area'|'bar'|'line',
-                  data: [{label, value, value2?}], series: [{key, color, label}] }
+              * custom_chart: { title: str, subtitle?: str, chartType: 'area'|'bar'|'line',
+                  data: [{label, value, value2?, value3?}], series: [{key, color, label}],
+                  formatValues?: 'currency'|'number'|'percent' }
     """
     types = [w.get("type", "widget") for w in widgets]
     return f"Dashboard updated: {', '.join(types)}"
@@ -150,6 +151,34 @@ def manage_dashboard(action: str, widgetId: Optional[str] = None,
 
 
 # ---------------------------------------------------------------------------
+# 6. save_dashboard — persist current dashboard layout
+# ---------------------------------------------------------------------------
+
+@tool
+def save_dashboard(name: str) -> str:
+    """Save the current dashboard layout with a name for later retrieval.
+
+    Args:
+        name: A descriptive name for this dashboard configuration (e.g. 'Q1 Cash Flow Review').
+    """
+    return f"Dashboard saved as '{name}'."
+
+
+# ---------------------------------------------------------------------------
+# 7. load_dashboard — restore a previously saved dashboard
+# ---------------------------------------------------------------------------
+
+@tool
+def load_dashboard(name: str) -> str:
+    """Load a previously saved dashboard by name (fuzzy match).
+
+    Args:
+        name: Name of the saved dashboard to load.
+    """
+    return f"Dashboard '{name}' loaded."
+
+
+# ---------------------------------------------------------------------------
 # Export
 # ---------------------------------------------------------------------------
 
@@ -160,6 +189,8 @@ ui_tools = [
     navigate_and_filter,
     update_dashboard,
     manage_dashboard,
+    save_dashboard,
+    load_dashboard,
 ]
 
 # Human-in-the-loop tools — execute on the backend via copilotkit_interrupt().

@@ -42,9 +42,11 @@ export interface CustomChartWidget extends BaseWidget {
   type: "custom-chart";
   config: {
     title: string;
+    subtitle?: string;
     chartType: "area" | "bar" | "line";
-    data: { label: string; value: number; value2?: number }[];
+    data: { label: string; value: number; value2?: number; value3?: number }[];
     series: { key: string; color: string; label: string }[];
+    formatValues?: "currency" | "number" | "percent";
   };
 }
 
@@ -55,3 +57,11 @@ export type DashboardWidget =
   | RecentTransactionsWidget
   | OutstandingInvoicesWidget
   | CustomChartWidget;
+
+export interface SavedDashboard {
+  id: string;
+  name: string;
+  widgets: DashboardWidget[];
+  createdAt: string;
+  updatedAt: string;
+}

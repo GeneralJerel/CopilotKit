@@ -147,6 +147,38 @@ body {
   --sidebar-ring: oklch(0.553 0.013 58.071);
 }
 
+/* Dashboard widget animations */
+@keyframes widget-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes widget-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+}
+
+.widget-enter {
+  animation: widget-enter 0.35s ease-out both;
+}
+
+.widget-exit {
+  animation: widget-exit 0.25s ease-in both;
+  pointer-events: none;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
