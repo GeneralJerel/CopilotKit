@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import { useRenderTool, ToolCallStatus } from "@copilotkit/react-core/v2";
 import { useDashboard } from "@/context/dashboard-context";
+import { CompletedToolCard } from "@/components/chat/tool-card";
 
 interface ReorderUpdate {
   widgetId: string;
@@ -10,25 +11,33 @@ interface ReorderUpdate {
   order?: number;
 }
 
+// Module-level dedup set — survives component remounts (issue #04)
+const processedKeys = new Set<string>();
+
 function DashboardManager({
   action,
   widgetId,
   updates,
   status,
+  result,
 }: {
   action: string;
   widgetId?: string;
   updates?: ReorderUpdate[];
   status: string;
+  result?: unknown;
 }) {
   const { getWidgets, setWidgets, removeWidget, resetToDefault } =
     useDashboard();
-  const applied = useRef(false);
 
   useEffect(() => {
-    if (status === ToolCallStatus.Complete && !applied.current) {
-      applied.current = true;
+    if (status !== ToolCallStatus.Complete) return;
 
+    const key = `manage_dashboard-${action}-${widgetId || ""}-${JSON.stringify(updates || [])}`;
+    if (processedKeys.has(key)) return;
+    processedKeys.add(key);
+
+    queueMicrotask(() => {
       if (action === "reset") {
         resetToDefault();
       } else if (action === "remove" && widgetId) {
@@ -47,10 +56,18 @@ function DashboardManager({
         });
         setWidgets(updatedWidgets);
       }
-    }
+    });
   }, [status, action, widgetId, updates, resetToDefault, removeWidget, getWidgets, setWidgets]);
 
-  if (status === ToolCallStatus.Complete) return null;
+  if (status === ToolCallStatus.Complete) {
+    return (
+      <CompletedToolCard
+        name="manage_dashboard"
+        args={{ action, widgetId, updates }}
+        result={result}
+      />
+    );
+  }
   return (
     <p className="text-sm text-muted-foreground animate-pulse py-1">
       Updating layout...
@@ -62,12 +79,13 @@ export function useManageDashboard() {
   useRenderTool(
     {
       name: "manage_dashboard",
-      render: ({ args, status }) => (
+      render: ({ args, status, result }) => (
         <DashboardManager
           action={args?.action ?? ""}
           widgetId={args?.widgetId}
           updates={args?.updates}
           status={status}
+          result={result}
         />
       ),
     },

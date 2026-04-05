@@ -145,11 +145,12 @@ Pure data retrieval — execute entirely on the backend, return text summaries.
 3. Middleware emits an AG-UI ToolCall event via SSE
 
 4. Frontend receives the event. CopilotKit matches tool name
-   to a useFrontendTool() hook registered in shell.tsx
+   to a useRenderTool() hook registered in shell.tsx
 
-5. Hook handler executes (updates state, renders component)
+5. Hook render function executes (renders component from args)
 
-6. Hook sends back a ToolResult event
+6. For HITL tools (useHumanInTheLoop), user responds and
+   the hook sends back a ToolResult event
 
 7. Middleware receives the result and injects it into the
    graph state as the tool's return value

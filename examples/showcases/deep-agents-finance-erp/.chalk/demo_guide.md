@@ -1,6 +1,6 @@
 # FinanceOS Deep Agents — Live Demo Guide
 
-A ~12 minute live demo showcasing CopilotKit's frontend primitives: **useCopilotReadable** (context sharing), **useFrontendTool** (agent-driven UI), **useHumanInTheLoop** (approval workflows), and **customizable dashboard** (agent-designed layouts).
+A ~12 minute live demo showcasing CopilotKit's frontend primitives: **useAgentContext** (context sharing), **useRenderTool** (agent-driven UI), **useHumanInTheLoop** (approval workflows), and **customizable dashboard** (agent-designed layouts).
 
 ---
 
@@ -20,7 +20,7 @@ A ~12 minute live demo showcasing CopilotKit's frontend primitives: **useCopilot
 > Establish that the agent understands your financial data without any setup.
 
 ### Say
-"This is FinanceOS — a finance ERP with invoices, accounts, inventory, and HR. We've connected it to a LangGraph agent using CopilotKit. The agent already sees all our data through `useCopilotReadable` — six data sources shared with zero custom API work. Let me show you."
+"This is FinanceOS — a finance ERP with invoices, accounts, inventory, and HR. We've connected it to a LangGraph agent using CopilotKit. The agent already sees key metrics and the dashboard layout through `useAgentContext`, and queries detailed data via backend research tools. Let me show you."
 
 ### Type
 ```
@@ -33,7 +33,7 @@ What's our current cash position and how does it compare to our liabilities?
 - The agent pulled this from frontend context — no backend query needed for this one
 
 ### Code Callout
-> `shell.tsx` — six `useCopilotReadable()` calls share KPIs, invoices, accounts, transactions, inventory, and employees with the agent.
+> `shell.tsx` — two `useAgentContext()` calls share KPIs and dashboard layout with the agent. Detailed data is fetched via backend research tools.
 
 ---
 
@@ -42,7 +42,7 @@ What's our current cash position and how does it compare to our liabilities?
 > Show the agent driving the UI — not just answering questions, but taking you to the answer.
 
 ### Say
-"But what if I don't just want a text answer? What if I want the agent to actually show me the data? With `useFrontendTool`, the agent can control the UI directly."
+"But what if I don't just want a text answer? What if I want the agent to actually show me the data? With `useRenderTool`, the agent can control the UI directly."
 
 ### Type
 ```
@@ -59,7 +59,7 @@ Show me all overdue invoices
 "The agent didn't just tell me about overdue invoices — it navigated me there and applied the filter. This is a frontend tool: the agent calls it, Next.js router does the navigation, and the URL params drive the filter. The user sees the real app view, not a chat summary."
 
 ### Code Callout
-> `use-navigate-and-filter.ts` — a `useFrontendTool` that calls `router.push()` with the target page and filter as a URL search param.
+> `use-navigate-and-filter.tsx` — a `useRenderTool` that renders a Navigator component, which calls `router.push()` with the target page and filter as a URL search param on completion.
 
 ---
 
@@ -85,10 +85,10 @@ Give me a visual cash flow projection for the next 4 quarters
 3. The agent follows up with a text summary below the chart
 
 ### Say (after)
-"That chart was composed by the agent — it decided the chart type, generated the data points from its analysis, and rendered it using Recharts, the same library powering the dashboard. This is `useFrontendTool` with a `render` prop — the agent calls the tool, and a React component renders the result inline in the chat."
+"That chart was composed by the agent — it decided the chart type, generated the data points from its analysis, and rendered it using Recharts, the same library powering the dashboard. This is `useRenderTool` — the agent calls the tool, and a React component renders the result inline in the chat."
 
 ### Code Callout
-> `use-render-chart.ts` — `useFrontendTool` with a `render` component that receives the agent's data and renders an area, bar, or line chart.
+> `use-render-chat-visual.tsx` — `useRenderTool` that dispatches to `InlineChatChart` or `CashPositionCard` based on the `type` arg.
 
 ### Optional Follow-Up
 If time permits, try a second chart to show type flexibility:
@@ -128,7 +128,7 @@ Process payment for all overdue invoices
 "The agent stopped and waited. It rendered a real approval card with the invoice details, and nothing happened until I clicked Approve. The `useHumanInTheLoop` hook creates a promise that resolves when the user responds — the agent's execution is literally suspended. This is the pattern for any high-stakes action: payments, transfers, refunds, adjustments."
 
 ### Code Callout
-> `use-approve-invoice-payment.ts` — `useHumanInTheLoop` with a render component that shows three states: loading, executing (with buttons), and complete (with badge).
+> `use-request-approval.tsx` — `useHumanInTheLoop` with a render function that dispatches to `InvoiceApprovalCard` or `InventoryReorderCard` based on `type`. Shows three states: loading, executing (with buttons), and complete (with badge).
 
 ---
 
@@ -160,7 +160,7 @@ Check inventory levels and reorder anything that needs restocking
 "Same hook, completely different UI. The invoice card had green approve/red reject. The PO card has blue approve/gray skip. Different business logic, different visual treatment, but the same `useHumanInTheLoop` primitive underneath. You define the render component, CopilotKit handles the agent pause/resume lifecycle."
 
 ### Code Callout
-> `use-approve-inventory-reorder.ts` — same `useHumanInTheLoop` pattern, different render component and business context.
+> Same `use-request-approval.tsx` hook handles both approval types — the `type` parameter routes to the correct render component.
 
 ---
 
@@ -187,7 +187,7 @@ Build me a dashboard focused on cash flow risk — show AR aging, overdue invoic
 5. The dashboard now tells a cash flow risk story
 
 ### Say (after)
-"The agent just redesigned the entire dashboard for a specific CFO use case. It didn't just move widgets — it decided what's relevant to cash flow risk, removed what's not, and composed custom charts from the financial data. It called `remove_dashboard_widget`, `update_dashboard_layout`, and `render_custom_chart` — multiple frontend tools in one conversation turn."
+"The agent just redesigned the entire dashboard for a specific CFO use case. It didn't just move widgets — it decided what's relevant to cash flow risk, removed what's not, and composed custom charts from the financial data. It called `manage_dashboard(reset)` and then `update_dashboard` with a batch of widgets — two consolidated tool calls instead of six individual ones."
 
 ### Type
 ```
@@ -210,7 +210,7 @@ I'm concerned about the Marketing overspend — set up a cost control view with 
 5. The dashboard now tells a cost control story
 
 ### Say (after)
-"Same primitives, completely different dashboard. The agent identified that Marketing is 32% over budget — driven by conference sponsorships and ad campaigns — and composed a dashboard around that insight. It's not following a template; it's reading the data, identifying the story, and designing a view that highlights what matters. That's the power of combining `useFrontendTool` with `useCopilotReadable` — the agent has the context to make editorial decisions."
+"Same primitives, completely different dashboard. The agent identified that Marketing is 32% over budget — driven by conference sponsorships and ad campaigns — and composed a dashboard around that insight. It's not following a template; it's reading the data, identifying the story, and designing a view that highlights what matters. That's the power of combining `useRenderTool` with `useAgentContext` — the agent has the context to make editorial decisions."
 
 ### Type
 ```
@@ -221,7 +221,7 @@ Reset my dashboard
 - Dashboard returns to default layout (clean finish)
 
 ### Code Callout
-> `src/hooks/` — nine dashboard tools: `render_kpi_cards`, `render_revenue_chart`, `render_expense_breakdown`, `render_transactions`, `render_invoices`, `render_custom_chart`, `remove_dashboard_widget`, `update_dashboard_layout`, `reset_dashboard`. Each is a `useFrontendTool` that mutates the `DashboardProvider` context.
+> `src/hooks/` — two consolidated dashboard hooks: `use-update-dashboard.tsx` (batch add/update widgets) and `use-manage-dashboard.tsx` (reset/remove/reorder). Each is a `useRenderTool` that mutates the `DashboardProvider` context.
 
 > `src/context/dashboard-context.tsx` — React context holding the widget list. Default state matches the original hardcoded layout. Exposes `addWidget`, `removeWidget`, `updateWidget`, `setWidgets`, `resetToDefault`.
 
@@ -236,13 +236,13 @@ Reset my dashboard
 ### Say
 "Let's recap what we just saw — four CopilotKit patterns powering an entire AI-native ERP:
 
-1. **`useCopilotReadable`** — shared all our financial data with the agent in six lines of code. No custom API endpoints, no data serialization logic.
+1. **`useAgentContext`** — shared KPIs and dashboard layout with the agent. No custom API endpoints, no data serialization logic.
 
-2. **`useFrontendTool`** — gave the agent the ability to drive the UI. Navigate pages, apply filters, render charts inline. The agent becomes a co-pilot, not just a chatbot.
+2. **`useRenderTool`** — gave the agent the ability to drive the UI. Navigate pages, apply filters, render charts inline, compose dashboards. The agent becomes a co-pilot, not just a chatbot.
 
 3. **`useHumanInTheLoop`** — the guardrail for high-stakes actions. The agent proposes, the human approves. Payments don't process and purchase orders don't submit without explicit confirmation.
 
-4. **Customizable Dashboard** — every dashboard widget is a frontend tool. The agent can add, remove, resize, and rearrange them. Users design their own dashboard experience through natural language. The same `useFrontendTool` primitive, but now it's modifying the application layout itself.
+4. **Customizable Dashboard** — dashboard widgets are managed through two consolidated tools (`update_dashboard` and `manage_dashboard`). The agent can add, remove, resize, and rearrange them. Users design their own dashboard experience through natural language.
 
 These are composable React hooks. You register them in your components, and CopilotKit handles the agent communication, the rendering lifecycle, and the approval flow. Your agent framework — LangGraph, CrewAI, whatever you're using — just sees tools. The magic is in the frontend."
 
@@ -253,13 +253,13 @@ These are composable React hooks. You register them in your components, and Copi
 | Issue | Fix |
 |-------|-----|
 | Agent doesn't navigate | Check that `useNavigateAndFilter` is registered in Shell and the agent system prompt mentions `navigate_and_filter` |
-| Chart doesn't render | Verify `recharts` is installed and `InlineChatChart` is imported correctly in `use-render-chart.ts` |
+| Chart doesn't render | Verify `recharts` is installed and `InlineChatChart` is imported correctly in `use-render-chat-visual.tsx` |
 | Approval card appears but buttons don't work | Ensure the component checks `status === ToolCallStatus.Executing` before rendering buttons with `respond` |
 | Agent processes payment without asking | Update agent system prompt to explicitly require approval tool usage before any data mutations |
 | Filter doesn't apply after navigation | Check that the page component reads `searchParams.filter` and filters data accordingly |
 | Dashboard widget doesn't appear/disappear | Verify `DashboardProvider` wraps `ShellInner` in `shell.tsx` and the hook calls `useDashboard()` |
 | Agent doesn't know widget IDs | Check that the dashboard layout `useAgentContext` call is present in `ShellInner` |
-| Custom chart shows no data | Ensure the agent's `render_custom_chart` call includes valid `data` and `series` arrays |
+| Custom chart shows no data | Ensure the agent's `update_dashboard` call includes valid `data` and `series` arrays in the `custom_chart` config |
 
 ---
 

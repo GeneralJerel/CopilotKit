@@ -53,39 +53,40 @@ Two calls share six KPI metrics and the full dashboard layout. The agent sees th
 
 ---
 
-### Pattern 2: Frontend Tools (`useFrontendTool`)
+### Pattern 2: Frontend Tools (`useRenderTool` + `useHumanInTheLoop`)
 
 **Problem**: The agent should be able to control the UI — navigate pages, render charts, modify the dashboard — not just output text.
 
-**Solution**: `useFrontendTool()` registers React-based tools that the agent can call. Each tool has a Zod schema, a handler function, and an optional render component.
+**Solution**: `useRenderTool()` registers render-only tools that the agent can call. The backend defines tool stubs (in `agent/frontend_tools.py`) so the model has schemas for function calling, while the frontend renders the actual UI from the tool call arguments.
 
 ```typescript
-// src/hooks/use-render-chart.ts
-useFrontendTool({
-  agentId: "finance_erp_agent",
-  name: "render_chart",
-  parameters: z.object({
-    title: z.string(),
-    type: z.enum(["area", "bar", "line"]),
-    data: z.array(z.object({ label: z.string(), value: z.number() })),
-    series: z.array(z.object({ key: z.string(), color: z.string(), label: z.string() })),
-  }),
-  render: InlineChatChart,
-});
+// src/hooks/use-render-chat-visual.tsx
+useRenderTool(
+  {
+    name: "render_chat_visual",
+    render: ({ args, status }) => {
+      if (args?.type === "cash_position") {
+        return <CashPositionCard status={status} args={...} />;
+      }
+      return <InlineChatChart status={status} args={...} />;
+    },
+  },
+  [],
+);
 ```
 
-When the agent calls `render_chart`, CopilotKit renders the `InlineChatChart` component inline in the chat with the agent's data.
+When the agent calls `render_chat_visual`, CopilotKit renders the appropriate component inline in the chat with the agent's data.
 
-**14 frontend tools** are registered in the shell:
+**5 consolidated frontend tools** are registered in the shell (down from 14):
 
 | Category | Tools |
 |---|---|
-| Chat rendering | `render_chart`, `render_cash_position`, `navigate_and_filter` |
-| Dashboard widgets | `render_kpi_cards`, `render_revenue_chart`, `render_expense_breakdown`, `render_transactions`, `render_invoices`, `render_custom_chart` |
-| Dashboard management | `remove_dashboard_widget`, `update_dashboard_layout`, `reset_dashboard` |
-| Human-in-the-loop | `approve_invoice_payment`, `approve_inventory_reorder` |
+| Chat rendering | `render_chat_visual` (charts + cash position card) |
+| Navigation | `navigate_and_filter` |
+| Dashboard | `update_dashboard` (batch add/update widgets), `manage_dashboard` (reset/remove/reorder) |
+| Human-in-the-loop | `request_approval` (invoice payments + inventory reorders) |
 
-**Where it's used**: Each tool lives in its own hook file under `src/hooks/`. All hooks are called in `src/components/layout/shell.tsx`.
+**Where it's used**: Each tool lives in its own hook file under `src/hooks/`. All 5 hooks are called in `src/components/layout/shell.tsx`.
 
 ---
 
@@ -101,26 +102,44 @@ When the agent calls `render_chart`, CopilotKit renders the `InlineChatChart` co
 ```python
 # agent/frontend_tools.py (backend)
 @tool
-def approve_invoice_payment(invoices, totalAmount, action):
-    answer, _ = copilotkit_interrupt(
-        action="approve_invoice_payment",
-        args={"invoices": invoices, "totalAmount": totalAmount, "action": action},
-    )
+def request_approval(type: str, invoices=None, totalAmount=None, action=None,
+                     items=None, estimatedTotal=None, supplier=None):
+    if type == "invoice_payment":
+        answer, _ = copilotkit_interrupt(
+            action="request_approval",
+            args={"type": "invoice_payment", "invoices": invoices,
+                  "totalAmount": totalAmount, "action": action},
+        )
+    else:
+        answer, _ = copilotkit_interrupt(
+            action="request_approval",
+            args={"type": "inventory_reorder", "items": items,
+                  "estimatedTotal": estimatedTotal, "supplier": supplier or ""},
+        )
     return answer
 ```
 
 ```typescript
-// src/hooks/use-approve-invoice-payment.ts (frontend)
-const { resolve } = useHumanInTheLoop({
+// src/hooks/use-request-approval.tsx (frontend)
+useHumanInTheLoop({
   agentId: "finance_erp_agent",
-  name: "approve_invoice_payment",
-  render: InvoiceApprovalCard,
+  name: "request_approval",
+  parameters: z.object({
+    type: z.enum(["invoice_payment", "inventory_reorder"]),
+    // ... type-specific params
+  }),
+  render: (props) => {
+    if (args?.type === "inventory_reorder") {
+      return <InventoryReorderCard {...} />;
+    }
+    return <InvoiceApprovalCard {...} />;
+  },
 });
 ```
 
-The approval card shows a table of invoices, the total amount, and Approve/Reject buttons. When the user clicks, `resolve()` sends the answer back through AG-UI, and the agent continues.
+A single consolidated tool handles both approval types. The render function dispatches to `InvoiceApprovalCard` or `InventoryReorderCard` based on the `type` parameter. When the user clicks Approve/Reject, `respond()` sends the answer back through AG-UI, and the agent continues.
 
-**Where it's used**: `src/hooks/use-approve-invoice-payment.ts`, `src/hooks/use-approve-inventory-reorder.ts`, with render components in `src/components/chat/`.
+**Where it's used**: `src/hooks/use-request-approval.tsx`, with render components in `src/components/chat/`.
 
 ---
 
@@ -130,15 +149,15 @@ The approval card shows a table of invoices, the total amount, and Approve/Rejec
 
 **Solution**: Every dashboard widget is a frontend tool. The agent can add, remove, resize, and reorder widgets through natural language — composing dashboards tailored to specific business questions.
 
-The dashboard state lives in React Context (`DashboardProvider`), shared with the agent via `useAgentContext()`. When the agent calls tools like `render_custom_chart` or `remove_dashboard_widget`, the corresponding hooks update the context, and the dashboard re-renders.
+The dashboard state lives in React Context (`DashboardProvider`), shared with the agent via `useAgentContext()`. When the agent calls `update_dashboard` or `manage_dashboard`, the corresponding hooks update the context, and the dashboard re-renders.
 
 **Dashboard reshaping flow:**
-1. Agent calls `reset_dashboard` to clear the current layout
+1. Agent calls `manage_dashboard(action="reset")` to clear the current layout
 2. Agent gathers data via research and/or projections subagents
-3. Agent adds only widgets that support the theme (e.g., for "cash flow risk": AR aging chart, overdue invoices, cash flow projection)
-4. Dashboard updates in real-time as each widget tool is called
+3. Agent calls `update_dashboard(widgets=[...])` with only widgets that support the theme (e.g., for "cash flow risk": AR aging chart, overdue invoices, cash flow projection)
+4. Dashboard updates in real-time
 
-**Where it's used**: `src/context/dashboard-context.tsx` for state, `src/components/dashboard/widget-renderer.tsx` for rendering, and nine hooks in `src/hooks/` for the dashboard tools.
+**Where it's used**: `src/context/dashboard-context.tsx` for state, `src/components/dashboard/widget-renderer.tsx` for rendering, and two hooks (`use-update-dashboard.tsx`, `use-manage-dashboard.tsx`) in `src/hooks/`.
 
 ---
 
@@ -188,19 +207,20 @@ FastAPI app with a single AG-UI endpoint:
 ```python
 add_langgraph_fastapi_endpoint(
     app=app,
-    agent=CopilotKitLangGraphAgent(
+    agent=LangGraphAGUIAgent(
         name="finance_erp_agent",
         description="A finance ERP assistant...",
         graph=agent_graph,
         config=copilotkit_customize_config(
             emit_tool_calls=_emit_tool_names,
+            emit_messages=True,
         ),
     ),
     path="/copilotkit/agents/finance_erp_agent",
 )
 ```
 
-`emit_tool_calls` controls which tool calls are streamed to the frontend. Only UI and HITL tools are emitted — internal tools like `task` (subagent delegation) are filtered out so their raw JSON doesn't appear in the chat.
+`emit_tool_calls` controls which tool calls are streamed to the frontend. Only the 5 frontend tools are emitted — internal tools like `task` (subagent delegation) are filtered out so their raw JSON doesn't appear in the chat.
 
 ### Multi-Agent Graph: `agent/agent.py`
 
@@ -247,7 +267,7 @@ deep-agents-finance-erp/
       dashboard/                 # Dashboard widgets & grid
       charts/                    # Revenue/expense chart components
       ui/                        # Reusable UI components (shadcn)
-    hooks/                       # 14 frontend tool hooks
+    hooks/                       # 5 consolidated frontend tool hooks
     context/
       dashboard-context.tsx      # Dashboard state management
     types/                       # TypeScript type definitions
@@ -263,13 +283,13 @@ If you want to understand how this project works, start with these files:
 
 | File | What You'll Learn |
 |---|---|
-| `src/components/layout/shell.tsx` | How all 14 frontend tools + context sharing are wired together |
+| `src/components/layout/shell.tsx` | How all 5 frontend tools + context sharing are wired together |
 | `agent/agent.py` | How the multi-agent graph is assembled |
 | `agent/prompts.py` | How the orchestrator decides what to do |
 | `agent/frontend_tools.py` | How backend stubs and HITL interrupts work |
 | `agent/tools.py` | What data is available and how it's queried |
-| `src/hooks/use-render-chart.ts` | Example of a frontend rendering tool |
-| `src/hooks/use-approve-invoice-payment.ts` | Example of a HITL approval flow |
+| `src/hooks/use-render-chat-visual.tsx` | Example of a frontend rendering tool |
+| `src/hooks/use-request-approval.tsx` | Example of a HITL approval flow |
 | `src/context/dashboard-context.tsx` | How dashboard state is managed |
 | `agent/main.py` | How the FastAPI server and AG-UI endpoint are configured |
 | `src/app/api/copilotkit/[[...slug]]/route.ts` | How the Next.js runtime bridges to the agent |

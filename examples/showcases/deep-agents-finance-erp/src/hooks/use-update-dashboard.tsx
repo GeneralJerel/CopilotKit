@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import { useRenderTool, ToolCallStatus } from "@copilotkit/react-core/v2";
 import { useDashboard } from "@/context/dashboard-context";
+import { CompletedToolCard } from "@/components/chat/tool-card";
 
 /** Map agent widget type names to internal WidgetType values. */
 const TYPE_MAP: Record<string, string> = {
@@ -29,20 +30,28 @@ interface WidgetSpec {
   config?: Record<string, unknown>;
 }
 
+// Module-level dedup set — survives component remounts (issue #04)
+const processedKeys = new Set<string>();
+
 function DashboardUpdater({
   widgets,
   status,
+  result,
 }: {
   widgets: WidgetSpec[];
   status: string;
+  result?: unknown;
 }) {
   const { upsertWidget, addWidget, getWidgets } = useDashboard();
-  const applied = useRef(false);
 
   useEffect(() => {
-    if (status === ToolCallStatus.Complete && widgets?.length && !applied.current) {
-      applied.current = true;
+    if (status !== ToolCallStatus.Complete || !widgets?.length) return;
 
+    const key = `update_dashboard-${JSON.stringify(widgets)}`;
+    if (processedKeys.has(key)) return;
+    processedKeys.add(key);
+
+    queueMicrotask(() => {
       for (const w of widgets) {
         const internalType = TYPE_MAP[w.type] ?? w.type;
         const colSpan = (w.colSpan ??
@@ -73,10 +82,18 @@ function DashboardUpdater({
           );
         }
       }
-    }
+    });
   }, [status, widgets, upsertWidget, addWidget, getWidgets]);
 
-  if (status === ToolCallStatus.Complete) return null;
+  if (status === ToolCallStatus.Complete) {
+    return (
+      <CompletedToolCard
+        name="update_dashboard"
+        args={{ widgets }}
+        result={result}
+      />
+    );
+  }
   return (
     <p className="text-sm text-muted-foreground animate-pulse py-1">
       Updating dashboard...
@@ -88,10 +105,11 @@ export function useUpdateDashboard() {
   useRenderTool(
     {
       name: "update_dashboard",
-      render: ({ args, status }) => (
+      render: ({ args, status, result }) => (
         <DashboardUpdater
           widgets={args?.widgets ?? []}
           status={status}
+          result={result}
         />
       ),
     },

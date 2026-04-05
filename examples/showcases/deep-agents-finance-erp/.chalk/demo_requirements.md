@@ -2,17 +2,21 @@
 
 ## Overview
 
-A production-grade Finance ERP showcase demonstrating CopilotKit deep agents with LangGraph, LangSmith observability, and a Postgres-backed data layer.
+A production-grade Finance ERP showcase demonstrating CopilotKit x LangChain deep agents with LangGraph, LangSmith observability, and a multi-agent architecture with human-in-the-loop approval workflows.
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────┐     AG-UI / SSE      ┌──────────────────┐     SQL      ┌────────────┐
-│   Next.js 16    │ ──────────────────▶   │  LangGraph Agent │ ──────────▶  │  Postgres  │
-│   (Frontend)    │ ◀──────────────────   │  (Python/FastAPI) │ ◀──────────  │   16       │
-└─────────────────┘                       └──────────────────┘              └────────────┘
+┌─────────────────┐     AG-UI / SSE      ┌──────────────────────────────────┐
+│   Next.js 16    │ ──────────────────▶   │  LangGraph Multi-Agent (FastAPI) │
+│   (Frontend)    │ ◀──────────────────   │                                  │
+└─────────────────┘                       │  Orchestrator                    │
+                                          │    ├─ Research Subagent (13 tools)│
+                                          │    └─ Projections Subagent (6)   │
+                                          │  + 5 Frontend Tools              │
+                                          └──────────────────────────────────┘
                                                   │
                                                   │ traces
                                                   ▼
@@ -27,19 +31,18 @@ A production-grade Finance ERP showcase demonstrating CopilotKit deep agents wit
 ### Frontend
 - **Framework:** Next.js 16.1 (App Router)
 - **UI:** Tailwind CSS v4, custom dark theme, Recharts for data viz
-- **CopilotKit:** `@copilotkit/react-core`, `@copilotkit/react-ui` v1.51.0
+- **CopilotKit:** `@copilotkit/react-core` v1.54.1
 - **Chat UI:** CopilotSidebar with finance-specific system prompt
 
 ### Backend Agent
 - **Runtime:** Python 3.11+, FastAPI + Uvicorn
-- **LLM Framework:** LangChain + LangGraph (deep agent pattern)
-- **Model:** GPT-4o (configurable via `OPENAI_MODEL` env var)
+- **LLM Framework:** LangChain + LangGraph (deep agent pattern via `create_deep_agent`)
+- **Model:** GPT-5.4 (configurable via `OPENAI_MODEL` env var)
 - **Protocol:** AG-UI (Agent-UI protocol) over SSE
 
 ### Data Layer
-- **Database:** PostgreSQL 16 (via Docker Compose)
-- **ORM:** SQLAlchemy 2.0
-- **Seed Data:** `agent/seed.sql` — auto-loaded on container start
+- **In-memory mock data** in `agent/tools.py` (backend) and `src/lib/data.ts` (frontend)
+- Mirrored seed data: 9 invoices, 12 accounts, 15 transactions, 8 inventory items, 11 employees, 8 quarters of financials
 
 ### Observability & Evaluation
 - **Tracing:** LangSmith (all agent calls traced automatically)
@@ -52,7 +55,7 @@ A production-grade Finance ERP showcase demonstrating CopilotKit deep agents wit
 
 | Module | Route | Description |
 |--------|-------|-------------|
-| Dashboard | `/` | KPI cards, revenue/expense charts, recent transactions, outstanding invoices |
+| Dashboard | `/` | KPI cards, revenue/expense charts, recent transactions, outstanding invoices — agent can compose themed dashboards |
 | Invoices | `/invoices` | Full invoice list with filtering, summary cards (outstanding, collected, overdue) |
 | Accounts | `/accounts` | Chart of accounts, transaction ledger, balance summary |
 | Inventory | `/inventory` | Stock management, reorder alerts, SKU tracking |
@@ -60,7 +63,13 @@ A production-grade Finance ERP showcase demonstrating CopilotKit deep agents wit
 
 ---
 
-## Agent Tools
+## Agent Architecture
+
+### Orchestrator (5 frontend tools + `task` for subagent dispatch)
+
+The orchestrator routes user intent to subagents for data, then calls frontend tools to render UI.
+
+### Research Subagent (13 tools)
 
 | Tool | Description |
 |------|-------------|
@@ -69,21 +78,41 @@ A production-grade Finance ERP showcase demonstrating CopilotKit deep agents wit
 | `query_transactions` | Query recent ledger transactions |
 | `query_inventory` | Query inventory items, filter by stock status |
 | `query_employees` | Query employee directory, filter by department |
+| `query_quarterly_financials` | Quarterly revenue/expenses/profit history (JSON) |
+| `query_cash_flow_components` | Quarterly cash flow by component (JSON) |
+| `query_budget_vs_actual` | Current quarter budget vs actual by category |
+| `query_ar_aging` | Accounts receivable aging breakdown |
+| `query_monthly_expenses` | Monthly expense breakdown by category |
 | `generate_financial_report` | Generate balance sheet, income statement, cash flow, or summary report |
 | `analyze_cash_flow` | Analyze cash flow trends over N months |
 | `forecast_revenue` | Project revenue for upcoming quarters |
+
+### Projections Subagent (6 tools)
+
+| Tool | Description |
+|------|-------------|
+| `compute_revenue_forecast` | Revenue projections (linear or seasonal method) |
+| `compute_cash_flow_forecast` | Cash flow projections by component |
+| `run_scenario_analysis` | Best/base/worst case scenarios |
+| `compute_trend_analysis` | QoQ growth, YoY comparisons, trend direction |
+| `query_quarterly_financials` | Historical quarterly data (shared) |
+| `query_cash_flow_components` | Historical cash flow data (shared) |
+
+### Frontend Tools (5 consolidated, called directly by orchestrator)
+
+| Tool | Description |
+|------|-------------|
+| `render_chat_visual` | Inline chart (area/bar/line) or cash position card in chat |
+| `navigate_and_filter` | SPA navigation to any ERP page with optional filter |
+| `request_approval` | Human-in-the-loop approval for invoice payments or inventory reorders |
+| `update_dashboard` | Batch add/update dashboard widgets |
+| `manage_dashboard` | Reset, remove, or reorder dashboard layout |
 
 ---
 
 ## Setup Instructions
 
-### 1. Start Postgres
-
-```bash
-docker compose up -d
-```
-
-### 2. Configure Environment
+### 1. Configure Environment
 
 ```bash
 cd agent
@@ -92,12 +121,12 @@ cp .env.example .env
 ```
 
 Required environment variables:
-- `OPENAI_API_KEY` — OpenAI API key for GPT-4o
-- `LANGCHAIN_API_KEY` — LangSmith API key for tracing
+- `OPENAI_API_KEY` — OpenAI API key
+- `OPENAI_MODEL` — Model name (default: `gpt-5.4-2026-03-05`)
+- `LANGCHAIN_API_KEY` — LangSmith API key for tracing (optional)
 - `LANGCHAIN_PROJECT` — LangSmith project name (default: `finance-erp-agent`)
-- `DATABASE_URL` — Postgres connection string (default: `postgresql://erp_user:erp_password@localhost:5432/finance_erp`)
 
-### 3. Start the Agent
+### 2. Start the Agent
 
 ```bash
 cd agent
@@ -110,21 +139,24 @@ Or with LangGraph CLI:
 langgraph dev
 ```
 
-### 4. Start the Frontend
+### 3. Start the Frontend
 
 ```bash
 npm install
 npm run dev
 ```
 
-### 5. Deploy to LangGraph Cloud
+Frontend environment (`.env.local`):
+- `REMOTE_ACTION_URL` — Agent endpoint (default: `http://localhost:8123/copilotkit/agents/finance_erp_agent`)
+
+### 4. Deploy to LangGraph Cloud
 
 ```bash
 cd agent
 langgraph deploy
 ```
 
-Update `LANGGRAPH_DEPLOYMENT_URL` in the frontend `.env.local` to point to the cloud deployment URL.
+Update `REMOTE_ACTION_URL` in the frontend `.env.local` to point to the cloud deployment URL.
 
 ---
 
@@ -150,14 +182,14 @@ Evaluations test:
 
 ## Demo Script
 
-1. **Dashboard Overview** — Show the KPI cards, revenue chart, and expense breakdown
-2. **AI Chat — Financial Query** — Ask "What's our current cash position?" (triggers `query_accounts`)
-3. **AI Chat — Overdue Invoices** — Ask "Show me overdue invoices" (triggers `query_invoices`)
-4. **AI Chat — Report Generation** — Ask "Generate a balance sheet" (triggers `generate_financial_report`)
-5. **AI Chat — Forecasting** — Ask "Forecast revenue for next 4 quarters" (triggers `forecast_revenue`)
-6. **AI Chat — Cross-module** — Ask "We need to hire 2 engineers — what's the budget impact?" (uses `query_employees` + `analyze_cash_flow`)
-7. **Navigate to Inventory** — Show low-stock alerts, ask AI "Which items need reordering?"
-8. **LangSmith Dashboard** — Show traces, latency, token usage, and eval results
+See `demo_guide.md` for the full 6-act demo script (~12 minutes). Summary:
+
+1. **Conversational baseline** — "What's our cash position?" (agent context + research subagent)
+2. **Navigate + Filter** — "Show me overdue invoices" (navigate_and_filter)
+3. **Inline Charts** — "Cash flow projection for 4 quarters" (projections subagent + render_chat_visual)
+4. **Invoice Approval (HITL)** — "Process payment for overdue invoices" (request_approval)
+5. **Inventory Reorder (HITL)** — "Check inventory and reorder" (request_approval)
+6. **Dashboard Composition** — "Build me a cash flow risk dashboard" (manage_dashboard + update_dashboard)
 
 ---
 
@@ -165,12 +197,15 @@ Evaluations test:
 
 - [ ] All 5 ERP modules render correctly with mock data
 - [ ] CopilotKit sidebar opens and connects to the LangGraph agent
-- [ ] Agent correctly routes queries to appropriate tools
-- [ ] LangSmith traces appear for all agent interactions
-- [ ] Postgres database seeds correctly via docker-compose
+- [ ] Agent correctly routes queries to appropriate subagents
+- [ ] Orchestrator calls frontend tools (not plain text) for visual responses
+- [ ] Human-in-the-loop approval works for invoice payments
+- [ ] Human-in-the-loop approval works for inventory reorders
+- [ ] Dashboard composition responds to themed requests (e.g. "cash flow risk dashboard")
+- [ ] Inline charts render in chat (area, bar, line)
+- [ ] Navigation + filtering works from chat
 - [ ] Revenue chart renders with Recharts (area chart)
-- [ ] Expense breakdown shows animated progress bars
 - [ ] Dark theme is consistent across all pages
 - [ ] Status badges show correct colors (green/amber/red)
 - [ ] Navigation sidebar highlights active route
-- [ ] LangSmith evals pass with >80% correctness score
+- [ ] LangSmith traces appear for all agent interactions (when configured)
