@@ -17,14 +17,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Member, MemberRole } from "@/app/api/v1/data";
+import type { Member } from "@/app/api/v1/data";
+import { MemberRole } from "@/app/api/v1/data";
 import { useAuthContext } from "@/components/auth-context";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useCopilotReadable } from "@copilotkit/react-core";
+import { useAgentContext } from "@copilotkit/react-core/v2";
 import { usePathname } from "next/navigation";
+import { ThreadsPanel } from "@/components/threads/threads-panel";
 
 interface LayoutProps {
   children: React.ReactNode;
+  /** Active chat thread id (from useThreadSelection in the wrapper). */
+  selectedThreadId: string;
+  onSelectThread: (id: string) => void;
+  onCreateThread: () => void;
 }
 
 function UserNavigation({
@@ -94,13 +100,17 @@ function UserNavigation({
   );
 }
 
-export function LayoutComponent({ children }: LayoutProps) {
+export function LayoutComponent({
+  children,
+  selectedThreadId,
+  onSelectThread,
+  onCreateThread,
+}: LayoutProps) {
   const { users, currentUser, setCurrentUser } = useAuthContext();
   const pathname = usePathname();
-  console.log("pathname", pathname.split("/")[1]);
-  useCopilotReadable({
+  useAgentContext({
     description: "The current page where the user is",
-    value: pathname.split("/")[1] == "" ? "cards" : pathname.split("/")[1],
+    value: pathname.split("/")[1] === "" ? "cards" : pathname.split("/")[1],
   });
 
   return (
@@ -127,6 +137,13 @@ export function LayoutComponent({ children }: LayoutProps) {
           />
         </div>
       </aside>
+      <ThreadsPanel
+        agentId="default"
+        selectedThreadId={selectedThreadId}
+        onSelectThread={onSelectThread}
+        onCreateThread={onCreateThread}
+        onSelectedThreadRemoved={onCreateThread}
+      />
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center justify-between border-b px-4 md:px-6">
           <h1 className="text-2xl font-bold">Hello, {currentUser.name}</h1>

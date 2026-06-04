@@ -1,15 +1,16 @@
 "use client";
-import {
+import type {
   NewCardRequest,
   Card as ICard,
   ExpensePolicy,
-  MemberRole,
   Transaction,
+  PolicyException,
 } from "@/app/api/v1/data";
+import { MemberRole } from "@/app/api/v1/data";
 import { randomDigits } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/components/auth-context";
-import { useCopilotReadable } from "@copilotkit/react-core";
+import { useAgentContext } from "@copilotkit/react-core/v2";
 
 export default function useCreditCards() {
   const [cards, setCards] = useState<ICard[]>([]);
@@ -96,7 +97,7 @@ export default function useCreditCards() {
           .toISOString()
           .split("-")[1] +
         "/" +
-        new Date().toISOString().split("-")[0].substring(2),
+        new Date().toISOString().split("-")[0].slice(2),
       type: type,
       color: color,
       pin: pin,
@@ -179,7 +180,7 @@ export default function useCreditCards() {
   }: {
     id: string;
     status: "pending" | "approved" | "denied";
-  }) => {
+  }): Promise<{ ok: boolean; error?: string }> => {
     try {
       const response = await fetch(`/api/v1/transactions/${id}`, {
         method: "PUT",
@@ -188,23 +189,84 @@ export default function useCreditCards() {
         },
         body: JSON.stringify({ status }),
       });
-      if (!response.ok) {
-        throw new Error("Failed to change transaction status");
-      }
+      // Always refresh from the server so the UI reflects the real state
+      // whether the write succeeded or was rejected (e.g. the over-limit gate).
       void fetchTransactions();
-      return response.json();
+      if (!response.ok) {
+        // Surface the server's symptom-only message (e.g. "<team> policy limit
+        // exceeded") so the agent + UI can learn the failure instead of
+        // silently reporting a false success.
+        const body = await response.json().catch(() => null);
+        return { ok: false, error: body?.message ?? "Failed to change transaction status" };
+      }
+      return { ok: true };
     } catch (error) {
       console.error("Error changing transaction status:", error);
+      return { ok: false, error: "Network error" };
+    }
+  };
+
+  const openPolicyException = async ({
+    transactionId,
+    code,
+  }: {
+    transactionId: string;
+    code: string;
+  }): Promise<{ ok: boolean; data?: PolicyException; error?: string }> => {
+    try {
+      const response = await fetch("/api/v1/exceptions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transactionId, code }),
+      });
+      const body = await response.json().catch(() => null);
+      void fetchTransactions();
+      if (!response.ok) {
+        return { ok: false, error: body?.message ?? "Failed to open policy exception" };
+      }
+      return { ok: true, data: body as PolicyException };
+    } catch (error) {
+      console.error("Error opening policy exception:", error);
+      return { ok: false, error: "Network error" };
+    }
+  };
+
+  const finalizePolicyException = async ({
+    exceptionId,
+  }: {
+    exceptionId: string;
+  }): Promise<{ ok: boolean; data?: PolicyException; error?: string }> => {
+    try {
+      const response = await fetch(
+        `/api/v1/exceptions/${exceptionId}/finalize`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      const body = await response.json().catch(() => null);
+      void fetchTransactions();
+      if (!response.ok) {
+        return { ok: false, error: body?.message ?? "Failed to finalize policy exception" };
+      }
+      return { ok: true, data: body as PolicyException };
+    } catch (error) {
+      console.error("Error finalizing policy exception:", error);
+      return { ok: false, error: "Network error" };
     }
   };
 
   // Provide the cards data to our copilot
   // This readable is set up here because the `useCards` hook is also used in the dashboard
   // So the cards information is available in both cards and dashboard pages.
-  useCopilotReadable({
+  useAgentContext({
     description:
       "The available credit cards, possible expense policies and transactions",
-    value: { cards, policies, transactions },
+    value: JSON.stringify({ cards, policies, transactions }),
   });
 
   return {
@@ -224,5 +286,7 @@ export default function useCreditCards() {
     addNoteToTransaction,
     assignPolicyToCard,
     changeTransactionStatus,
+    openPolicyException,
+    finalizePolicyException,
   };
 }
