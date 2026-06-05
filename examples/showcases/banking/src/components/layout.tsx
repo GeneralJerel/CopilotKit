@@ -28,15 +28,10 @@ import { useAuthContext } from "@/components/auth-context";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAgentContext } from "@copilotkit/react-core/v2";
 import { usePathname } from "next/navigation";
-import { ThreadsPanel } from "@/components/threads/threads-panel";
 import { IDENTITY } from "@/lib/identity";
 
 interface LayoutProps {
   children: React.ReactNode;
-  /** Active chat thread id (from useThreadSelection in the wrapper). */
-  selectedThreadId: string;
-  onSelectThread: (id: string) => void;
-  onCreateThread: () => void;
 }
 
 /** Compact violet→indigo logo mark used at the top of the floating rail. */
@@ -135,12 +130,7 @@ function UserNavigation({
   );
 }
 
-export function LayoutComponent({
-  children,
-  selectedThreadId,
-  onSelectThread,
-  onCreateThread,
-}: LayoutProps) {
+export function LayoutComponent({ children }: LayoutProps) {
   const { users, currentUser, setCurrentUser } = useAuthContext();
   const pathname = usePathname();
   useAgentContext({
@@ -209,13 +199,6 @@ export function LayoutComponent({
         </aside>
       </div>
 
-      <ThreadsPanel
-        agentId="default"
-        selectedThreadId={selectedThreadId}
-        onSelectThread={onSelectThread}
-        onCreateThread={onCreateThread}
-        onSelectedThreadRemoved={onCreateThread}
-      />
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-20 items-center justify-between px-6 md:px-10">
           <div>
