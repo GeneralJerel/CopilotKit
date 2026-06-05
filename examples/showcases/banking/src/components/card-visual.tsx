@@ -62,7 +62,7 @@ export function GradientCreditCard({
   return (
     <div
       className={cn(
-        "relative aspect-[1.586/1] w-full overflow-hidden rounded-[22px] p-5 text-white",
+        "relative aspect-[1.586/1] w-full overflow-hidden rounded-[22px] p-5 text-white @container",
         subtle
           ? "bg-gradient-to-br from-indigo-400/80 to-violet-500/80"
           : "brand-gradient shadow-[0_20px_45px_hsl(252_83%_55%/0.45)]",
@@ -93,8 +93,14 @@ export function GradientCreditCard({
         </div>
 
         <div className="space-y-3">
-          <p className="font-mono text-lg tracking-[0.18em] text-white/95">
-            ••••&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;{card.last4}
+          {/* Masked PAN. `clamp()` + nowrap keeps all four groups on a single
+             line at every card width (the wide dashboard hero AND the narrow
+             /-page cards) without ever wrapping or clipping the last group. */}
+          <p
+            className="whitespace-nowrap font-mono tracking-[0.16em] text-white/95"
+            style={{ fontSize: "clamp(0.95rem, 4.8cqw, 1.125rem)" }}
+          >
+            ••••&nbsp;••••&nbsp;••••&nbsp;{card.last4}
           </p>
           <div className="flex items-end justify-between text-xs">
             <div>

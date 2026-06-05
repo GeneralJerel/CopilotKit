@@ -197,10 +197,11 @@ export const PolicyExceptionModal = (props: Props) => {
           </div>
         ) : (
           <div className="flex flex-col items-start gap-4">
-            <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-foreground ring-1 ring-inset ring-green-200 dark:bg-green-900/20 dark:ring-green-900/40">
-              <CheckCircle2 className="size-4 text-green-600" />
+            <div className="flex w-full items-center gap-2.5 rounded-2xl bg-positive-soft px-3.5 py-3 text-sm text-ink ring-1 ring-inset ring-positive/30">
+              <CheckCircle2 className="size-5 flex-shrink-0 text-positive" />
               <span>
-                Exception <span className="font-mono">{doneId}</span> filed (
+                Exception{" "}
+                <span className="font-mono font-medium">{doneId}</span> filed (
                 {labelForExceptionCode(code)}).
               </span>
             </div>
@@ -211,7 +212,9 @@ export const PolicyExceptionModal = (props: Props) => {
         )}
 
         {error !== null ? (
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="rounded-xl bg-negative-soft px-3.5 py-2.5 text-sm text-negative ring-1 ring-inset ring-negative/30">
+            {error}
+          </p>
         ) : null}
       </DialogContent>
     </Dialog>

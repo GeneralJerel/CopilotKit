@@ -178,7 +178,7 @@ export function TransactionsList({
               <div className="flex flex-col items-center gap-3 rounded-2xl bg-surface p-4">
                 {overLimit && (
                   <div className="flex flex-col items-center gap-2">
-                    <div className="flex items-center gap-1.5 rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-200 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-900/40">
+                    <div className="flex items-center gap-1.5 rounded-full bg-negative-soft px-2.5 py-1 text-xs font-medium text-negative ring-1 ring-inset ring-negative/30">
                       <AlertTriangle className="h-3.5 w-3.5" />
                       Over policy limit
                     </div>
@@ -211,7 +211,7 @@ export function TransactionsList({
                       }).catch(console.error);
                     }}
                     aria-label="Approve"
-                    className="h-12 w-12 rounded-full bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30 dark:hover:text-green-300"
+                    className="h-12 w-12 rounded-full border-transparent bg-positive-soft text-positive hover:bg-positive-soft hover:text-positive hover:brightness-95 dark:hover:brightness-110"
                   >
                     <Check className="h-6 w-6" />
                   </Button>
@@ -234,7 +234,7 @@ export function TransactionsList({
                       }).catch(console.error);
                     }}
                     aria-label="Deny"
-                    className="h-12 w-12 rounded-full bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 dark:hover:text-red-300"
+                    className="h-12 w-12 rounded-full border-transparent bg-negative-soft text-negative hover:bg-negative-soft hover:text-negative hover:brightness-95 dark:hover:brightness-110"
                   >
                     <X className="h-6 w-6" />
                   </Button>
