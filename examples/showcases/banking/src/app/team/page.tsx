@@ -65,18 +65,23 @@ export default function Team() {
     }),
     render: ({ args, respond, status }) => {
       const { id } = args;
-      if (status === "inProgress") return <div>Loading...</div>;
+      if (status === "inProgress")
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       const member = team.find((m) => m.id === id);
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
           <h3 className="font-semibold text-lg">Remove Team Member</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Member:</span>{" "}
+              <span className="text-ink-muted">Member:</span>{" "}
               {member?.name ?? id}
             </p>
             <p>
-              <span className="text-gray-500">Role:</span> {member?.role}
+              <span className="text-ink-muted">Role:</span> {member?.role}
             </p>
           </div>
           <ApprovalButtons
@@ -106,22 +111,27 @@ export default function Team() {
     }),
     render: ({ args, respond, status }) => {
       const { id, role } = args;
-      if (status === "inProgress") return <div>Loading...</div>;
+      if (status === "inProgress")
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       const member = team.find((m) => m.id === id);
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
           <h3 className="font-semibold text-lg">Change Member Role</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Member:</span>{" "}
+              <span className="text-ink-muted">Member:</span>{" "}
               {member?.name ?? id}
             </p>
             <p>
-              <span className="text-gray-500">Current Role:</span>{" "}
+              <span className="text-ink-muted">Current Role:</span>{" "}
               {member?.role}
             </p>
             <p>
-              <span className="text-gray-500">New Role:</span> {role}
+              <span className="text-ink-muted">New Role:</span> {role}
             </p>
           </div>
           <ApprovalButtons
@@ -151,22 +161,27 @@ export default function Team() {
     }),
     render: ({ args, respond, status }) => {
       const { id, team: newTeam } = args;
-      if (status === "inProgress") return <div>Loading...</div>;
+      if (status === "inProgress")
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       const member = team.find((m) => m.id === id);
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
           <h3 className="font-semibold text-lg">Change Member Team</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Member:</span>{" "}
+              <span className="text-ink-muted">Member:</span>{" "}
               {member?.name ?? id}
             </p>
             <p>
-              <span className="text-gray-500">Current Team:</span>{" "}
+              <span className="text-ink-muted">Current Team:</span>{" "}
               {member?.team}
             </p>
             <p>
-              <span className="text-gray-500">New Team:</span> {newTeam}
+              <span className="text-ink-muted">New Team:</span> {newTeam}
             </p>
           </div>
           <ApprovalButtons
@@ -210,9 +225,16 @@ export default function Team() {
   }, [operation]);
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Team Management</h2>
+    <div className="mx-auto max-w-7xl space-y-6 px-2 pb-4 md:px-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight text-ink">
+            Team Management
+          </h2>
+          <p className="text-sm text-ink-muted">
+            Invite teammates and manage roles &amp; departments.
+          </p>
+        </div>
         <Button
           onClick={() =>
             dispatchDialogState({ dialogOpen: true, action: "add" })
@@ -221,19 +243,19 @@ export default function Team() {
           <UserPlus className="mr-2 h-4 w-4" /> Invite Team Member
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {team.map((member) => (
-          <Card key={member.id}>
+          <Card key={member.id} className="p-2">
             <CardHeader>
-              <CardTitle>{member.name}</CardTitle>
+              <CardTitle className="text-ink">{member.name}</CardTitle>
               <CardDescription>{member.email}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Role:</span>
-                  <span className="font-semibold">{member.role}</span>
-                </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-ink-muted">Role</span>
+                <span className="inline-flex items-center rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand-indigo dark:text-brand-violet">
+                  {member.role}
+                </span>
               </div>
             </CardContent>
             {currentUser.role === MemberRole.Admin ? (

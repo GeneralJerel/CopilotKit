@@ -127,14 +127,18 @@ export default function Page() {
       const { type, color, pin } = args;
 
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
-          <h3 className="font-semibold text-lg">New Card Request</h3>
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
+          <h3 className="text-lg font-semibold text-ink">New Card Request</h3>
           <div className="flex items-center gap-3">
-            <div className="bg-white border rounded-md p-1 flex items-center justify-center w-10 h-7">
+            <div className="flex h-7 w-10 items-center justify-center rounded-md border border-hairline bg-surface p-1">
               {type === CardBrand.Visa ? (
                 <svg
                   className="h-5"
@@ -167,7 +171,7 @@ export default function Page() {
             </div>
             <div>
               <p className="font-medium">{type}</p>
-              <p className="text-sm text-gray-500">PIN: {pin}</p>
+              <p className="text-sm text-ink-muted">PIN: {pin}</p>
             </div>
           </div>
           <ApprovalButtons
@@ -198,22 +202,26 @@ export default function Page() {
       const { cardId, policyType } = args;
 
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       const card = cards.find((c) => c.id === cardId);
       const policy = policies.find((p) => p.type === policyType);
 
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
-          <h3 className="font-semibold text-lg">Assign Policy to Card</h3>
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
+          <h3 className="text-lg font-semibold text-ink">Assign Policy to Card</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Card:</span>{" "}
+              <span className="text-ink-muted">Card:</span>{" "}
               {card ? `${card.type} ending in ${card.last4}` : cardId}
             </p>
             <p>
-              <span className="text-gray-500">Policy:</span> {policyType}
+              <span className="text-ink-muted">Policy:</span> {policyType}
             </p>
           </div>
           <ApprovalButtons
@@ -249,21 +257,25 @@ export default function Page() {
       const { transactionId, content } = args;
 
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       const transaction = transactions.find((t) => t.id === transactionId);
 
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
-          <h3 className="font-semibold text-lg">Add Note to Transaction</h3>
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
+          <h3 className="text-lg font-semibold text-ink">Add Note to Transaction</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Transaction:</span>{" "}
+              <span className="text-ink-muted">Transaction:</span>{" "}
               {transaction?.title ?? transactionId}
             </p>
             <p>
-              <span className="text-gray-500">Note:</span> {content}
+              <span className="text-ink-muted">Note:</span> {content}
             </p>
           </div>
           <ApprovalButtons
@@ -353,21 +365,25 @@ export default function Page() {
       const { cardId, pin } = args;
 
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       const card = cards.find((c) => c.id === cardId);
 
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
-          <h3 className="font-semibold text-lg">Change Card PIN</h3>
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
+          <h3 className="text-lg font-semibold text-ink">Change Card PIN</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Card:</span>{" "}
+              <span className="text-ink-muted">Card:</span>{" "}
               {card ? `${card.type} ending in ${card.last4}` : cardId}
             </p>
             <p>
-              <span className="text-gray-500">New PIN:</span> {pin}
+              <span className="text-ink-muted">New PIN:</span> {pin}
             </p>
           </div>
           <ApprovalButtons
@@ -407,7 +423,11 @@ export default function Page() {
     render: ({ args, respond, status }) => {
       const { transactionId } = args;
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       if (!transactionId) {
@@ -483,18 +503,22 @@ export default function Page() {
       const { transactionId, code } = args;
 
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
-          <h3 className="font-semibold text-lg">Open policy exception</h3>
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
+          <h3 className="text-lg font-semibold text-ink">Open policy exception</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Transaction:</span> {transactionId}
+              <span className="text-ink-muted">Transaction:</span> {transactionId}
             </p>
             <p>
-              <span className="text-gray-500">Code:</span> {code}
+              <span className="text-ink-muted">Code:</span> {code}
             </p>
           </div>
           <ApprovalButtons
@@ -534,15 +558,19 @@ export default function Page() {
       const { exceptionId } = args;
 
       if (status === "inProgress") {
-        return <div>Loading...</div>;
+        return (
+          <div className="rounded-2xl border border-hairline bg-surface p-4 text-sm text-ink-muted shadow-soft">
+            Loading…
+          </div>
+        );
       }
 
       return (
-        <div className="rounded-lg border bg-white p-4 shadow-sm space-y-4">
-          <h3 className="font-semibold text-lg">Finalize policy exception</h3>
+        <div className="space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-ink shadow-soft">
+          <h3 className="text-lg font-semibold text-ink">Finalize policy exception</h3>
           <div className="text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Exception:</span> {exceptionId}
+              <span className="text-ink-muted">Exception:</span> {exceptionId}
             </p>
           </div>
           <ApprovalButtons
@@ -630,9 +658,16 @@ export default function Page() {
   if (!cards || !policies) return null;
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Credit Cards</h1>
+    <div className="mx-auto max-w-7xl px-2 pb-4 md:px-4">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-ink">
+            Credit Cards
+          </h1>
+          <p className="text-sm text-ink-muted">
+            Manage cards and spending policies for your team.
+          </p>
+        </div>
         <AddCardDropdown
           handleAddCard={handleAddCard}
           currentUser={currentUser}
@@ -644,6 +679,7 @@ export default function Page() {
             <CreditCardDetails
               key={card.id}
               card={card}
+              holder={currentUser.name}
               policy={policies.find((p) => p.id === card.expensePolicyId)}
               onChangePinModalOpen={() =>
                 dispatch({ dialogOpen: true, cardId: card.id })
@@ -651,7 +687,9 @@ export default function Page() {
             />
           ))
         ) : (
-          <div>No cards found for {currentUser.team} team</div>
+          <div className="col-span-full rounded-2xl border border-dashed border-hairline bg-surface/60 p-10 text-center text-ink-muted">
+            No cards found for {currentUser.team} team
+          </div>
         )}
       </div>
 

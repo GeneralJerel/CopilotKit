@@ -176,7 +176,7 @@ export const PolicyExceptionModal = (props: Props) => {
                 <SelectContent>
                   {POLICY_EXCEPTION_CODES.map((c) => (
                     <SelectItem key={c.code} value={c.code}>
-                      <span className="font-mono text-xs text-neutral-500">
+                      <span className="font-mono text-xs text-ink-muted">
                         {c.code}
                       </span>
                       <span className="ml-2">{c.label}</span>

@@ -107,7 +107,7 @@
 .iconButton:focus-visible,
 .threadItem:focus-visible,
 .newThreadButton:focus-visible {
-  outline: 2px solid rgb(37 99 235 / 0.35);
+  outline: 2px solid rgb(124 92 252 / 0.45);
   outline-offset: 2px;
 }
 
@@ -160,7 +160,7 @@
 .toggleCheckbox {
   width: 0.9rem;
   height: 0.9rem;
-  accent-color: rgb(37 99 235);
+  accent-color: rgb(124 92 252);
   cursor: pointer;
 }
 
@@ -228,7 +228,7 @@
 }
 
 .threadItemSelected .threadAccent {
-  background: linear-gradient(180deg, rgb(30 64 175), rgb(59 130 246));
+  background: linear-gradient(180deg, rgb(91 61 245), rgb(124 92 252));
 }
 
 .threadBody {

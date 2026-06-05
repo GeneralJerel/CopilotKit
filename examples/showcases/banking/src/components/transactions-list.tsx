@@ -2,15 +2,14 @@
 
 import {
   AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
   Check,
   MessageSquare,
-  PlusCircle,
-  Send,
   X,
 } from "lucide-react";
 import type { ExpensePolicy, PolicyException, Transaction } from "@/app/api/v1/data";
 import { cn, formatCurrency } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRecordUserActionInCurrentThread } from "@/lib/record-user-action";
@@ -68,11 +67,11 @@ export function TransactionsList({
   return (
     <div
       className={cn(
-        "border rounded-lg overflow-hidden",
+        "overflow-hidden",
         compact ? "text-sm" : "text-base",
       )}
     >
-      {transactions.map((transaction, index) => {
+      {transactions.map((transaction) => {
         // Over-limit is derived on the CLIENT from already-loaded data: a
         // pending txn whose policy would be pushed past its limit by this
         // amount, and which has no exception linked yet. Once a justifying
@@ -85,38 +84,38 @@ export function TransactionsList({
           policy.spent + Math.abs(transaction.amount) > policy.limit;
         const overLimit = policyOver && !transaction.activeExceptionId;
 
+        const isIncome = transaction.amount > 0;
         return (
           <div key={transaction.id}>
             <div
-              className={cn("flex items-center p-4", compact ? "p-3" : "p-4")}
+              className={cn(
+                "flex items-center rounded-2xl transition-colors hover:bg-surface-muted",
+                compact ? "gap-3 p-2.5" : "gap-4 p-3",
+              )}
             >
               <div
                 className={cn(
-                  "rounded-full flex items-center justify-center mr-4",
-                  transaction.amount > 0 ? "bg-green-500" : "bg-red-500",
-                  compact ? "w-6 h-6" : "w-8 h-8",
+                  "flex items-center justify-center rounded-full",
+                  isIncome
+                    ? "bg-positive-soft text-positive"
+                    : "bg-negative-soft text-negative",
+                  compact ? "h-9 w-9" : "h-11 w-11",
                 )}
               >
-                {transaction.amount > 0 ? (
-                  <PlusCircle
-                    className={cn(
-                      "text-white",
-                      compact ? "h-3 w-3" : "h-4 w-4",
-                    )}
+                {isIncome ? (
+                  <ArrowUpRight
+                    className={cn(compact ? "h-4 w-4" : "h-5 w-5")}
                   />
                 ) : (
-                  <Send
-                    className={cn(
-                      "text-white",
-                      compact ? "h-3 w-3" : "h-4 w-4",
-                    )}
+                  <ArrowDownRight
+                    className={cn(compact ? "h-4 w-4" : "h-5 w-5")}
                   />
                 )}
               </div>
-              <div className="flex-1 space-y-1">
+              <div className="flex-1 space-y-0.5">
                 <p
                   className={cn(
-                    "font-medium leading-tight",
+                    "font-semibold leading-tight text-ink",
                     compact ? "text-xs" : "text-sm",
                   )}
                 >
@@ -124,40 +123,41 @@ export function TransactionsList({
                 </p>
                 <p
                   className={cn(
-                    "text-neutral-500 dark:text-neutral-400 leading-tight",
-                    compact ? "text-xs" : "text-sm",
+                    "leading-tight text-ink-muted",
+                    compact ? "text-[0.7rem]" : "text-xs",
                   )}
                 >
-                  {transaction.date}
+                  {isIncome ? "Incoming" : "Outgoing"} · {transaction.date}
                 </p>
               </div>
               <div
                 className={cn(
-                  transaction.amount > 0 ? "text-green-500" : "text-red-500",
+                  "font-semibold tabular-nums",
+                  isIncome ? "text-positive" : "text-negative",
                   compact ? "text-sm" : "text-base",
                 )}
               >
-                {transaction.amount > 0 ? "+" : ""}
+                {isIncome ? "+" : ""}
                 {formatCurrency(transaction.amount)}
               </div>
             </div>
             {transaction.note && (
               <div
                 className={cn(
-                  "bg-neutral-100 dark:bg-neutral-800 p-3 flex items-start",
+                  "mx-3 mb-2 flex items-start rounded-xl bg-surface-muted",
                   compact ? "p-2" : "p-3",
                 )}
               >
                 <MessageSquare
                   className={cn(
-                    "text-neutral-500 dark:text-neutral-400 mr-2 flex-shrink-0",
-                    compact ? "h-3 w-3 mt-0.5" : "h-4 w-4 mt-1",
+                    "mr-2 flex-shrink-0 text-ink-muted",
+                    compact ? "h-3 w-3 mt-0.5" : "h-4 w-4 mt-0.5",
                   )}
                 />
                 <div className="flex-1">
                   <p
                     className={cn(
-                      "text-neutral-700 dark:text-neutral-300",
+                      "text-ink",
                       compact ? "text-xs" : "text-sm",
                     )}
                   >
@@ -165,7 +165,7 @@ export function TransactionsList({
                   </p>
                   <p
                     className={cn(
-                      "text-neutral-500 dark:text-neutral-400 mt-1",
+                      "mt-1 text-ink-muted",
                       compact ? "text-xs" : "text-sm",
                     )}
                   >
@@ -175,7 +175,7 @@ export function TransactionsList({
               </div>
             )}
             {showApprovalInterface && transaction.status === "pending" && (
-              <div className="flex flex-col items-center gap-3 rounded-lg bg-white p-4">
+              <div className="flex flex-col items-center gap-3 rounded-2xl bg-surface p-4">
                 {overLimit && (
                   <div className="flex flex-col items-center gap-2">
                     <div className="flex items-center gap-1.5 rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-200 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-900/40">
@@ -241,7 +241,6 @@ export function TransactionsList({
                 </div>
               </div>
             )}
-            {index < transactions.length - 1 && <Separator className="my-0" />}
           </div>
         );
       })}
