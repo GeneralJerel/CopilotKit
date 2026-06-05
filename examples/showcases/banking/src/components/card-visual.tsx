@@ -62,10 +62,10 @@ export function GradientCreditCard({
   return (
     <div
       className={cn(
-        "relative aspect-[1.586/1] w-full overflow-hidden rounded-[22px] p-5 text-white @container",
+        "relative flex aspect-[1.586/1] min-h-[185px] w-full overflow-hidden rounded-[22px] p-5 text-white @container",
         subtle
           ? "bg-gradient-to-br from-indigo-400/80 to-violet-500/80"
-          : "brand-gradient shadow-[0_20px_45px_hsl(252_83%_55%/0.45)]",
+          : "brand-gradient shadow-[0_16px_38px_hsl(252_83%_55%/0.34)]",
         className,
       )}
     >
@@ -79,7 +79,7 @@ export function GradientCreditCard({
         className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-white/10 blur-xl"
       />
 
-      <div className="relative flex h-full flex-col justify-between">
+      <div className="relative flex h-full min-w-0 flex-1 flex-col justify-between gap-3">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-2">
             {/* EMV chip */}

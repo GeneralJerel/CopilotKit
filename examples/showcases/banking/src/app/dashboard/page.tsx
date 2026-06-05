@@ -127,18 +127,6 @@ export default function HomePage() {
                 </Link>
               </div>
               <div className="flex gap-5 overflow-x-auto pb-2">
-                {/* Add-card tile */}
-                <Link
-                  href="/"
-                  aria-label="Add a new card"
-                  className="flex aspect-[1.586/1] w-[300px] flex-shrink-0 flex-col items-center justify-center gap-2 rounded-[22px] border-2 border-dashed border-brand/40 text-ink-muted transition-colors hover:border-brand hover:bg-brand-soft/50 hover:text-brand-indigo"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-brand-indigo">
-                    <Plus className="h-6 w-6" />
-                  </span>
-                  <span className="text-sm font-medium">Add new card</span>
-                </Link>
-
                 {primaryCard && (
                   <div className="relative w-[300px] flex-shrink-0">
                     {/* A second card peeking behind */}
@@ -159,6 +147,18 @@ export default function HomePage() {
                     </div>
                   </div>
                 )}
+
+                {/* Add-card tile (rendered last) */}
+                <Link
+                  href="/"
+                  aria-label="Add a new card"
+                  className="flex aspect-[1.586/1] w-[300px] flex-shrink-0 flex-col items-center justify-center gap-2 rounded-[22px] border-2 border-dashed border-brand/40 text-ink-muted transition-colors hover:border-brand hover:bg-brand-soft/50 hover:text-brand-indigo"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-brand-indigo">
+                    <Plus className="h-6 w-6" />
+                  </span>
+                  <span className="text-sm font-medium">Add new card</span>
+                </Link>
               </div>
             </section>
 
