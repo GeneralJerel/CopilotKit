@@ -505,9 +505,7 @@ describe("railway-envs SSOT — domains + probe", () => {
     // is no longer a type error — it resolves to "no such environment" at
     // runtime (the service simply has no `dev` key in `environments`). This
     // is the env-map analogue of the old closed-union "Unknown env" guard.
-    expect(() => domainFor("docs", "dev")).toThrow(
-      /has no "dev" environment/,
-    );
+    expect(() => domainFor("docs", "dev")).toThrow(/has no "dev" environment/);
   });
 
   it("domainFor scheme guard rejects scheme-included literals but accepts http*-prefixed hosts", () => {
