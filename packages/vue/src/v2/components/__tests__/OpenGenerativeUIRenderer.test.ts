@@ -128,6 +128,35 @@ describe("OpenGenerativeUIRenderer", () => {
     expect(options.frameContent).toContain("<head></head>");
   });
 
+  it("anchors agent css to the real </head>, not a </head> token inside a comment", async () => {
+    renderRenderer({
+      html: ["<head><title>t</title><!-- </head> --></head><body>x</body>"],
+      htmlComplete: true,
+      css: "AGENTCSS",
+      cssComplete: true,
+    });
+    await flushImport();
+    expect(mockCreate).toHaveBeenCalledTimes(1);
+    const [, options] = mockCreate.mock.calls[0];
+    expect(options.frameContent).toBe(
+      "<head><title>t</title><!-- </head> --><style>AGENTCSS</style></head><body>x</body>",
+    );
+  });
+
+  it("normalizes the real head so websandbox's literal <head> anchor cannot land in a comment", async () => {
+    renderRenderer({
+      html: [
+        '<!-- <head> --><head lang="en"><title>t</title></head><body>x</body>',
+      ],
+      htmlComplete: true,
+    });
+    await flushImport();
+    const [, options] = mockCreate.mock.calls[0];
+    expect(options.frameContent).toBe(
+      "<head><title>t</title></head><body>x</body>",
+    );
+  });
+
   it("joins html chunks when complete", async () => {
     renderRenderer({
       html: ["<head></head>", "<body>", "<p>Hello</p>", "</body>"],

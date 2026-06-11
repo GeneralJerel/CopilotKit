@@ -1,18 +1,12 @@
-import {
-  computed,
-  defineComponent,
-  h,
-  onBeforeUnmount,
-  ref,
-  watch,
-  type PropType,
-} from "vue";
+import { computed, defineComponent, h, onBeforeUnmount, ref, watch } from "vue";
+import type { PropType } from "vue";
 import { z } from "zod";
 import { ToolCallStatus } from "@copilotkit/core";
 import {
   processPartialHtml,
   extractCompleteStyles,
 } from "../lib/processPartialHtml";
+import { ensureHead, injectCssIntoHtml } from "./openGenerativeUIDocument";
 import { useSandboxFunctions } from "../providers/SandboxFunctionsContext";
 
 export const OpenGenerativeUIActivityType = "open-generative-ui";
@@ -61,23 +55,6 @@ function shouldFlushImmediately(
     return true;
   if (next.html?.length && (!previous || !previous.html?.length)) return true;
   return false;
-}
-
-function ensureHead(html: string): string {
-  if (/<head[\s>]/i.test(html)) return html;
-  return `<head></head>${html}`;
-}
-
-function injectCssIntoHtml(html: string, css: string): string {
-  const headCloseIdx = html.indexOf("</head>");
-  if (headCloseIdx !== -1) {
-    return (
-      html.slice(0, headCloseIdx) +
-      `<style>${css}</style>` +
-      html.slice(headCloseIdx)
-    );
-  }
-  return `<head><style>${css}</style></head>${html}`;
 }
 
 type SandboxInstance = {
